@@ -10,6 +10,7 @@ API pour les services :
 
 Without '-Dspring-boot.run.fork=false' the -Dspring.config.additional-location is not received by SpringBoot.
 
+After maven clean compile it may be necessary to mark /target/generated-sources as generated sources folder
 
 ### Commandes pour notice et license
 - `mvn notice:check`

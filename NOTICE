@@ -19,10 +19,14 @@ This project includes:
   Apache Commons Codec under Apache License, Version 2.0
   Apache Log4j API under Apache License, Version 2.0
   Apache Log4j to SLF4J Adapter under Apache License, Version 2.0
+  Axis Web Services under The Apache Software License, Version 2.0
+  axis-jaxrpc under Apache License
+  axis-saaj under Apache License
+  axis-wsdl4j under Apache License
   Bouncy Castle ASN.1 Extension and Utility APIs under Bouncy Castle Licence
   Bouncy Castle PKIX, CMS, EAC, TSP, PKCS, OCSP, CMP, and CRMF APIs under Bouncy Castle Licence
   Bouncy Castle Provider under Bouncy Castle Licence
-  esco-sympa-api under Apache License, Version 2.0
+  Discovery under Apache License, Version 2.0
   IntelliJ IDEA Annotations under The Apache Software License, Version 2.0
   Jackson datatype: jdk8 under The Apache Software License, Version 2.0
   Jackson datatype: JSR310 under The Apache Software License, Version 2.0
@@ -32,10 +36,12 @@ This project includes:
   Jackson-module-parameter-names under The Apache Software License, Version 2.0
   Jakarta Annotations API under EPL 2.0 or GPL2 w/ CPE
   Jasig CAS Client for Java - Core under Apache License Version 2.0
+  javax.xml.rpc API v.1.1 under CDDL + GPLv2 with classpath exception
   JUL to SLF4J bridge under MIT License
   Lettuce under Apache License, Version 2.0
   Logback Classic Module under Eclipse Public License - v 1.0 or GNU Lesser General Public License
   Logback Core Module under Eclipse Public License - v 1.0 or GNU Lesser General Public License
+  Logging under The Apache Software License, Version 2.0
   Netty/Buffer under Apache License, Version 2.0
   Netty/Codec under Apache License, Version 2.0
   Netty/Common under Apache License, Version 2.0
@@ -65,6 +71,7 @@ This project includes:
   spring-boot under Apache License, Version 2.0
   spring-boot-autoconfigure under Apache License, Version 2.0
   spring-boot-starter under Apache License, Version 2.0
+  spring-boot-starter-cache under Apache License, Version 2.0
   spring-boot-starter-data-redis under Apache License, Version 2.0
   spring-boot-starter-json under Apache License, Version 2.0
   spring-boot-starter-logging under Apache License, Version 2.0
@@ -78,6 +85,7 @@ This project includes:
   spring-security-web under Apache License, Version 2.0
   spring-session-core under Apache License, Version 2.0
   spring-session-data-redis under Apache License, Version 2.0
+  sympa-api under Apache License, Version 2.0
   tomcat-embed-core under Apache License, Version 2.0
   tomcat-embed-el under Apache License, Version 2.0
   tomcat-embed-websocket under Apache License, Version 2.0
