@@ -47,7 +47,7 @@ public class SympaController {
   UserAttributesHandler userAttributesHandler;
 
   @GetMapping("/list")
-  public ResponseEntity<SympaListResponseForDisplay> referenceData( @RequestBody(required = false) SympaListRequestForm sympaListRequestForm) throws Exception {
+  public ResponseEntity<SympaListResponseForDisplay> fetchSympaList( @RequestBody(required = false) SympaListRequestForm sympaListRequestForm) throws Exception {
 
   if(Objects.isNull(sympaListRequestForm)){
     sympaListRequestForm = new SympaListRequestForm(true, true, true);
