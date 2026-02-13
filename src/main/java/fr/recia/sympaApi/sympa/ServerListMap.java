@@ -37,7 +37,7 @@ import java.util.Objects;
 @Setter
 @Slf4j
 @NoArgsConstructor // only for deserialization
-public class ServerListMap extends HashMap<String, AbstractSympaServer> {
+public class ServerListMap extends HashMap<String, SpringCachingSympaServerAxisWsImpl> {
 
   public ServerListMap(RobotSympaConf robotSympaConf, ServerListMapProperties serverListMapProperties, CASCredentialRetrieverService casCredentialRetriever, UserAttributesHandler userAttributesHandler, SessionAttributesHandler sessionAttributesHandler, CacheManager cacheManager, CasProperties casProperties) throws Exception {
     this.robotSympaConf = robotSympaConf;
@@ -112,11 +112,6 @@ public class ServerListMap extends HashMap<String, AbstractSympaServer> {
 		}
 	}
 
-//  @NotNull
-//  @Override
-//  public Collection<AbstractSympaServer> values(){
-//    return super.values();
-//  }
 
 	private RobotSympaInfo creeSympaServer(String uai, List<String> isMemberOf) throws Exception{
 		if (uai != null) {
@@ -136,7 +131,7 @@ public class ServerListMap extends HashMap<String, AbstractSympaServer> {
 				server.setCredentialRetriever(getCredentialRetriever());
 				server.setCacheManager(getCacheManager());
 				server.setNewListForRoles(serverListMapProperties.getNewListForRoles());
-				server.afterPropertiesSet();
+				server.init();
 
         log.info("created server {} in creeSympaServer ", server);
 

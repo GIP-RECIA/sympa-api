@@ -17,7 +17,7 @@ package fr.recia.sympaApi.service;
 
 import fr.recia.sympaApi.config.bean.CasProperties;
 import fr.recia.sympaApi.config.bean.ServerListMapProperties;
-import fr.recia.sympaApi.sympa.AbstractSympaServer;
+import fr.recia.sympaApi.sympa.SpringCachingSympaServerAxisWsImpl;
 import fr.recia.sympaApi.pojo.CreateListInfo;
 import fr.recia.sympaApi.pojo.RobotSympaConf;
 import fr.recia.sympaApi.sympa.ServerListMap;
@@ -25,6 +25,7 @@ import fr.recia.sympaApi.pojo.SympaListCriterion;
 import fr.recia.sympaApi.pojo.UserSympaList;
 import fr.recia.sympaApi.pojo.UserSympaListWithUrl;
 
+import fr.recia.sympaApi.sympa.SpringCachingSympaServerAxisWsImpl;
 import fr.recia.sympaApi.utils.SessionAttributesHandler;
 import fr.recia.sympaApi.utils.UserAttributesHandler;
 import org.springframework.beans.DirectFieldAccessor;
@@ -100,9 +101,9 @@ public class DomainService {
   }
 
   public List<UserSympaListWithUrl> getWhich() throws Exception {
-    Collection<AbstractSympaServer> srvList = getServerList().values();
+    Collection<SpringCachingSympaServerAxisWsImpl> srvList = getServerList().values();
     List<UserSympaListWithUrl> result = new ArrayList<UserSympaListWithUrl>();
-    for ( AbstractSympaServer s : srvList ) {
+    for ( SpringCachingSympaServerAxisWsImpl s : srvList ) {
       List<UserSympaListWithUrl> srvResult = s.getWhich();
       if ( srvResult != null && srvResult.size() > 0 ) {
         result.addAll(srvResult);
@@ -127,9 +128,9 @@ public class DomainService {
 
 
   public List<CreateListInfo> getCreateListInfo() throws Exception {
-    Collection<AbstractSympaServer> srvList = getServerList().values();
+    Collection<SpringCachingSympaServerAxisWsImpl> srvList = getServerList().values();
     List<CreateListInfo> result = new ArrayList<CreateListInfo>();
-    for ( AbstractSympaServer s : srvList ) {
+    for ( SpringCachingSympaServerAxisWsImpl s : srvList ) {
       CreateListInfo infos = s.getCreateListInfo();
       if ( infos != null )
         result.add(infos);
@@ -224,8 +225,8 @@ public class DomainService {
   /**
    * @return the serverList
    */
-  public Map<String, AbstractSympaServer> getServerList() throws Exception {
-    Map<String, AbstractSympaServer> serverListToUse = new HashMap<String, AbstractSympaServer>();
+  public Map<String, SpringCachingSympaServerAxisWsImpl> getServerList() throws Exception {
+    Map<String, SpringCachingSympaServerAxisWsImpl> serverListToUse = new HashMap<String, SpringCachingSympaServerAxisWsImpl>();
     for(String serverKey: getServerListInternal().keySet()) {
         //TODO   logger.debug("Add this server to the list for the current user : " + serverKey);
         serverListToUse.put(serverKey, getServerListInternal().get(serverKey));
