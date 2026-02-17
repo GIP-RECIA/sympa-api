@@ -102,6 +102,33 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-cache</artifactId>
       </dependency>
+      <dependency>
+        <groupId>org.springframework.ldap</groupId>
+        <artifactId>spring-ldap-core</artifactId>
+      </dependency>
+
+      <!-- Source: https://mvnrepository.com/artifact/org.hibernate/hibernate -->
+      <!-- Source: https://mvnrepository.com/artifact/org.springframework/spring-hibernate3 -->
+<!--      <dependency>-->
+<!--        <groupId>org.springframework</groupId>-->
+<!--        <artifactId>spring-hibernate3</artifactId>-->
+<!--        <version>2.0.8</version>-->
+<!--        <scope>compile</scope>-->
+<!--      </dependency>-->
+      <!-- Source: https://mvnrepository.com/artifact/org.springframework.data/spring-data-jpa -->
+      <dependency>
+        <groupId>org.springframework.data</groupId>
+        <artifactId>spring-data-jpa</artifactId>
+      </dependency>
+      <!-- Source: https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-persistence -->
+      <dependency>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-data-jpa</artifactId>
+      </dependency>
+      <dependency>
+        <groupId>org.mariadb.jdbc</groupId>
+        <artifactId>mariadb-java-client</artifactId>
+      </dependency>
     </dependencies>
 
     <build>

@@ -104,6 +104,11 @@ public class RobotSympaConf {
           rsi.url = String.format(props.getFormatUrl(), rsi.nom);
           rsi.soapUrl = String.format(props.getFormatSoapUrl(), rsi.nom);
           rsi.adminUrl = String.format(props.getFormatAdminUrl(), rsi.nom);
+          rsi.archiveUrl = String.format(props.getFormatArchiveUrl(), rsi.nom);
+
+          log.info("RSI adminUrl {} ", rsi.adminUrl);
+          log.info("RSI archiveUrl {} ", rsi.archiveUrl);
+
           rsi.adminPortletUrl = props.getStem2PortletAdmin().get(stem);
           if (rsi.adminPortletUrl == null || "".equals(rsi.adminPortletUrl) ) {
             rsi.adminPortletUrl = props.getStem2PortletAdmin().get(props.getDefaultStem());

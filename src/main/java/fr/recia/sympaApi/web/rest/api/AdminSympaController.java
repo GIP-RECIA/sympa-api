@@ -15,16 +15,257 @@
  */
 package fr.recia.sympaApi.web.rest.api;
 
+import fr.recia.sympaApi.config.custom.impl.UserCustomImplementation;
+import fr.recia.sympaApi.dto.request.SympaListRequestForm;
+import fr.recia.sympaApi.dto.response.admin.AdminSympaListResponseForDisplay;
+import fr.recia.sympaApi.pojo.CreateListInfo;
+import fr.recia.sympaApi.pojo.UserSympaListWithUrl;
+import fr.recia.sympaApi.service.AdminService;
+import fr.recia.sympaApi.service.DomainService;
+import fr.recia.sympaApi.sympa.admin.EscoUserAttributeMapping;
+import fr.recia.sympaApi.sympa.admin.LdapEstablishment;
+import fr.recia.sympaApi.sympa.admin.LdapPerson;
+import fr.recia.sympaApi.sympa.admin.UserAttributeMapping;
+import fr.recia.sympaApi.utils.FormToCriterion;
+import fr.recia.sympaApi.utils.SessionAttributesHandler;
+import fr.recia.sympaApi.utils.UserAttributesHandler;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.Assert;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
+@Slf4j
+@Getter
 @RestController
 @RequestMapping("/api/admin-sympa")
 public class AdminSympaController {
+
+  @Autowired
+  UserAttributesHandler userAttributesHandler;
+
+  @Autowired
+  private EscoUserAttributeMapping userAttributeMapping;
+
+  @Autowired
+  private SessionAttributesHandler sessionAttributesHandler;
+
+  @Autowired
+  private LdapPerson ldapPerson;
+
+
+  @Autowired
+  private FormToCriterion formToCriterion;
+
+  @Autowired
+  private DomainService domainService;
+
+  @Autowired
+  private AdminService adminService;
+
+  @GetMapping("/me")
+  public ResponseEntity<Map<String,Object>> test(){
+    Map<String, Object> responseMap = new HashMap<>();
+
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+    if (authentication.getPrincipal() instanceof UserCustomImplementation) {
+      UserCustomImplementation userCustomImplementation = (UserCustomImplementation)authentication.getPrincipal();
+      responseMap.put("user info from cas ticket", userCustomImplementation.getAttributes());
+      responseMap.put("principal", (UserCustomImplementation)authentication.getPrincipal());
+      responseMap.put("name",       authentication.getName());
+    }
+
+    return ResponseEntity.ok().body(responseMap);
+
+  }
+
+
+  @GetMapping("/list")
+  public ResponseEntity<AdminSympaListResponseForDisplay> fetchList(@RequestBody(required = false) SympaListRequestForm sympaListRequestForm) throws Exception {
+  //  public ResponseEntity<Map<String,Object>> fetchList(@RequestBody(required = false) SympaListRequestForm sympaListRequestForm) throws Exception {
+
+    if(Objects.isNull(sympaListRequestForm)){
+      sympaListRequestForm = new SympaListRequestForm(true, true, true);
+    }
+    Map<String, Object> responseMap = new HashMap<>();
+
+    Map<String,Object> map = new HashMap<String, Object>();
+
+
+    final String USER_ATTRIBUTE_SIREN_KEY = "USER_ATTRIBUTE_SIREN_KEY";
+
+    Map<String, String> userInfo = new HashMap<>();
+
+
+    //enhanceUserInfo => add siren
+    userInfo.put(UserAttributesHandler.UAI_CURRENT, userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT).orElse(null));
+    userInfo.put(UserAttributesHandler.MAIL, userAttributesHandler.getAttribute(UserAttributesHandler.MAIL).orElse(null));
+
+    userInfo = this.getUserAttributeMapping().enhanceUserInfo(userInfo);
+
+//    userInfo.put(UserAttributesHandler.UAI_CURRENT, userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT).orElse(null));
+
+
+//    String uai = userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT).orElse(null);
+//    if(Objects.isNull(uai)) {
+//      throw new Exception("uai is null");
+//    }
+//
+//    if (StringUtils.hasText(uai)) {
+//      String siren = this.ldapEstablishment.getSiren(uai);
+//
+//      if (StringUtils.hasText(siren)) {
+//        userInfo.put(USER_ATTRIBUTE_SIREN_KEY, siren);
+//      }
+//    } else {
+//      log.warn(
+//        "No UAI attribute found in portal context !");
+//    }
+
+    responseMap.put("userInfo",userInfo);
+
+    Map<String, String> placeholderValuesMap = null;
+    try {
+      placeholderValuesMap = this.getUserAttributeMapping()
+        .buildPlaceholderValuesMap(userInfo);
+    } catch (Exception e) {
+      log.error("error ",e);
+    }
+
+    String PLACEHOLDER_VALUES_MAP_SESSION_KEY
+      = "UserAttributeMapping.PLACEHOLDER_VALUES_MAP_SESSION_KEY";
+
+    //stocker une map placeholder en session scode ?
+    // ou application scope
+
+    try {
+      sessionAttributesHandler.setSessionAttribute(PLACEHOLDER_VALUES_MAP_SESSION_KEY, placeholderValuesMap);
+    } catch (Exception e) {
+      log.error("error ",e);
+    }
+
+
+    responseMap.put("placeholderValuesMap", placeholderValuesMap);
+
+
+//    request.getPortletSession().setAttribute(PLACEHOLDER_VALUES_MAP_SESSION_KEY,
+//      placeholderValuesMap, javax.portlet.PortletSession.APPLICATION_SCOPE);
+
+
+    //Fetch multi-valued attributes
+    Map<String, List<Object>> mvUserInfo = new HashMap<>();
+
+    String uaiFromhandler = userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT).orElse(null);
+
+    assert uaiFromhandler != null;
+    List<String> uaiAsList = List.of(uaiFromhandler);
+
+
+    String mailFromhandler = userAttributesHandler.getAttribute(UserAttributesHandler.MAIL).orElse(null);
+
+    assert mailFromhandler != null;
+    List<String> mailAsList = List.of(mailFromhandler);
+
+
+
+    List<String> isMemberOf = userAttributesHandler.getAttributeList(UserAttributesHandler.IS_MEMBER_OF).orElse(null);
+    assert isMemberOf != null;
+
+
+
+    mvUserInfo.put(UserAttributesHandler.IS_MEMBER_OF, new ArrayList<>(isMemberOf));
+    mvUserInfo.put(UserAttributesHandler.UAI_CURRENT, new ArrayList<>(uaiAsList));
+    mvUserInfo.put(UserAttributesHandler.MAIL, new ArrayList<>(mailAsList));
+
+    log.debug("Multi variable map is empty? " + ((!mvUserInfo.isEmpty()) ? " false " : " true"));
+    List<UserSympaListWithUrl> sympaList = null;
+
+
+    final String uid = SecurityContextHolder.getContext().getAuthentication().getName();// userInfo.get(UserInfoService.getPortalUidAttribute());
+    final String mail =  userAttributesHandler.getAttribute(UserAttributesHandler.MAIL).orElse(null);  // userInfo.get(UserInfoService.getPortalMailAttribute());
+    final String uai = uaiFromhandler; // refactor plus tard pour éviter ça
+
+    Assert.hasText(uid, "UID shouldn't be empty !");
+    Assert.hasText(uai, "UAI shouldn't be empty !");
+    Assert.hasText(mail, "MAIL shouldn't be empty !");
+
+    map.put("uai", uai);
+    map.put("mail", mail);
+
+    //Filter the user lists to make sure we only display lists that are in the current establishment.  This
+    //is done by comparing the domain of the list address (after the @).
+    //As domains are 1 to 1 with establishments
+    //this can be used to tell what lists belong to which establishment.
+    sympaList = this.getDomainService().getWhich(this.formToCriterion.formToCriterion(sympaListRequestForm), false);
+
+    responseMap.put("sympaList sublist 0 2",sympaList.subList(0, Math.min(2, sympaList.size())));
+//
+    List<CreateListInfo> createList = this.getDomainService().getCreateListInfo();
+
+    responseMap.put("create list", createList);
+
+//    map.put("sympaList", sympaList);
+//    map.put("createList", createList);
+
+
+    responseMap.put("mvUserInfo",mvUserInfo);
+
+    List<String> emailProfileList = List.of(Objects.requireNonNull(userAttributesHandler.getAttribute(UserAttributesHandler.MAIL).orElse(null)));
+
+    responseMap.put("emailProfileList", emailProfileList);
+
+
+    List<String> isMemberOfList = userAttributesHandler.getAttributeList(UserAttributesHandler.IS_MEMBER_OF).orElse(null);
+
+//
+    try {
+      this.adminService.fetchIsAdmin(map, isMemberOfList, this.ldapPerson.getAdminRegex(), uai);
+    } catch (Exception e) {
+      log.error("exception during fetchIsAdmin", e);
+    }
+
+    responseMap.put("userInfo",userInfo);
+
+
+    try {
+      this.adminService.fetchEmailUtility(map, emailProfileList);
+    } catch (Exception e) {
+      log.error("exception during fetchEmailUtility", e);
+    }
+
+
+    responseMap.put("userInfo",userInfo);
+    responseMap.clear();
+
+    responseMap.put("map",map);
+
+    if (Boolean.TRUE.equals(map.get("isListAdmin"))) {
+      responseMap.put("will go in  fetchCreateListTableData", null);
+//        Map<String,Object>  tempMap = this.adminService.fetchCreateListTableData(map, userInfo, sympaList);
+      AdminSympaListResponseForDisplay response = this.adminService.fetchCreateListTableData(map, userInfo, sympaList);
+     // responseMap.putAll(tempMap);
+      return ResponseEntity.ok().body(response);
+
+    }
+
+    return ResponseEntity.internalServerError().body(null);
+  }
+
 
 }

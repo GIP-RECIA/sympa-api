@@ -13,22 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package fr.recia.sympaApi.pojo;
+package fr.recia.sympaApi.sympa.listfinder.model;
 
+import lombok.Getter;
+import lombok.Setter;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import javax.persistence.Embeddable;
+import java.io.Serializable;
+import java.math.BigInteger;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class UserSympaListWithUrl extends UserSympaList {
+@Getter
+@Setter
+@Embeddable
+public class ModelSubscribersId implements Serializable {
 
-	private static final long serialVersionUID = 2955582285925647743L;
-
-	private String listUrl;
-	private String listAdminUrl;
-  private String listArchivesUrl;
+  private BigInteger id;
+  private String groupFilter;
 
 }

@@ -43,6 +43,7 @@ public class RobotSympaConfProperties {
   private String formatUrl;
   private String formatSoapUrl;
   private String formatAdminUrl;
+  private String formatArchiveUrl;
   private String formatNewListUrl;
   private String defaultStem;
   private boolean forAllUai;
@@ -64,6 +65,7 @@ public class RobotSympaConfProperties {
       ", formatUrl='" + formatUrl + '\'' +
       ", formatSoapUrl='" + formatSoapUrl + '\'' +
       ", formatAdminUrl='" + formatAdminUrl + '\'' +
+      ", formatArchiveUrl='" + formatArchiveUrl + '\'' +
       ", formatNewListUrl='" + formatNewListUrl + '\'' +
       ", defaultStem='" + defaultStem + '\'' +
       ", forAllUai=" + forAllUai +

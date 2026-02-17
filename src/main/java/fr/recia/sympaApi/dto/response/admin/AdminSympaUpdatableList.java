@@ -13,22 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package fr.recia.sympaApi.pojo;
+package fr.recia.sympaApi.dto.response.admin;
+
+import fr.recia.sympaApi.servlet.JsCreateListTableRow;
+import lombok.Getter;
+
+@Getter
+public class AdminSympaUpdatableList {
 
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+  final String address;
+  final String subject;
+  final String adminUrl;
+  final String archivesUrl;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class UserSympaListWithUrl extends UserSympaList {
-
-	private static final long serialVersionUID = 2955582285925647743L;
-
-	private String listUrl;
-	private String listAdminUrl;
-  private String listArchivesUrl;
+  public AdminSympaUpdatableList(JsCreateListTableRow tableRow){
+    this.address = tableRow.getName();
+    this.subject = tableRow.getSubject();
+    this.adminUrl = tableRow.getUrls().getListAdminUrl();
+    this.archivesUrl = tableRow.getUrls().getListArchivesUrl();
+  }
 
 }

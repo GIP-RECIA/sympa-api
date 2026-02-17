@@ -31,6 +31,8 @@ public class RobotSympaInfo {
   String adminUrl;
   String newListUrl;
   String adminPortletUrl;
+  String archiveUrl;
+
 
   @Override
   public String toString() {

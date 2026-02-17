@@ -122,7 +122,8 @@ public class ServerListMap extends HashMap<String, SpringCachingSympaServerAxisW
 				SpringCachingSympaServerAxisWsImpl server = new  SpringCachingSympaServerAxisWsImpl();
 
 				server.setAdminUrl(rsi.getAdminUrl());
-				server.setConnectUrl(getConnectUrl());
+        server.setArchivesUrl(rsi.getArchiveUrl());
+        server.setConnectUrl(getConnectUrl());
 				server.setName(rsi.getNom());
 				server.setNewListUrl(rsi.getNewListUrl());
 				server.setHomeUrl(rsi.getUrl());

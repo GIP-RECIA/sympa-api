@@ -17,6 +17,7 @@ package fr.recia.sympaApi.service;
 
 import fr.recia.sympaApi.config.bean.CasProperties;
 import fr.recia.sympaApi.config.bean.ServerListMapProperties;
+import fr.recia.sympaApi.pojo.SympaRobot;
 import fr.recia.sympaApi.sympa.SpringCachingSympaServerAxisWsImpl;
 import fr.recia.sympaApi.pojo.CreateListInfo;
 import fr.recia.sympaApi.pojo.RobotSympaConf;
@@ -104,7 +105,7 @@ public class DomainService {
     Collection<SpringCachingSympaServerAxisWsImpl> srvList = getServerList().values();
     List<UserSympaListWithUrl> result = new ArrayList<UserSympaListWithUrl>();
     for ( SpringCachingSympaServerAxisWsImpl s : srvList ) {
-      List<UserSympaListWithUrl> srvResult = s.getWhich();
+      List<UserSympaListWithUrl> srvResult = s.getWhich(SympaRobot.getDefaultRobot());
       if ( srvResult != null && srvResult.size() > 0 ) {
         result.addAll(srvResult);
       }
@@ -113,6 +114,21 @@ public class DomainService {
     sortResults(result);
     return result;
   }
+
+  public List<UserSympaListWithUrl> getLists() throws Exception {
+    Collection<SpringCachingSympaServerAxisWsImpl> srvList = getServerList().values();
+    List<UserSympaListWithUrl> result = new ArrayList<UserSympaListWithUrl>();
+    for ( SpringCachingSympaServerAxisWsImpl s : srvList ) {
+      List<UserSympaListWithUrl> srvResult = s.getLists(SympaRobot.getDefaultRobot());
+      if ( (srvResult != null) && (srvResult.size() > 0) ) {
+        result.addAll(srvResult);
+      }
+    }
+    // default sort on list address
+    sortResults(result);
+    return result;
+  }
+
 
   public List<UserSympaListWithUrl> getWhich(List<SympaListCriterion> criterions, boolean matchAll) throws Exception {
     List<UserSympaListWithUrl> sympaList = getWhich();

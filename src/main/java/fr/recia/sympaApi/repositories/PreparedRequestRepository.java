@@ -13,22 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package fr.recia.sympaApi.pojo;
+package fr.recia.sympaApi.repositories;
 
+import fr.recia.sympaApi.sympa.listfinder.model.PreparedRequest;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.math.BigInteger;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class UserSympaListWithUrl extends UserSympaList {
-
-	private static final long serialVersionUID = 2955582285925647743L;
-
-	private String listUrl;
-	private String listAdminUrl;
-  private String listArchivesUrl;
-
+public interface PreparedRequestRepository extends JpaRepository<PreparedRequest, BigInteger> {
 }
