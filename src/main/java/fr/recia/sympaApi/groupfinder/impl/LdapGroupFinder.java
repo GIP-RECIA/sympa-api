@@ -51,14 +51,6 @@ public class LdapGroupFinder implements IEtabGroupsFinder {
   @Autowired
   LdapGroupFinderProperties properties;
 
-//	/** for example, (ou=groups);. */
-//	private String ldapSearchFilter;
-//
-//	private String ldapSearchBaseDN;
-//
-//	/** for example, cn. */
-//	private String ldapGroupAttribute;
-
 	/** Prefix to add to all groups. */
 	private String groupPrefix;
 

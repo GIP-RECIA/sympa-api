@@ -15,9 +15,17 @@
  */
 package fr.recia.sympaApi.groupfinder.impl;
 
+import fr.recia.sympaApi.config.bean.ConcatenateGroupFinderProperties;
 import fr.recia.sympaApi.groupfinder.IEtabGroupsFinder;
+import fr.recia.sympaApi.sympa.admin.UserAttributeMapping;
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.ldap.core.LdapTemplate;
+import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -29,10 +37,37 @@ import java.util.Map;
  * @author GIP - RECIA Maxime BOSSARD.
  *
  */
+@Getter
+@Setter
+@Service
 public class ConcatenateGroupFinder implements IEtabGroupsFinder {
 
 	/** Configured via spring. */
 	private List<IEtabGroupsFinder> groupsFinders;
+
+  @Autowired
+  RegexGroupFinder regexGroupFinder;
+
+  @Autowired
+  ConcatenateGroupFinderProperties properties;
+
+  @Autowired
+  LdapTemplate ldapTemplate;
+
+  @Autowired
+  UserAttributeMapping userAttributeMapping;
+
+
+  @PostConstruct
+  private void postConstruct() {
+    groupsFinders = new ArrayList<>();
+    for(Map<String, String> mapping: properties.getMapping()){
+      MultiValuedAttributeGroupFinder multiValuedAttributeGroupFinder = new MultiValuedAttributeGroupFinder(mapping, this.ldapTemplate, this.userAttributeMapping, this.properties.getLdapSearchBaseDN());
+      groupsFinders.add(multiValuedAttributeGroupFinder);
+    }
+    groupsFinders.add(regexGroupFinder);
+  }
+
 
 	/** Constructor. */
 	public ConcatenateGroupFinder() {
