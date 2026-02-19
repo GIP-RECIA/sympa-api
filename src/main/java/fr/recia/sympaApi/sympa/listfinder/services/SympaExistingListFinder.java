@@ -59,11 +59,11 @@ public class SympaExistingListFinder implements IExistingListsFinder {
 
 		log.debug("Total lists returned : " + lists.size());
 
-		List<String> existingLists = new ArrayList<String>();
+		List<String> existingLists = new ArrayList<>();
 
 		for (UserSympaListWithUrl list : lists) {
 			String[] address = list.getAddress().split("@");
-			if ((address == null) || (address.length != 2)) {
+			if (address.length != 2) {
 				log.warn("Unexpected address, @ not found : " + list.getAddress());
 				continue;
 			}

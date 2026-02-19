@@ -57,16 +57,4 @@ public class SessionAttributesHandler {
 
     return Optional.empty();
   }
-
-  private Object getAttributeRaw(String attributeKey) {
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-    if (authentication.getPrincipal() instanceof UserCustomImplementation) {
-      UserCustomImplementation userCustomImplementation = (UserCustomImplementation)authentication.getPrincipal();
-
-      return userCustomImplementation.getAttributes().get(attributeKey);
-    }
-    return null;
-  }
-
 }

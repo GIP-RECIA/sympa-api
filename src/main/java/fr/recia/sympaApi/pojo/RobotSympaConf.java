@@ -65,11 +65,11 @@ public class RobotSympaConf {
                 return matcher.group(1);
               }
             } catch (Exception e) {
-              log.error(String.format("group user = %s erreur=%s", grp,  e.toString()));
+              log.error("group user = {} erreur=", grp, e);
             }
           }
         } catch (Exception e) {
-          log.error(String.format("error=%d uai=%s rgxFormat=%s erreur=%s", uai, rgxFormat, e.toString() ));
+          log.error("uai={} rgxFormat={} erreur=", uai, rgxFormat, e);
         }
       }
     }
@@ -108,13 +108,13 @@ public class RobotSympaConf {
           log.info("RSI archiveUrl {} ", rsi.archiveUrl);
 
           rsi.adminPortletUrl = props.getStem2PortletAdmin().get(stem);
-          if (rsi.adminPortletUrl == null || "".equals(rsi.adminPortletUrl) ) {
+          if (rsi.adminPortletUrl == null || rsi.adminPortletUrl.isEmpty()) {
             rsi.adminPortletUrl = props.getStem2PortletAdmin().get(props.getDefaultStem());
           }
           rsi.newListUrl =String.format(props.getFormatNewListUrl(), rsi.nom);
           return rsi;
         } catch (Exception e) {
-          log.error(String.format(" robotInfo = %s \n  erreur=%s", rsi.toString(),  e.toString()));
+          log.error(String.format(" robotInfo = %s \n  erreur=%s", rsi,  e));
         }
       }
     }

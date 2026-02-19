@@ -112,11 +112,11 @@ public class ServerListMap extends HashMap<String, SpringCachingSympaServerAxisW
 	}
 
 
-	private RobotSympaInfo creeSympaServer(String uai, List<String> isMemberOf) throws Exception{
+	private RobotSympaInfo creeSympaServer(String uai, List<String> isMemberOf) {
 		if (uai != null) {
 			RobotSympaInfo rsi = robotSympaConf.getRobotSympaInfoByUai(uai, isMemberOf, false);
 			if (rsi != null) {
-        log.debug("robotSympaInfo=" + rsi.toString());
+        log.debug("robotSympaInfo=" + rsi);
 
 				SpringCachingSympaServerAxisWsImpl server = new  SpringCachingSympaServerAxisWsImpl();
 

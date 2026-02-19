@@ -67,7 +67,6 @@ public class HibernateDaoServiceImpl
   private PreparedRequestRepository preparedRequestRepository;
 
 
-  @SuppressWarnings("unchecked")
   public List<ModelSubscribers> getAllModelSubscribers() {
     return modelSubscribersRepository.findAll();
   }
@@ -75,7 +74,6 @@ public class HibernateDaoServiceImpl
   /**
    * @return a list of groups that could have access to the list
    */
-  @SuppressWarnings("unchecked")
   public List<ModelRequest> getAllModelRequests() {
     return modelRequestRepository.findAll();
   }
@@ -83,12 +81,10 @@ public class HibernateDaoServiceImpl
   /**
    * @return a list of groups that could have access to the list
    */
-  @SuppressWarnings("unchecked")
   public List<Model> getAllModels() {
     return modelRepository.findAll();
   }
 
-  @SuppressWarnings("unchecked")
   public Model getModel(final BigInteger id) {
 
     Optional<Model> modelOptional = modelRepository.findById(id);
@@ -104,7 +100,6 @@ public class HibernateDaoServiceImpl
 //    return models.get(0);
   }
 
-  @SuppressWarnings("unchecked")
   public ModelSubscribers getModelSubscriber(final Model model) {
 
     return modelSubscribersRepository.findByIdId(model.getId()).orElse(null);
@@ -132,7 +127,6 @@ public class HibernateDaoServiceImpl
    * @param model
    * @return
    */
-  @SuppressWarnings({ "unchecked", "rawtypes" })
   public ModelRequest getModelRequest(final Model model, final PreparedRequest preparedRequest) {
 
     ModelRequestId modelRequestId = new ModelRequestId();

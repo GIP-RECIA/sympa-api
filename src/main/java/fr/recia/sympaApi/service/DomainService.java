@@ -49,9 +49,7 @@ public class DomainService {
     owner,
     editor,
     subscriber
-  };
-
-// ServerListMap serverList; // utiliser server list map
+  }
 
 
   @Autowired
@@ -95,16 +93,13 @@ public class DomainService {
 
   }
 
-  private void setServerList(String connectUrl){
-    sessionAttributesHandler.setSessionAttribute(SERVER_LIST_KEY,connectUrl);
-  }
 
   public List<UserSympaListWithUrl> getWhich() throws Exception {
     Collection<SpringCachingSympaServerAxisWsImpl> srvList = getServerList().values();
-    List<UserSympaListWithUrl> result = new ArrayList<UserSympaListWithUrl>();
+    List<UserSympaListWithUrl> result = new ArrayList<>();
     for ( SpringCachingSympaServerAxisWsImpl s : srvList ) {
       List<UserSympaListWithUrl> srvResult = s.getWhich(SympaRobot.getDefaultRobot());
-      if ( srvResult != null && srvResult.size() > 0 ) {
+      if ( srvResult != null && !srvResult.isEmpty()) {
         result.addAll(srvResult);
       }
     }
@@ -115,10 +110,10 @@ public class DomainService {
 
   public List<UserSympaListWithUrl> getLists() throws Exception {
     Collection<SpringCachingSympaServerAxisWsImpl> srvList = getServerList().values();
-    List<UserSympaListWithUrl> result = new ArrayList<UserSympaListWithUrl>();
+    List<UserSympaListWithUrl> result = new ArrayList<>();
     for ( SpringCachingSympaServerAxisWsImpl s : srvList ) {
       List<UserSympaListWithUrl> srvResult = s.getLists(SympaRobot.getDefaultRobot());
-      if ( (srvResult != null) && (srvResult.size() > 0) ) {
+      if ( (srvResult != null) && (!srvResult.isEmpty()) ) {
         result.addAll(srvResult);
       }
     }
@@ -131,7 +126,7 @@ public class DomainService {
   public List<UserSympaListWithUrl> getWhich(List<SympaListCriterion> criterions, boolean matchAll) throws Exception {
     List<UserSympaListWithUrl> sympaList = getWhich();
     if ( criterions == null || criterions.size() <= 0 ) return sympaList;
-    List<UserSympaListWithUrl> filteredList = new ArrayList<UserSympaListWithUrl>();
+    List<UserSympaListWithUrl> filteredList = new ArrayList<>();
     for ( UserSympaListWithUrl item : sympaList ) {
       if ( matchCriterions(item, criterions, matchAll) ) {
         filteredList.add(item);
@@ -143,7 +138,7 @@ public class DomainService {
 
   public List<CreateListInfo> getCreateListInfo() throws Exception {
     Collection<SpringCachingSympaServerAxisWsImpl> srvList = getServerList().values();
-    List<CreateListInfo> result = new ArrayList<CreateListInfo>();
+    List<CreateListInfo> result = new ArrayList<>();
     for ( SpringCachingSympaServerAxisWsImpl s : srvList ) {
       CreateListInfo infos = s.getCreateListInfo();
       if ( infos != null )
@@ -174,28 +169,28 @@ public class DomainService {
       }
     }
     if ( matchAll ) {
-      return (results == crits.size() ) ? true : false;
+      return results == crits.size();
     } else {
-      return (results > 0 ) ? true : false;
+      return results > 0;
     }
   }
   //protected boolean have
   // sorting
   private void sortResults(List<UserSympaListWithUrl> toSort) {
-    Collections.sort(toSort, new UserSympaListComparator());
+    toSort.sort(new UserSympaListComparator());
   }
 
-  class UserSympaListComparator implements Comparator<UserSympaList> {
+  static class UserSympaListComparator implements Comparator<UserSympaList> {
     boolean sortOrder; // true mean ascending
     SympaListFields sortOn;
     public UserSympaListComparator() {
       this.sortOrder = true;
       this.sortOn = SympaListFields.address;
     }
-    public UserSympaListComparator(SympaListFields field,boolean order) {
-      this.sortOrder = order;
-      this.sortOn = field;
-    }
+//    public UserSympaListComparator(SympaListFields field,boolean order) {
+//      this.sortOrder = order;
+//      this.sortOn = field;
+//    }
 
     public int compare(UserSympaList o1, UserSympaList o2) {
       int result = 0;
@@ -216,7 +211,7 @@ public class DomainService {
       return result;
     }
     private int compareBoolean(boolean b1, boolean b2) {
-      int result = 0;
+      int result;
       if ( (b1 && b2) || (!b1 && !b2) ) return 0;
       if ( sortOrder ) {
         result = ( b1 ) ? 1 : -1;
@@ -227,7 +222,7 @@ public class DomainService {
     }
     private int compareString(String s1, String s2) {
       if ( s1 == null || s2 == null ) return 0;
-      int result = 0;
+      int result;
       if ( sortOrder ) {
         result = s1.compareTo(s2);
       } else {
@@ -240,7 +235,7 @@ public class DomainService {
    * @return the serverList
    */
   public Map<String, SpringCachingSympaServerAxisWsImpl> getServerList() throws Exception {
-    Map<String, SpringCachingSympaServerAxisWsImpl> serverListToUse = new HashMap<String, SpringCachingSympaServerAxisWsImpl>();
+    Map<String, SpringCachingSympaServerAxisWsImpl> serverListToUse = new HashMap<>();
     for(String serverKey: getServerListInternal().keySet()) {
         //TODO   logger.debug("Add this server to the list for the current user : " + serverKey);
         serverListToUse.put(serverKey, getServerListInternal().get(serverKey));
@@ -248,11 +243,11 @@ public class DomainService {
     return serverListToUse;
   }
 
-  public String getHomeUrl() throws Exception {
-    String homeUrl="#";
-    for(String serverKey: getServerListInternal().keySet()) {
-        homeUrl=getServerListInternal().get(serverKey).getHomeUrl();
-    }
-    return homeUrl;
-  }
+//  public String getHomeUrl() throws Exception {
+//    String homeUrl="#";
+//    for(String serverKey: getServerListInternal().keySet()) {
+//        homeUrl=getServerListInternal().get(serverKey).getHomeUrl();
+//    }
+//    return homeUrl;
+//  }
 }

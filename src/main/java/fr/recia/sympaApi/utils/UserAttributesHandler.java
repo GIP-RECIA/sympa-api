@@ -43,7 +43,6 @@ public class UserAttributesHandler {
   public static final String IS_MEMBER_OF = "isMemberOf";
   public static final String IS_ADMIN_SYMPA = "IS_ADMIN_SYMPA";
   public static final String MAIL = "mail";
-  public static final String DISPLAY_NAME = "displayName";
 
 
   public void setIsAdminSympa(String url){
@@ -98,11 +97,7 @@ public class UserAttributesHandler {
     }
     Optional<String> valueAsString = getAttribute(key);
 
-    if(valueAsString.isPresent()){
-      return Optional.of(List.of(valueAsString.get()));
-    }
-
-    return Optional.empty();
+    return valueAsString.map(List::of);
 
   }
 }

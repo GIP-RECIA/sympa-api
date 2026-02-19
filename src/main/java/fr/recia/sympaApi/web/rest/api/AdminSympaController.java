@@ -82,7 +82,7 @@ public class AdminSympaController {
     if (authentication.getPrincipal() instanceof UserCustomImplementation) {
       UserCustomImplementation userCustomImplementation = (UserCustomImplementation)authentication.getPrincipal();
       responseMap.put("user info from cas ticket", userCustomImplementation.getAttributes());
-      responseMap.put("principal", (UserCustomImplementation)authentication.getPrincipal());
+      responseMap.put("principal", authentication.getPrincipal());
       responseMap.put("name",       authentication.getName());
     }
 
@@ -98,12 +98,10 @@ public class AdminSympaController {
     if(Objects.isNull(sympaListRequestForm)){
       sympaListRequestForm = new SympaListRequestForm(true, true, true);
     }
-    Map<String, Object> responseMap = new HashMap<>();
 
-    Map<String,Object> map = new HashMap<String, Object>();
+    Map<String,Object> map = new HashMap<>();
 
 
-    final String USER_ATTRIBUTE_SIREN_KEY = "USER_ATTRIBUTE_SIREN_KEY";
 
     Map<String, String> userInfo = new HashMap<>();
 
@@ -133,15 +131,14 @@ public class AdminSympaController {
 //        "No UAI attribute found in portal context !");
 //    }
 
-    responseMap.put("userInfo",userInfo);
 
     //Fetch multi-valued attributes
     Map<String, List<Object>> mvUserInfo = new HashMap<>();
 
-    String uaiFromhandler = userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT).orElse(null);
+    String uai = userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT).orElse(null);
 
-    assert uaiFromhandler != null;
-    List<String> uaiAsList = List.of(uaiFromhandler);
+    assert uai != null;
+    List<String> uaiAsList = List.of(uai);
 
 
     String mailFromhandler = userAttributesHandler.getAttribute(UserAttributesHandler.MAIL).orElse(null);
@@ -160,13 +157,11 @@ public class AdminSympaController {
     mvUserInfo.put(UserAttributesHandler.UAI_CURRENT, new ArrayList<>(uaiAsList));
     mvUserInfo.put(UserAttributesHandler.MAIL, new ArrayList<>(mailAsList));
 
-    log.debug("Multi variable map is empty? " + ((!mvUserInfo.isEmpty()) ? " false " : " true"));
-    List<UserSympaListWithUrl> sympaList = null;
+    List<UserSympaListWithUrl> sympaList;
 
 
     final String uid = SecurityContextHolder.getContext().getAuthentication().getName();// userInfo.get(UserInfoService.getPortalUidAttribute());
     final String mail =  userAttributesHandler.getAttribute(UserAttributesHandler.MAIL).orElse(null);  // userInfo.get(UserInfoService.getPortalMailAttribute());
-    final String uai = uaiFromhandler; // refactor plus tard pour éviter ça
 
     Assert.hasText(uid, "UID shouldn't be empty !");
     Assert.hasText(uai, "UAI shouldn't be empty !");
@@ -181,21 +176,17 @@ public class AdminSympaController {
     //this can be used to tell what lists belong to which establishment.
     sympaList = this.getDomainService().getWhich(this.formToCriterion.formToCriterion(sympaListRequestForm), false);
 
-    responseMap.put("sympaList sublist 0 2",sympaList.subList(0, Math.min(2, sympaList.size())));
 //
     List<CreateListInfo> createList = this.getDomainService().getCreateListInfo();
 
-    responseMap.put("create list", createList);
 
 //    map.put("sympaList", sympaList);
 //    map.put("createList", createList);
 
 
-    responseMap.put("mvUserInfo",mvUserInfo);
 
     List<String> emailProfileList = List.of(Objects.requireNonNull(userAttributesHandler.getAttribute(UserAttributesHandler.MAIL).orElse(null)));
 
-    responseMap.put("emailProfileList", emailProfileList);
 
 
     List<String> isMemberOfList = userAttributesHandler.getAttributeList(UserAttributesHandler.IS_MEMBER_OF).orElse(null);
@@ -207,7 +198,6 @@ public class AdminSympaController {
       log.error("exception during fetchIsAdmin", e);
     }
 
-    responseMap.put("userInfo",userInfo);
 
 
     try {
@@ -217,15 +207,11 @@ public class AdminSympaController {
     }
 
 
-    responseMap.put("userInfo",userInfo);
-    responseMap.clear();
 
-    responseMap.put("map",map);
 
     if (Boolean.TRUE.equals(map.get("isListAdmin"))) {
-      responseMap.put("will go in  fetchCreateListTableData", null);
 //        Map<String,Object>  tempMap = this.adminService.fetchCreateListTableData(map, userInfo, sympaList);
-      AdminSympaListResponseForDisplay response = this.adminService.fetchCreateListTableData(map, userInfo, sympaList);
+      AdminSympaListResponseForDisplay response = this.adminService.fetchCreateListTableData(userInfo, sympaList);
 
       // responseMap.putAll(tempMap);
       return ResponseEntity.ok().body(response);

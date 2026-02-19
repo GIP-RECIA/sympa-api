@@ -50,7 +50,7 @@ public class AdminService {
 
   protected List<JsCreateListTableRow> convertMailingListsToJsListTableTow(
     final String domain, final Collection<IMailingList> creatableLists) {
-    List<JsCreateListTableRow> tableData = new ArrayList<JsCreateListTableRow>();
+    List<JsCreateListTableRow> tableData = new ArrayList<>();
 
     if (creatableLists != null) {
       for(IMailingList mailList : creatableLists) {
@@ -59,7 +59,7 @@ public class AdminService {
         row.setSubject(mailList.getDescription());
         row.setModelId(mailList.getModel().getId());
         row.setModelParam(mailList.getModelParameter());
-        log.debug("Loading creatable list " + row.toString());
+        log.debug("Loading creatable list " + row);
         tableData.add(row);
       }
     }
@@ -86,7 +86,7 @@ public class AdminService {
     if ((mvUserInfo != null) && mvUserInfo.containsKey(ldapPerson.getMemberAttribute())) {
 
 
-      emailProfileList = new ArrayList<String>();
+      emailProfileList = new ArrayList<>();
       log.debug("Reading email profiles for ldap person using attribute [" + ldapPerson.getWebmailProfileAttribute() + "]");
       List<Object> listObjects = mvUserInfo.get(ldapPerson.getWebmailProfileAttribute());
       if (listObjects != null) {
@@ -157,13 +157,11 @@ public class AdminService {
   }
 
 
-// TODO : return void after debugging
-  public AdminSympaListResponseForDisplay fetchCreateListTableData(final Map<String,Object> map, final Map<String,String> userInfo, List<UserSympaListWithUrl> sympaList) throws Exception {
+  public AdminSympaListResponseForDisplay fetchCreateListTableData(final Map<String,String> userInfo, List<UserSympaListWithUrl> sympaList) throws Exception {
 
 
     AdminSympaListResponseForDisplay response = new AdminSympaListResponseForDisplay();
 
-    Map<String,Object> responseMap = new HashMap<>();
 
     //	String establishementId = userInfo.get(UserInfoService.getPortalUaiAttribute());
 
@@ -173,19 +171,15 @@ public class AdminService {
     final String domain = this.robotDomainNameResolver.resolveRobotDomainName();
     log.debug("Mailing list domain for establishment is [" + domain + "]");
 
-    responseMap.put("domain", domain);
 
     //Fetch the models from the ESCO-SympaRemote database
     List<Model> listModels = this.daoService.getAllModels();
 
     log.debug("Fetched models from SympaRemote db.  Count: " + listModels.size());
 
-    responseMap.put("listModels", listModels);
 
-    responseMap.put("userInfo for getMailingListModels", userInfo);
 
     List<IMailingListModel> listMailingListModels = this.daoService.getMailingListModels(listModels, userInfo);
-    responseMap.put("IMailingListModel", listMailingListModels);
 
 
 
@@ -196,9 +190,6 @@ public class AdminService {
     final Collection<IMailingList> creatableLists = availableLists.getCreatableLists();
     final Collection<IMailingList> updatableLists = availableLists.getUpdatableLists();
 
-    responseMap.put("availableLists", availableLists);
-    responseMap.put("creatableLists", creatableLists);
-    responseMap.put("updatableLists", updatableLists); // ceux avec icones fermer la liste et modifier la liste, pas l'intégralité qui ont accéder aux archives/accéder à l'administration
 
 
 
@@ -210,16 +201,16 @@ public class AdminService {
 
 
 
-    if (updateTableData != null && sympaList != null && updateTableData.size() > 0) {
+    if (updateTableData != null && sympaList != null && !updateTableData.isEmpty()) {
       // on merge les données de sympaList dans updateTableData pour recuperer les urls
       // on cree une map provisoire avce updateTable
-      HashMap<String, JsCreateListTableRow> mapTmp = new HashMap<String, JsCreateListTableRow>(updateTableData.size());
+      HashMap<String, JsCreateListTableRow> mapTmp = new HashMap<>(updateTableData.size());
       for (JsCreateListTableRow liste : updateTableData) {
         if (liste != null) {
           String addr = liste.getName();
           if (addr != null) {
             mapTmp.put(addr, liste);
-            log.debug("liste =" + liste.toString());
+            log.debug("liste =" + liste);
           }
         }
       }
@@ -251,13 +242,6 @@ public class AdminService {
     }else {
       response.setAdminSympaUpdatableListList(updateTableData.stream().map(AdminSympaUpdatableList::new).collect(Collectors.toList()));
     }
-
-
-
-    responseMap.put("createTableData", createTableData);
-    responseMap.put("updateTableData", updateTableData);
-    responseMap.put("sympaList", sympaList);
-
 
     return response;
 

@@ -61,7 +61,7 @@ public class SympaController {
 
   private List<SympaListCriterion> formToCriterion(SympaListRequestForm form) {
     if ( form == null ) return null;
-    List<SympaListCriterion> crits = new ArrayList<SympaListCriterion>();
+    List<SympaListCriterion> crits = new ArrayList<>();
     if ( form.isEditor() )
       crits.add(new SympaListCriterion(SympaListFields.editor, true));
     if ( form.isOwner() )

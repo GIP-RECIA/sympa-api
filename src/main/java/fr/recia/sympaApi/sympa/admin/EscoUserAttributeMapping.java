@@ -16,6 +16,7 @@
 package fr.recia.sympaApi.sympa.admin;
 
 import fr.recia.sympaApi.utils.UserAttributesHandler;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,11 +46,18 @@ public class EscoUserAttributeMapping extends UserAttributeMapping implements In
   @Autowired
   UserAttributesHandler userAttributesHandler;
 
-	/** Ldap establishment searcher. */
+	/** Ldap establishment searcher.
+   * -- SETTER --
+   *  Mapping setter.
+   *
+   * @param ldapEstablishment the ldapEstablishment
+   */
+  @Setter
   @Autowired
 	private LdapEstablishment ldapEstablishment;
 
 	/** Ldap Person searcher. */
+  @Setter
   @Autowired
   private LdapPerson ldapPerson;
 
@@ -92,27 +100,6 @@ public class EscoUserAttributeMapping extends UserAttributeMapping implements In
 					"No UAI attribute found in portal context !");
 		}
 
-	}
-
-	/**
-	 * Mapping setter.
-	 * 
-	 * @param ldapEstablishment the ldapEstablishment
-	 */
-	public void setLdapEstablishment(final LdapEstablishment ldapEstablishment) {
-		this.ldapEstablishment = ldapEstablishment;
-	}
-
-	public LdapEstablishment getLdapEstablishment() {
-		return this.ldapEstablishment;
-	}
-
-	public LdapPerson getLdapPerson() {
-		return this.ldapPerson;
-	}
-
-	public void setLdapPerson(final LdapPerson ldapPerson) {
-		this.ldapPerson = ldapPerson;
 	}
 
 }

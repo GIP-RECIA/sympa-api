@@ -56,8 +56,6 @@ import java.util.TreeSet;
 @Service
 public class AvailableListsFinderBasicImpl implements IAvailableListsFinder {
 
-	/** Logger */
-
 	/** Le mecanisme de recherche des groupes de l'etablissement injecte par Spring */
   @Autowired
 //	private LdapGroupFinder etabGroupsFinder;
@@ -114,36 +112,30 @@ public class AvailableListsFinderBasicImpl implements IAvailableListsFinder {
 		// the group "esco:etablissement:FICTIF_0450822x:Niveau Seconde:Profs_503'
 		// matches the pattern "esco:Etablissements:FICTIF_0450822x:[^:]+:Profs_([\\ -]|\\w+)"
 		// so the "profs503" list will be added to the available lists
-		Iterator<IMailingListModel> modelesIt = modeles.iterator();
-		if (modelesIt != null) {
-			while (modelesIt.hasNext()) {
-				IMailingListModel currentModel = modelesIt.next();
-				Collection<IMailingList> results = this.listsFromGroupsPatternMatcher.findPossibleListsWithModel(
-						groupsOfEtab, currentModel);
-				AvailableListsFinderBasicImpl.log.debug("Mailing Lists found " + results.size() + " for model [" + currentModel.toString() + "]");
-				creatableLists.addAll(results);
-			}
-		}
+    for (IMailingListModel currentModel : modeles) {
+      Collection<IMailingList> results = this.listsFromGroupsPatternMatcher.findPossibleListsWithModel(
+        groupsOfEtab, currentModel);
+      AvailableListsFinderBasicImpl.log.debug("Mailing Lists found " + results.size() + " for model [" + currentModel.toString() + "]");
+      creatableLists.addAll(results);
+    }
 
-		AvailableListsFinderBasicImpl.log.debug("Finding existing lists with userInfo [" + userInfo.toString() + "]");
+    AvailableListsFinderBasicImpl.log.debug("Finding existing lists with userInfo [" + userInfo.toString() + "]");
 		Collection<String> existingLists = this.existingListsFinder.findExistingLists(userInfo);
 		AvailableListsFinderBasicImpl.log.debug("Existing lists found " + existingLists.size());
 
 		Iterator<IMailingList> itLists = creatableLists.iterator();
-		if (itLists != null) {
-			while (itLists.hasNext()) {
-				IMailingList list = itLists.next();
+    while (itLists.hasNext()) {
+      IMailingList list = itLists.next();
 
-				// On test si la liste fait partie des listes existantes
-				if (existingLists.contains(list.getName().toLowerCase())) {
-					updatableLists.add(list);
-					itLists.remove();
-					AvailableListsFinderBasicImpl.log.debug("List " + list.toString() + " already exists, removing");
-				}
-			}
-		}
+      // On test si la liste fait partie des listes existantes
+      if (existingLists.contains(list.getName().toLowerCase())) {
+        updatableLists.add(list);
+        itLists.remove();
+        AvailableListsFinderBasicImpl.log.debug("List " + list + " already exists, removing");
+      }
+    }
 
-		AvailableListsFinderBasicImpl.log.debug("Available lists count " + creatableLists.size());
+    AvailableListsFinderBasicImpl.log.debug("Available lists count " + creatableLists.size());
 		return availableLists;
 	}
 }

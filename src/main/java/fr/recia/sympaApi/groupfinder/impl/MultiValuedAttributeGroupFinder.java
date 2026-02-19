@@ -51,8 +51,6 @@ public class MultiValuedAttributeGroupFinder extends LdapGroupFinder {
   private final String ldapGroupAttribute;
 
 
-  //ldapSearchBaseDN
-
 	/** Constructor. */
 	public MultiValuedAttributeGroupFinder(Map<String, String> args, LdapTemplate ldapTemplate, UserAttributeMapping userAttributeMapping, String ldapSearchBaseDN) {
     this.ldapSearchFilter = args.get("ldapSearchFilter");
@@ -76,7 +74,7 @@ public class MultiValuedAttributeGroupFinder extends LdapGroupFinder {
 			public Object mapFromAttributes(final Attributes attrs) throws NamingException {
 				Attribute groupNameAttr = attrs.get(MultiValuedAttributeGroupFinder.this.getLdapGroupAttribute());
 
-				Collection<String> groups = new HashSet<String>();
+				Collection<String> groups = new HashSet<>();
 				if (groupNameAttr != null) {
 					NamingEnumeration<String> values =
 							(NamingEnumeration<String>) groupNameAttr.getAll();
@@ -93,7 +91,7 @@ public class MultiValuedAttributeGroupFinder extends LdapGroupFinder {
 				LdapUtils.ldapSearch(this.getLdapTemplate(), searchFilter, searchString, groupsMapper);
 
 		// Merge of all Sets and add the prefix on all groups
-		Collection<String> groups = new HashSet<String>();
+		Collection<String> groups = new HashSet<>();
 		StringBuilder groupName = new StringBuilder(128);
 		if (groupsList != null) {
 			for (Collection<String> groupSet : groupsList) {
@@ -107,22 +105,20 @@ public class MultiValuedAttributeGroupFinder extends LdapGroupFinder {
 				}
 			}
 		} else {
-      log.warn("groupsList null dans la requette ldap :"+ searchFilter);
-      log.debug( "        searchString :"+ searchString);
+      log.warn("groupsList null dans la requette ldap :{}", searchFilter);
+      log.debug("        searchString :{}", searchString);
 		}
 		
-			if ((groups == null) || (groups.size() == 0)) {
-				log.info(String.format(
-						"No multi-valued attribute groups found for filter: [%s]", this.getLdapSearchFilter()));
+			if (groups.isEmpty()) {
+				log.info("No multi-valued attribute groups found for filter: [{}]", this.getLdapSearchFilter());
 			} else {
-        log.info(String.format(
-						"[%s] Multi-valued attribute groups found for filter: [%s]", groups.size(), this.getLdapSearchFilter()));
+        log.info("[{}] Multi-valued attribute groups found for filter: [{}]", groups.size(), this.getLdapSearchFilter());
 			}
 
 
-			if ((groups != null) && (groups.size() > 0)) {
+			if (!groups.isEmpty()) {
 				for (String group : groups) {
-					log.debug("Multi-valued attribute group: " + group);
+          log.debug("Multi-valued attribute group: {}", group);
 				}
 			}
 

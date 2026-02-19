@@ -56,28 +56,14 @@ public class LdapPerson {
     return properties.getAdminRegex();
   }
 
+  @Getter
+  @Setter
   public static class Person {
-		private List<String> memberOf = new ArrayList<String>();
-		private List<String> profile = new ArrayList<String>();
 
+		private List<String> memberOf = new ArrayList<>();
+		private List<String> profile = new ArrayList<>();
 
-		public List<String> getProfile() {
-			return this.profile;
-		}
-
-		public void setProfile(final List<String> profile) {
-			this.profile = profile;
-		}
-
-		public List<String> getMemberOf() {
-			return this.memberOf;
-		}
-
-		public void setMemberOf(final List<String> memberOf) {
-			this.memberOf = memberOf;
-		}
-
-	}
+  }
 
 	@SuppressWarnings("unchecked")
 	public Person getPerson(final String uid) {

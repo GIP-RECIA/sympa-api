@@ -56,7 +56,7 @@ public class SpringCachingSympaServerAxisWsImpl {
 
   private Cache cache = null;
 
-  private Map<SympaRobot, SympaPort_PortType> portCache = new HashMap<SympaRobot, SympaPort_PortType>(8);
+  private Map<SympaRobot, SympaPort_PortType> portCache = new HashMap<>(8);
 
 
 
@@ -111,7 +111,7 @@ public class SpringCachingSympaServerAxisWsImpl {
     return infos;
   }
 
-  protected String generateListUrl(final SympaRobot robot, final String listHomepage) {
+  protected String generateListUrl(final String listHomepage) {
     return this.generateConnectUrl(listHomepage);
   }
 
@@ -121,36 +121,33 @@ public class SpringCachingSympaServerAxisWsImpl {
       return url;
     }
     String tmpUrl = url;
-    try {
-      tmpUrl = URLEncoder.encode(tmpUrl,"UTF-8");
-    } catch (UnsupportedEncodingException e) {
-      log.error("unable to urlencode",e);
-    }
-    String strTmp = tmpConnectUrl.replaceFirst("%s", tmpUrl);
-    return strTmp;
+    tmpUrl = URLEncoder.encode(tmpUrl, StandardCharsets.UTF_8);
+    return tmpConnectUrl.replaceFirst("%s", tmpUrl);
   }
 
   protected String generateListAdminUrl(final SympaRobot robot, final String listAddress) {
     String strListName = listAddress;
-    if ( (listAddress != null) && (listAddress.length() > 0) ) {
+    if ( (listAddress != null) && (!listAddress.isEmpty()) ) {
       int atIdx = listAddress.indexOf("@");
       if ( atIdx > 0) {
         strListName = listAddress.substring(0, atIdx);
       }
     }
     String tmpUrl = this.getAdminUrl(robot);
+    assert strListName != null;
     return this.generateConnectUrl(tmpUrl.replaceFirst("%l", strListName));
   }
 
   protected String generateListArchivesUrl(final SympaRobot robot, final String listAddress) {
     String strListName = listAddress;
-    if ( (listAddress != null) && (listAddress.length() > 0) ) {
+    if ( (listAddress != null) && (!listAddress.isEmpty()) ) {
       int atIdx = listAddress.indexOf("@");
       if ( atIdx > 0) {
         strListName = listAddress.substring(0, atIdx);
       }
     }
     String tmpUrl = this.getArchivesUrl(robot);
+    assert strListName != null;
     return this.generateConnectUrl(tmpUrl.replaceFirst("%l", strListName));
   }
 
@@ -173,8 +170,8 @@ public class SpringCachingSympaServerAxisWsImpl {
 
 
   private SympaPort_PortType getPort(final SympaRobot robot) throws MalformedURLException, ServiceException, RemoteException {
-    SympaSOAP locator = new SympaSOAPLocator();
-    ((SympaSOAPLocator)locator).setMaintainSession(true); // mandatory for cookie after login
+    SympaSOAPLocator locator = new SympaSOAPLocator();
+    locator.setMaintainSession(true); // mandatory for cookie after login
     final String endpointUrl = this.getEndPointUrl(robot);
     if (log.isDebugEnabled()) {
       log.debug(String.format("SympaSoap endpoint URL: [%1$s] for Robot: [%2$s].", endpointUrl, robot));
@@ -220,13 +217,7 @@ public class SpringCachingSympaServerAxisWsImpl {
     if(this.portCache.get(robot) == null) {
       try {
         this.portCache.put(robot, this.getPort(robot));
-      } catch (MalformedURLException e) {
-        log.error("unable to get a new SympaPort_PortType",e);
-        return null;
-      } catch (ServiceException e) {
-        log.error("unable to get a new SympaPort_PortType",e);
-        return null;
-      } catch (RemoteException e) {
+      } catch (MalformedURLException | RemoteException | ServiceException e) {
         log.error("unable to get a new SympaPort_PortType",e);
         return null;
       }
@@ -237,7 +228,7 @@ public class SpringCachingSympaServerAxisWsImpl {
     }
     // do the which
     //ListType[] whichList = null;
-    String[] whichList = null;
+    String[] whichList;
     try {
 			/* BUG
 			 *    """org.xml.sax.SAXException:  No deserializer for {http://www.w3.org/2001/XMLSchema}anyType"""
@@ -250,7 +241,7 @@ public class SpringCachingSympaServerAxisWsImpl {
       log.error("complexWhich() failed !",e);
       return null;
     }
-    List<UserSympaListWithUrl> result = new ArrayList<UserSympaListWithUrl>();
+    List<UserSympaListWithUrl> result = new ArrayList<>();
     if ( whichList != null ) {
       for (String l : whichList) {
         Map<String, String> listeInfos = stringToMap(l);
@@ -264,7 +255,7 @@ public class SpringCachingSympaServerAxisWsImpl {
         //  append various urls
 
 
-        item.setListUrl(this.generateListUrl(robot, item.getHomepage()));
+        item.setListUrl(this.generateListUrl(item.getHomepage()));
         item.setListAdminUrl(this.generateListAdminUrl(robot, item.getAddress()));
         item.setListArchivesUrl(this.generateListArchivesUrl(robot, item.getAddress()));
         result.add(item);
@@ -355,13 +346,7 @@ public class SpringCachingSympaServerAxisWsImpl {
     if(this.portCache.get(robot) == null) {
       try {
         this.portCache.put(robot, this.getPort(robot));
-      } catch (MalformedURLException e) {
-        log.error("unable to get a new SympaPort_PortType",e);
-        return null;
-      } catch (ServiceException e) {
-        log.error("unable to get a new SympaPort_PortType",e);
-        return null;
-      } catch (RemoteException e) {
+      } catch (MalformedURLException | RemoteException | ServiceException e) {
         log.error("unable to get a new SympaPort_PortType",e);
         return null;
       }
@@ -371,7 +356,7 @@ public class SpringCachingSympaServerAxisWsImpl {
       return null;
     }
     // do the which
-    String[] lists = null;
+    String[] lists;
     try {
 			/* BUG
 			 *    """org.xml.sax.SAXException:  No deserializer for {http://www.w3.org/2001/XMLSchema}anyType"""
@@ -384,7 +369,7 @@ public class SpringCachingSympaServerAxisWsImpl {
       log.error("lists() failed !",e);
       return null;
     }
-    List<UserSympaListWithUrl> result = new ArrayList<UserSympaListWithUrl>();
+    List<UserSympaListWithUrl> result = new ArrayList<>();
     if ( lists != null ) {
       for (String l : lists) {
         Map<String, String> listeInfos = stringToMap(l);
@@ -398,30 +383,30 @@ public class SpringCachingSympaServerAxisWsImpl {
     return result;
   }
 
-  private SympaPort_PortType getPort() throws MalformedURLException, ServiceException, RemoteException {
-    SympaSOAP locator = new SympaSOAPLocator();
-    ((SympaSOAPLocator)locator).setMaintainSession(true); // mandatory for cookie after login
-    log.info("getPort getEndpointURl {}",getEndPointUrl());
-    SympaPort_PortType port = locator.getSympaPort(new URL(getEndPointUrl()));
-    // set a timeout on port (10 seconds)
-    ((org.apache.axis.client.Stub)port).setTimeout(getTimeout());
-    // now authenticate
-    SympaCredential creds = getCredentialRetriever().getCredentialForService(endPointUrl);
-    if ( creds == null ) {
-      log.error("unable to retrieve credential for service "+endPointUrl);
-      return null;
-    }
-    String tmp = port.casLogin(creds.getPassword());
-    ((SOAPStub)port)._setProperty(HTTPConstants.HEADER_COOKIE,
-      "sympa_session=" + tmp);
-    if ( log.isDebugEnabled() ) {
-      log.debug("CAS authentication ok : "+tmp);
-    }
-    return port;
-  }
+//  private SympaPort_PortType getPort() throws MalformedURLException, ServiceException, RemoteException {
+//    SympaSOAPLocator locator = new SympaSOAPLocator();
+//    locator.setMaintainSession(true); // mandatory for cookie after login
+//    log.info("getPort getEndpointURl {}",getEndPointUrl());
+//    SympaPort_PortType port = locator.getSympaPort(new URL(getEndPointUrl()));
+//    // set a timeout on port (10 seconds)
+//    ((org.apache.axis.client.Stub)port).setTimeout(getTimeout());
+//    // now authenticate
+//    SympaCredential creds = getCredentialRetriever().getCredentialForService(endPointUrl);
+//    if ( creds == null ) {
+//      log.error("unable to retrieve credential for service "+endPointUrl);
+//      return null;
+//    }
+//    String tmp = port.casLogin(creds.getPassword());
+//    ((SOAPStub)port)._setProperty(HTTPConstants.HEADER_COOKIE,
+//      "sympa_session=" + tmp);
+//    if ( log.isDebugEnabled() ) {
+//      log.debug("CAS authentication ok : "+tmp);
+//    }
+//    return port;
+//  }
 
   protected static Map<String, String> stringToMap(String input) {
-    Map<String, String> map = new HashMap<String, String>();
+    Map<String, String> map = new HashMap<>();
 
     String[] nameValuePairs = input.split(";");
     for (String nameValuePair : nameValuePairs) {

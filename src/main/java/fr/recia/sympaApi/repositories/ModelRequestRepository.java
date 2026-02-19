@@ -17,6 +17,7 @@ package fr.recia.sympaApi.repositories;
 
 import fr.recia.sympaApi.sympa.listfinder.model.ModelRequest;
 import fr.recia.sympaApi.sympa.listfinder.model.ModelRequestId;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -25,6 +26,6 @@ import java.util.Optional;
 @Repository
 public interface ModelRequestRepository  extends JpaRepository<ModelRequest, ModelRequestId> {
 
-  Optional<ModelRequest> findById(ModelRequestId modelRequestId);
+  @NotNull Optional<ModelRequest> findById(@NotNull ModelRequestId modelRequestId);
 
 }
