@@ -22,6 +22,7 @@ import fr.recia.sympaApi.config.bean.DebugProperties;
 import fr.recia.sympaApi.dto.request.admin.CloseListRequestPayload;
 import fr.recia.sympaApi.dto.request.admin.CreateOrUpdateListRequestPayload;
 import fr.recia.sympaApi.dto.request.admin.LoadCreateOrUpdateListRequestPayload;
+import fr.recia.sympaApi.dto.response.admin.LoadCreateOrUpdateListResponsePayload;
 import fr.recia.sympaApi.groupfinder.impl.RegexGroupFinder;
 import fr.recia.sympaApi.pojo.RobotSympaConf;
 import fr.recia.sympaApi.pojo.RobotSympaInfo;
@@ -66,7 +67,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -125,7 +125,7 @@ public class ServletAjaxController implements Serializable {
 
   @SuppressWarnings("unchecked")
   @PostMapping("/loadCreateList")
-  public ResponseEntity<Map<String, Object>> loadCreateList(@RequestBody LoadCreateOrUpdateListRequestPayload requestPayload) {
+  public ResponseEntity<LoadCreateOrUpdateListResponsePayload> loadCreateList(@RequestBody LoadCreateOrUpdateListRequestPayload requestPayload) {
     log.info("------- BEGIN loadCreateList ---------");
 
     String modelParam = requestPayload.getModelParam();
@@ -151,7 +151,6 @@ public class ServletAjaxController implements Serializable {
     Model model = this.daoService.getModel(new BigInteger(modelId));
     ModelSubscribers modelSubscribers = this.daoService.getModelSubscriber(model);
     log.debug("Additional groups filter is " + modelSubscribers.getId().getGroupFilter());
-    responseMap.put("subscribersGroup", modelSubscribers.getId().getGroupFilter());
 
     List<JsCreateListRow> editorsAliases = new ArrayList<JsCreateListRow>();
 
@@ -181,7 +180,6 @@ public class ServletAjaxController implements Serializable {
 
         //MADE pierre
         String name = ldapFilterSourceRequest.makeDisplayName(preparedRequest, uai, siren);
-        log.info("makeDisplayName  result is {}", name);
         if (name != null) {
           row.setName(name);
           row.setIdRequest(modelRequest.getId().getIdRequest().toString());
@@ -190,21 +188,29 @@ public class ServletAjaxController implements Serializable {
       }
     }
 
-    responseMap.put("editorsAliases", editorsAliases);
-    responseMap.put("type", model.getModelName());
+    LoadCreateOrUpdateListResponsePayload responsePayload = new LoadCreateOrUpdateListResponsePayload();
+
+    responsePayload.setEditorsAliases(editorsAliases);
+//    responseMap.put("editorsAliases", editorsAliases);  //required
+    responsePayload.setType(model.getModelName());
+
+//    responseMap.put("type", model.getModelName()); // required
 
     Pattern p = Pattern.compile("\\{((?!UAI).*)\\}");
     Matcher m = p.matcher(model.getListname());
 
     if (m.find()) {
-      responseMap.put("typeParamName", m.group(1));
-      responseMap.put("typeParam", modelParam);
+      responsePayload.setTypeParam(modelParam);
+      responsePayload.setTypeParamName(m.group(1));
+//      responseMap.put("typeParamName", m.group(1)); // required if found
+//      responseMap.put("typeParam", modelParam); // required if found
     }
 
-    log.debug("Model map content: " + responseMap);
     // TODO à mettre en cache redis et non session
     sessionAttributesHandler.setSessionAttribute(createListAdditionalGroupsCacheKey, new HashMap<String, List<String>>());
-    return ResponseEntity.ok(responseMap);
+    responsePayload.setSubscribersGroup(modelSubscribers.getId().getGroupFilter());
+//    responseMap.put("subscribersGroup", modelSubscribers.getId().getGroupFilter()); // required
+    return ResponseEntity.ok(responsePayload);
   }
 
 
@@ -468,11 +474,12 @@ public class ServletAjaxController implements Serializable {
 
   @SuppressWarnings("unchecked")
   @RequestMapping("/jstreeData")
-  public @ResponseBody ResponseEntity<List<JsList>> jstreeData(@RequestBody Map<String, String> args) {
+  public @ResponseBody ResponseEntity<List<JsList>> jstreeData() {
 
     Map<String, Object> responseMap = new HashMap<>();
 
-    String establishementId = args.get("establishementId");
+    String uai = userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT).orElseThrow();
+
 
     List<String> additionalGroups = null;
     Map<String, List<String>> createListAdditionalGroupsCache = null;
@@ -489,8 +496,8 @@ public class ServletAjaxController implements Serializable {
     }
 
     if ((createListAdditionalGroupsCache != null)
-      && createListAdditionalGroupsCache.containsKey(establishementId)) {
-      additionalGroups = createListAdditionalGroupsCache.get(establishementId);
+      && createListAdditionalGroupsCache.containsKey(uai)) {
+      additionalGroups = createListAdditionalGroupsCache.get(uai);
       this.log.debug("Fetched additional groups from cache, size: " + additionalGroups.size());
     }
 
@@ -501,16 +508,16 @@ public class ServletAjaxController implements Serializable {
       // Construct user info map to call the groups finder.
       Map<String, String> userInfo = new HashMap<String, String>();
       String uaiUserPropertyKey = UserAttributesHandler.UAI_CURRENT;
-      userInfo.put(uaiUserPropertyKey, establishementId);
+      userInfo.put(uaiUserPropertyKey, uai);
 
       Collection<String> additionalGroupsColl = this.jsTreeGroupFinder.findGroupsOfEtab(userInfo);
 
-      additionalGroups = new ArrayList<String>(additionalGroupsColl);
+      additionalGroups = new ArrayList<>(additionalGroupsColl);
       Collections.sort(additionalGroups);
 
       //Stock in cache for later retrieval
       if (createListAdditionalGroupsCache != null) {
-        createListAdditionalGroupsCache.put(establishementId, additionalGroups);
+        createListAdditionalGroupsCache.put(uai, additionalGroups);
       }
     }
 
