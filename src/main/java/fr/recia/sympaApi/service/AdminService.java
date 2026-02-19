@@ -19,8 +19,6 @@ import fr.recia.sympaApi.dto.response.admin.AdminSympaCreatableList;
 import fr.recia.sympaApi.dto.response.admin.AdminSympaListResponseForDisplay;
 import fr.recia.sympaApi.dto.response.admin.AdminSympaUpdatableList;
 import fr.recia.sympaApi.pojo.UserSympaListWithUrl;
-import fr.recia.sympaApi.pojo.email.EmailConfiguration;
-import fr.recia.sympaApi.pojo.email.IEmailUtility;
 import fr.recia.sympaApi.servlet.JsCreateListTableRow;
 import fr.recia.sympaApi.sympa.admin.LdapPerson;
 import fr.recia.sympaApi.sympa.admin.RobotDomaineNameResolver;
@@ -66,9 +64,6 @@ public class AdminService {
 
     return tableData;
   }
-
-  @Autowired
-  EmailConfiguration emailConfig;
 
   @Autowired
   RobotDomaineNameResolver robotDomainNameResolver;
@@ -135,27 +130,6 @@ public class AdminService {
     }
 
   }
-
-
-  //todo remove, used for mail form
-  public void fetchEmailUtility(final Map<String, Object> map, final List<String> emailProfileList) {
-    //Find which email program is configured for the user
-
-    IEmailUtility selectedEmailUtility = null;
-
-    if (emailProfileList != null) {
-      for (String profile : emailProfileList) {
-        for (IEmailUtility emailUtil : emailConfig.getUtils()) {
-          if (emailUtil.isCorrectEmailUtility(profile)) {
-            selectedEmailUtility = emailUtil;
-            break;
-          }
-        }
-      }
-    }
-    map.put("emailUtil", selectedEmailUtility);
-  }
-
 
   public AdminSympaListResponseForDisplay fetchCreateListTableData(final Map<String,String> userInfo, List<UserSympaListWithUrl> sympaList) throws Exception {
 

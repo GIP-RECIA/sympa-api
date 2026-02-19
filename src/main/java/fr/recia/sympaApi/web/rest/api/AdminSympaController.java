@@ -108,7 +108,6 @@ public class AdminSympaController {
 
     //enhanceUserInfo => add siren
     userInfo.put(UserAttributesHandler.UAI_CURRENT, userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT).orElse(null));
-    userInfo.put(UserAttributesHandler.MAIL, userAttributesHandler.getAttribute(UserAttributesHandler.MAIL).orElse(null));
 
     userInfo = this.getUserAttributeMapping().enhanceUserInfo(userInfo);
 
@@ -141,10 +140,7 @@ public class AdminSympaController {
     List<String> uaiAsList = List.of(uai);
 
 
-    String mailFromhandler = userAttributesHandler.getAttribute(UserAttributesHandler.MAIL).orElse(null);
 
-    assert mailFromhandler != null;
-    List<String> mailAsList = List.of(mailFromhandler);
 
 
 
@@ -155,20 +151,16 @@ public class AdminSympaController {
 
     mvUserInfo.put(UserAttributesHandler.IS_MEMBER_OF, new ArrayList<>(isMemberOf));
     mvUserInfo.put(UserAttributesHandler.UAI_CURRENT, new ArrayList<>(uaiAsList));
-    mvUserInfo.put(UserAttributesHandler.MAIL, new ArrayList<>(mailAsList));
 
     List<UserSympaListWithUrl> sympaList;
 
 
     final String uid = SecurityContextHolder.getContext().getAuthentication().getName();// userInfo.get(UserInfoService.getPortalUidAttribute());
-    final String mail =  userAttributesHandler.getAttribute(UserAttributesHandler.MAIL).orElse(null);  // userInfo.get(UserInfoService.getPortalMailAttribute());
 
     Assert.hasText(uid, "UID shouldn't be empty !");
     Assert.hasText(uai, "UAI shouldn't be empty !");
-    Assert.hasText(mail, "MAIL shouldn't be empty !");
 
     map.put("uai", uai);
-    map.put("mail", mail);
 
     //Filter the user lists to make sure we only display lists that are in the current establishment.  This
     //is done by comparing the domain of the list address (after the @).
@@ -183,12 +175,6 @@ public class AdminSympaController {
 //    map.put("sympaList", sympaList);
 //    map.put("createList", createList);
 
-
-
-    List<String> emailProfileList = List.of(Objects.requireNonNull(userAttributesHandler.getAttribute(UserAttributesHandler.MAIL).orElse(null)));
-
-
-
     List<String> isMemberOfList = userAttributesHandler.getAttributeList(UserAttributesHandler.IS_MEMBER_OF).orElse(null);
 
 //
@@ -197,17 +183,6 @@ public class AdminSympaController {
     } catch (Exception e) {
       log.error("exception during fetchIsAdmin", e);
     }
-
-
-
-    try {
-      this.adminService.fetchEmailUtility(map, emailProfileList);
-    } catch (Exception e) {
-      log.error("exception during fetchEmailUtility", e);
-    }
-
-
-
 
     if (Boolean.TRUE.equals(map.get("isListAdmin"))) {
 //        Map<String,Object>  tempMap = this.adminService.fetchCreateListTableData(map, userInfo, sympaList);
