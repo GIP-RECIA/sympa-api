@@ -128,7 +128,6 @@ public class ServletAjaxController implements Serializable {
   public ResponseEntity<Map<String, Object>> loadCreateList(@RequestBody LoadCreateOrUpdateListRequestPayload requestPayload) {
     log.info("------- BEGIN loadCreateList ---------");
 
-    String establishementId = requestPayload.getEstablishementId();
     String modelParam = requestPayload.getModelParam();
     String modelId = requestPayload.getModelId();
 
@@ -136,9 +135,6 @@ public class ServletAjaxController implements Serializable {
 
     //TODO pb placeholderValuesMap peut revenir null en cas de perte de session
 
-    Map<String, String> placeholderValuesMap = sessionAttributesHandler.getSessionAttribute(SessionAttributesHandler.PLACEHOLDER_VALUES_MAP_SESSION_KEY, Map.class).orElse(null);
-
-    responseMap.put("placeholderValuesMap from session", placeholderValuesMap);
 
 //		ModelMap modelMap = new ModelMap();
 
@@ -161,21 +157,8 @@ public class ServletAjaxController implements Serializable {
 
     List<PreparedRequest> listPreparedRequest = this.daoService.getAllPreparedRequests();
 
-
-    String uai = null;
-    String siren = null;
-    if (placeholderValuesMap != null) {
-      uai = placeholderValuesMap.get("uai");
-      siren = placeholderValuesMap.get("siren");
-    }
-
-    if (uai == null && establishementId != null) {
-      uai = establishementId;
-    }
-    if (uai != null && siren == null) {
-      siren = ldapFilterSourceRequest.findSirenByUai(uai);
-    }
-
+    String uai = userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT).orElseThrow();
+    String siren =  userAttributesHandler.getAttribute(UserAttributesHandler.SIREN_CURRENT).orElseThrow();
 
     for (PreparedRequest preparedRequest : listPreparedRequest) {
       JsCreateListRow row = new JsCreateListRow();
@@ -218,19 +201,7 @@ public class ServletAjaxController implements Serializable {
       responseMap.put("typeParam", modelParam);
     }
 
-    responseMap.put("uai", establishementId);
-
-    StringBuilder userAttributes = new StringBuilder(128);
-    for (Entry<String, String> userAttribute : placeholderValuesMap.entrySet()) {
-      log.debug("USER ATTRIBUT : " + userAttribute.getKey() + " ; " + userAttribute.getValue());
-      userAttributes.append("&");
-      userAttributes.append(userAttribute.getKey());
-      userAttributes.append("=");
-      userAttributes.append(userAttribute.getValue());
-    }
-    responseMap.put("userAttributes", userAttributes.toString());
-
-    log.debug("Model map content: " + responseMap.toString());
+    log.debug("Model map content: " + responseMap);
     // TODO à mettre en cache redis et non session
     sessionAttributesHandler.setSessionAttribute(createListAdditionalGroupsCacheKey, new HashMap<String, List<String>>());
     return ResponseEntity.ok(responseMap);

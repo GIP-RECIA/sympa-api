@@ -140,33 +140,6 @@ public class AdminSympaController {
 
     responseMap.put("userInfo",userInfo);
 
-    Map<String, String> placeholderValuesMap = null;
-    try {
-      placeholderValuesMap = this.getUserAttributeMapping()
-        .buildPlaceholderValuesMap(userInfo);
-    } catch (Exception e) {
-      log.error("error ",e);
-    }
-
-
-
-    //stocker une map placeholder en session scode ?
-    // ou application scope
-
-    try {
-      sessionAttributesHandler.setSessionAttribute(SessionAttributesHandler.PLACEHOLDER_VALUES_MAP_SESSION_KEY, placeholderValuesMap);
-    } catch (Exception e) {
-      log.error("error ",e);
-    }
-
-
-    responseMap.put("placeholderValuesMap", placeholderValuesMap);
-
-
-//    request.getPortletSession().setAttribute(PLACEHOLDER_VALUES_MAP_SESSION_KEY,
-//      placeholderValuesMap, javax.portlet.PortletSession.APPLICATION_SCOPE);
-
-
     //Fetch multi-valued attributes
     Map<String, List<Object>> mvUserInfo = new HashMap<>();
 

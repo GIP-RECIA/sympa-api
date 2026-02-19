@@ -28,8 +28,6 @@ import org.jetbrains.annotations.NotNull;
 public class LoadCreateOrUpdateListRequestPayload {
 
   @NotNull
-  String establishementId;
-  @NotNull
   String modelParam;
   @NotNull
   String modelId;

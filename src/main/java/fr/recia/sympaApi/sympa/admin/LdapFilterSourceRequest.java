@@ -91,38 +91,6 @@ public class LdapFilterSourceRequest implements Serializable {
 		}
 		return res;
 	}
-	
-	/**
-	 * Recherche dans ldap du siren d'un etablissement connaissant son uai
-	 * @param uai
-	 * @return siren
-	 */
-	public String findSirenByUai(String uai){
-		String siren=null;
-		if (uai != null) {
-			siren = request2name.get(uai);
-			if (siren == null) {
-				String filtre = String.format(filtreLdapSearchSirenByUaiFormat, objectClassEtab, ldapAttrUai, uai);
-				Collection<String> colLdap= LdapUtils.ldapSearch(
-									ldapTemplate,  
-									filtre, 
-									ldapBaseRdnEtab, 
-									new AttributesMapper() {
-										@Override
-										public Object mapFromAttributes(Attributes attrs) throws NamingException {
-											Attribute attr = attrs.get(ldapAttrSiren);
-											return attr.get();
-										}
-									}
-								);
-				if (colLdap != null && !colLdap.isEmpty()) {
-					siren = colLdap.iterator().next();
-					request2name.put(uai, siren);
-				}
-			}
-		}
-		return siren;
-	}
 
 	/**
 	 * Test si on doit afficher les adresses mail correspondant à la  preparedRequest.
