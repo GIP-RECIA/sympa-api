@@ -33,6 +33,7 @@ import javax.annotation.PostConstruct;
 public class DebugProperties {
 
   String testSympaRemoteUri;
+  boolean useTestSympaRemote = false;
 
   @PostConstruct
   public void postConstruct() {

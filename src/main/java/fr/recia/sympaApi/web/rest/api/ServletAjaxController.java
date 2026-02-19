@@ -580,7 +580,6 @@ public class ServletAjaxController implements Serializable {
     return robotSympaConf.getRobotSympaInfoByUai(userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT).orElseThrow(), userAttributesHandler.getAttributeList(UserAttributesHandler.IS_MEMBER_OF).orElseThrow(), true);
   }
 
-
   @Autowired
   DebugProperties debugProperties;
 
@@ -588,16 +587,18 @@ public class ServletAjaxController implements Serializable {
 
     //todo redirect temporary to test sympa remote
 
-    return debugProperties.getTestSympaRemoteUri();
+    if(debugProperties.isUseTestSympaRemote()){
+      return debugProperties.getTestSympaRemoteUri();
+    }
 
-//		RobotSympaInfo rsi = getRobotInfo();
-//		String sympaRemoteEndpointUrl = null;
-//		if (rsi != null) {
-//			sympaRemoteEndpointUrl = rsi.getSympaRemoteUrl();
-//		} else {
-//			log.debug("RobotSympaInfo est null");
-//		}
-//		return sympaRemoteEndpointUrl;
+		RobotSympaInfo rsi = getRobotInfo();
+		String sympaRemoteEndpointUrl = null;
+		if (rsi != null) {
+			sympaRemoteEndpointUrl = rsi.getSympaRemoteUrl();
+		} else {
+			log.debug("RobotSympaInfo est null");
+		}
+		return sympaRemoteEndpointUrl;
   }
 
   /**
