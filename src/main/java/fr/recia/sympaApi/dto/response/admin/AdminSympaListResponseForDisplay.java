@@ -29,8 +29,6 @@ import java.util.List;
 @NoArgsConstructor
 public class AdminSympaListResponseForDisplay {
 
-  String uai;
-
   @JsonProperty("createData")
   List<AdminSympaCreatableList> adminSympaCreatableListList;
   @JsonProperty("updateData")

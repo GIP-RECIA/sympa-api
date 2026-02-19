@@ -258,7 +258,6 @@ public class AdminSympaController {
       responseMap.put("will go in  fetchCreateListTableData", null);
 //        Map<String,Object>  tempMap = this.adminService.fetchCreateListTableData(map, userInfo, sympaList);
       AdminSympaListResponseForDisplay response = this.adminService.fetchCreateListTableData(map, userInfo, sympaList);
-      response.setUai(uai);
 
       // responseMap.putAll(tempMap);
       return ResponseEntity.ok().body(response);
