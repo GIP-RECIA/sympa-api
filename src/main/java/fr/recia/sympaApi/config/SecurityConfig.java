@@ -85,6 +85,8 @@ public class SecurityConfig {
       .authorizeHttpRequests(authorize -> authorize
         .antMatchers("/health-check").permitAll()
         .antMatchers("/api/admin-sympa/**").authenticated()
+        //todo remove after merging constroller admin-sympa and admin-cmd
+        .antMatchers("/api/admin-cmd/**").authenticated()
         .antMatchers("/api/sympa/**").authenticated()
         .antMatchers(appConfProperties.getCasTicketCallback()).permitAll()
         .antMatchers(appConfProperties.getCasProxyReceptorUrl()).permitAll()

@@ -15,6 +15,10 @@
  */
 package fr.recia.sympaApi.sympa.listfinder.model;
 
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.stereotype.Service;
+
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
@@ -24,6 +28,8 @@ import javax.persistence.Table;
  * @author Eric Groning
  *
  */
+@Getter
+@Setter
 @Entity
 @Table(name = "model_subscribers")
 public class ModelSubscribers {

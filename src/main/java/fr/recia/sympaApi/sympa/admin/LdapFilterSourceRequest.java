@@ -17,11 +17,14 @@ package fr.recia.sympaApi.sympa.admin;
 
 import fr.recia.sympaApi.sympa.listfinder.model.PreparedRequest;
 import fr.recia.sympaApi.utils.LdapUtils;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.LdapTemplate;
-import org.springframework.util.StringUtils;
+import org.springframework.stereotype.Service;
 
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
@@ -33,8 +36,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
-
+@Getter
+@Setter
 @Slf4j
+@Service
 public class LdapFilterSourceRequest implements Serializable {
 	/**
 	 * 
@@ -73,6 +78,7 @@ public class LdapFilterSourceRequest implements Serializable {
 	
 	private transient int pourtest = 0;
 
+  @Autowired
 	private LdapTemplate ldapTemplate;
 
 	static private String replaceAll(String in, String uai, String siren) {
@@ -117,47 +123,6 @@ public class LdapFilterSourceRequest implements Serializable {
 		}
 		return siren;
 	}
-	
-	public String getObjectClassEtab() {
-		return objectClassEtab;
-	}
-
-	public void setObjectClassEtab(String objectClassEtab) {
-		this.objectClassEtab = objectClassEtab;
-	}
-
-	public String getLdapAttrSiren() {
-		return ldapAttrSiren;
-	}
-
-	public void setLdapAttrSiren(String ldapAttrSiren) {
-		this.ldapAttrSiren = ldapAttrSiren;
-	}
-
-	public String getLdapAttrUai() {
-		return ldapAttrUai;
-	}
-
-	public void setLdapAttrUai(String ldapAttrUai) {
-		this.ldapAttrUai = ldapAttrUai;
-	}
-
-	public String getLdapBaseRdnEtab() {
-		return ldapBaseRdnEtab;
-	}
-
-	public void setLdapBaseRdnEtab(String ldapBaseRdnEtab) {
-		this.ldapBaseRdnEtab = ldapBaseRdnEtab;
-	}
-
-	public String getFiltreLdapSearchSirenByUaiFormat() {
-		return filtreLdapSearchSirenByUaiFormat;
-	}
-
-	public void setFiltreLdapSearchSirenByUaiFormat(
-			String filtreLdapSearchSirenByUaiFormat) {
-		this.filtreLdapSearchSirenByUaiFormat = filtreLdapSearchSirenByUaiFormat;
-	}
 
 	/**
 	 * Test si on doit afficher les adresses mail correspondant à la  preparedRequest.
@@ -171,9 +136,7 @@ public class LdapFilterSourceRequest implements Serializable {
 	 * @return
 	 */
 	public String makeDisplayName(PreparedRequest preparedRequest, String uai, String siren) {
-		if (log.isDebugEnabled()) {
       log.debug("MakeDisplayName POUR TEST=" + pourtest++);
-		}
 		
 		
 		String name = null;
@@ -193,13 +156,16 @@ public class LdapFilterSourceRequest implements Serializable {
 				String request = String.format("%s:%s", filter, base);
 				if (request2name.containsKey(request)) {
 						// si oui on redonne la meme reponse (elle peut etre vide)
-					name = request2name.get(request);
-				} else {
+          //todo retablir après debugage
+				 //	name = request2name.get(request);
+          //return name
+				}
+
+        {
 						// sinon on interroge le ldap
-					if (log.isDebugEnabled()) {
             log.debug("PreparedRequest source="  + source+";");
             log.debug("filter =" + filter + "; base =" + base+";");
-					}
+
 					Collection<String> mails =LdapUtils.ldapSearch(ldapTemplate, filter, base, 
 							new AttributesMapper() {
 								
@@ -224,8 +190,8 @@ public class LdapFilterSourceRequest implements Serializable {
 						name = String.format("%s: %s%s", preparedRequest.getDisplayName(), mail, autre );
 					} 
 						// le nom calcule peut etre vide
-					request2name.put(request, name);
-				} 
+				//	request2name.put(request, name);
+				}
 			} else {
 				name = preparedRequest.getDisplayName();
 			}
@@ -241,18 +207,6 @@ public class LdapFilterSourceRequest implements Serializable {
 			}
 		}
 		return sourceSet;
-	}
-	
-	public LdapTemplate getLdapTemplate() {
-		return ldapTemplate;
-	}
-
-	public void setLdapTemplate(LdapTemplate ldapTemplate) {
-		this.ldapTemplate = ldapTemplate;
-	}
-	
-	public String getFunctionSources() {
-		return functionSources;
 	}
 
 	public void setFunctionSources(String sources) {

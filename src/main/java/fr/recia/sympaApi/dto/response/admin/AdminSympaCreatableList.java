@@ -27,10 +27,15 @@ public class AdminSympaCreatableList {
 
   final String address;
   final String subject;
+  final String modelId;
+  final String modelParam;
+
 
   public AdminSympaCreatableList(JsCreateListTableRow tableRow){
     this.address = tableRow.getName();
     this.subject = tableRow.getSubject();
+    this.modelId = tableRow.getModelId();
+    this.modelParam = tableRow.getModelParam();
   }
 
 }

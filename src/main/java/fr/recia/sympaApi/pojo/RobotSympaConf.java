@@ -30,6 +30,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -105,6 +106,8 @@ public class RobotSympaConf {
           rsi.soapUrl = String.format(props.getFormatSoapUrl(), rsi.nom);
           rsi.adminUrl = String.format(props.getFormatAdminUrl(), rsi.nom);
           rsi.archiveUrl = String.format(props.getFormatArchiveUrl(), rsi.nom);
+          rsi.sympaRemoteUrl = valueOrDefault(props.getStem2sympaRemoteUrl(),stem);
+          rsi.sympaRemoteDatabaseId = valueOrDefault(props.getStem2sympaRemoteDatabaseId(),stem);
 
           log.info("RSI adminUrl {} ", rsi.adminUrl);
           log.info("RSI archiveUrl {} ", rsi.archiveUrl);
@@ -122,6 +125,15 @@ public class RobotSympaConf {
     }
     return null;
   }
+
+  private String valueOrDefault(Map<String, String> laMap, String stem) {
+    String val = laMap.get(stem);
+    if (val == null) {
+      return laMap.get(props.getDefaultStem());
+    }
+    return val;
+  }
+
   /**
    * indique si les groupes permetent l'administration des listes du robot donné par l'uai
    * @param uai

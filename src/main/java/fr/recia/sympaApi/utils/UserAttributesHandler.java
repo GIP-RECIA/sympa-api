@@ -37,6 +37,7 @@ public class UserAttributesHandler {
 
 
   public static final String UAI_CURRENT = "ESCOUAICourant";
+  public static final String SIREN_CURRENT = "ESCOSIRENCourant";
   public static final String UAI_ALL = "ESCOUAI";
   public static final String IS_MEMBER_OF = "isMemberOf";
   public static final String IS_ADMIN_SYMPA = "IS_ADMIN_SYMPA";

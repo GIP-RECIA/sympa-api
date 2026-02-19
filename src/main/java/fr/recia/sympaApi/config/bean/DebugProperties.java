@@ -13,33 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package fr.recia.sympaApi.pojo;
+package fr.recia.sympaApi.config.bean;
 
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.validation.annotation.Validated;
 
-@Getter
-@Setter
+import javax.annotation.PostConstruct;
+
+@ConfigurationProperties(prefix = "debug")
+@Data
+@Validated
+@Slf4j
+@AllArgsConstructor
 @NoArgsConstructor
-public class RobotSympaInfo {
-  String dom;
-  String nom;
-  String uai;
-  String url;
-  String soapUrl;
-  String adminUrl;
-  String newListUrl;
-  String adminPortletUrl;
-  String sympaRemoteUrl;
-  String sympaRemoteDatabaseId;
-  String archiveUrl;
+public class DebugProperties {
 
+  String testSympaRemoteUri;
+
+  @PostConstruct
+  public void postConstruct() {
+
+    log.info("DebugProperties {}", this);
+  }
 
   @Override
   public String toString() {
-    return "RobotSympaInfo [dom=" + dom + ", nom=" + nom + ", uai=" + uai + ", url=" + url + ", soapUrl=" + soapUrl
-      + ", adminUrl=" + adminUrl + ", newListUrl=" + newListUrl + ", adminPortletUrl=" + adminPortletUrl
-      + "]";
+    return "DebugProperties{" +
+      "testSympaRemoteUri='" + testSympaRemoteUri + '\'' +
+      '}';
   }
 }

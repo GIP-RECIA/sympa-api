@@ -40,6 +40,8 @@ public class RobotSympaConfProperties {
 
   private Map<String, String> stem2domaine;
   private Map<String, String> stem2PortletAdmin;
+  private Map<String, String> stem2sympaRemoteUrl;
+  private Map<String, String> stem2sympaRemoteDatabaseId;
   private String formatUrl;
   private String formatSoapUrl;
   private String formatAdminUrl;
@@ -62,6 +64,8 @@ public class RobotSympaConfProperties {
       ", regexFormatAdminByUai=" + regexFormatAdminByUai +
       ", stem2domaine=" + stem2domaine +
       ", stem2PortletAdmin=" + stem2PortletAdmin +
+      ", stem2sympaRemoteUrl=" + stem2sympaRemoteUrl +
+      ", stem2sympaRemoteDatabaseId=" + stem2sympaRemoteDatabaseId +
       ", formatUrl='" + formatUrl + '\'' +
       ", formatSoapUrl='" + formatSoapUrl + '\'' +
       ", formatAdminUrl='" + formatAdminUrl + '\'' +

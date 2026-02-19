@@ -148,14 +148,13 @@ public class AdminSympaController {
       log.error("error ",e);
     }
 
-    String PLACEHOLDER_VALUES_MAP_SESSION_KEY
-      = "UserAttributeMapping.PLACEHOLDER_VALUES_MAP_SESSION_KEY";
+
 
     //stocker une map placeholder en session scode ?
     // ou application scope
 
     try {
-      sessionAttributesHandler.setSessionAttribute(PLACEHOLDER_VALUES_MAP_SESSION_KEY, placeholderValuesMap);
+      sessionAttributesHandler.setSessionAttribute(SessionAttributesHandler.PLACEHOLDER_VALUES_MAP_SESSION_KEY, placeholderValuesMap);
     } catch (Exception e) {
       log.error("error ",e);
     }
@@ -259,7 +258,9 @@ public class AdminSympaController {
       responseMap.put("will go in  fetchCreateListTableData", null);
 //        Map<String,Object>  tempMap = this.adminService.fetchCreateListTableData(map, userInfo, sympaList);
       AdminSympaListResponseForDisplay response = this.adminService.fetchCreateListTableData(map, userInfo, sympaList);
-     // responseMap.putAll(tempMap);
+      response.setUai(uai);
+
+      // responseMap.putAll(tempMap);
       return ResponseEntity.ok().body(response);
 
     }

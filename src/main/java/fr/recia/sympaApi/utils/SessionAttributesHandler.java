@@ -35,6 +35,9 @@ public class SessionAttributesHandler {
   @Autowired
   private HttpSession session;
 
+  public final static String PLACEHOLDER_VALUES_MAP_SESSION_KEY
+    = "UserAttributeMapping.PLACEHOLDER_VALUES_MAP_SESSION_KEY";
+
 
   public <T> void setSessionAttribute(String key, T value) {
     if (session == null) {

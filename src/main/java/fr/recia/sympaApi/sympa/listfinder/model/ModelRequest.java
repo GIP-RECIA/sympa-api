@@ -72,9 +72,9 @@ public class ModelRequest {
 //		return category;
 //	}
 //
-//	public ModelRequestRequired getCategoryAsEnum() {
-//		return ModelRequestRequired.valueOf(category);
-//	}
+	public ModelRequestRequired getCategoryAsEnum() {
+		return ModelRequestRequired.valueOf(category);
+	}
 //	/**
 //	 * @param category the category to set
 //	 */

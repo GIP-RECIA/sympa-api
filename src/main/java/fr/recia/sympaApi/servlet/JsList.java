@@ -15,6 +15,11 @@
  */
 package fr.recia.sympaApi.servlet;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,67 +30,44 @@ import java.util.Map;
  * 
  *
  */
+@Getter
+@Setter
 public class JsList {
+
+  @JsonProperty("text")
 	private String data;
+  @JsonIgnore
 	private Map<String, String> attr;
-	private Map<String, String> metadata;
+  @JsonIgnore
+  private Map<String, String> metadata;
+
+  @JsonProperty("getChildren")
 	private List<JsList> children;
+
+  private String id;
+
+  @JsonIgnore
+  private boolean isFolder;
+
+  @JsonProperty("children")
+  public boolean hasChildren() {
+    return !children.isEmpty();
+  }
+
+  @JsonProperty("iconIndex")
+  public int getIconIndex() {
+    return isFolder ? 0 : 1;
+  }
+
+  @JsonIgnore
+  private String nodeKey;
+
 	
-	JsList() {
+	public JsList() {
 		children = new ArrayList<JsList>();
 		attr = new HashMap<String, String>();
 		metadata = new HashMap<String, String>();
-	}
-	
-	/**
-	 * @return the metadata
-	 */
-	public Map<String, String> getMetadata() {
-		return metadata;
-	}
-
-	/**
-	 * @param metadata the metadata to set
-	 */
-	public void setMetadata(Map<String, String> metadata) {
-		this.metadata = metadata;
-	}
-
-	/**
-	 * @return the data
-	 */
-	public String getData() {
-		return data;
-	}
-	/**
-	 * @param data the data to set
-	 */
-	public void setData(String data) {
-		this.data = data;
-	}
-	/**
-	 * @return the attr
-	 */
-	public Map<String, String> getAttr() {
-		return attr;
-	}
-	/**
-	 * @param attr the attr to set
-	 */
-	public void setAttr(Map<String, String> attr) {
-		this.attr = attr;
-	}
-	/**
-	 * @return the children
-	 */
-	public List<JsList> getChildren() {
-		return children;
-	}
-	/**
-	 * @param children the children to set
-	 */
-	public void setChildren(List<JsList> children) {
-		this.children = children;
+    isFolder = false;
 	}
 	
 	public static JsList getMatchingNode(List<JsList> listNodes, String node) {
@@ -97,6 +79,25 @@ public class JsList {
 		
 		return null;
 	}
+
+  public static JsList getMatchingNodeOnKey(List<JsList> listNodes, String nodeKey) {
+    for(JsList l : listNodes) {
+      if (l.getNodeKey().equals(nodeKey)) {
+        return l;
+      }
+    }
+
+    return null;
+  }
+
+  // todo remove after test
+  public int countNodes() {
+    int count = 1;
+    for (JsList child : children) {
+      count += child.countNodes();
+    }
+    return count;
+  }
 	
 	
 }

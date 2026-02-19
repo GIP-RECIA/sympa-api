@@ -254,6 +254,7 @@ public class AdminService {
     }
 
 
+
     responseMap.put("createTableData", createTableData);
     responseMap.put("updateTableData", updateTableData);
     responseMap.put("sympaList", sympaList);
