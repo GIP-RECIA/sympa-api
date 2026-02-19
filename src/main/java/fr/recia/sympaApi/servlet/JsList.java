@@ -64,20 +64,10 @@ public class JsList {
 
 	
 	public JsList() {
-		children = new ArrayList<JsList>();
-		attr = new HashMap<String, String>();
-		metadata = new HashMap<String, String>();
+		children = new ArrayList<>();
+		attr = new HashMap<>();
+		metadata = new HashMap<>();
     isFolder = false;
-	}
-	
-	public static JsList getMatchingNode(List<JsList> listNodes, String node) {
-		for(JsList l : listNodes) {
-			if (l.getData().equals(node)) {
-				return l;
-			}
-		} 
-		
-		return null;
 	}
 
   public static JsList getMatchingNodeOnKey(List<JsList> listNodes, String nodeKey) {

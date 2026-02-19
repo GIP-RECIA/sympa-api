@@ -19,6 +19,7 @@ import fr.recia.sympaApi.config.bean.ConcatenateGroupFinderProperties;
 import fr.recia.sympaApi.groupfinder.IEtabGroupsFinder;
 import fr.recia.sympaApi.sympa.admin.UserAttributeMapping;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.ldap.core.LdapTemplate;
@@ -39,6 +40,7 @@ import java.util.Map;
  */
 @Getter
 @Setter
+@NoArgsConstructor
 @Service
 public class ConcatenateGroupFinder implements IEtabGroupsFinder {
 
@@ -68,12 +70,6 @@ public class ConcatenateGroupFinder implements IEtabGroupsFinder {
     groupsFinders.add(regexGroupFinder);
   }
 
-
-	/** Constructor. */
-	public ConcatenateGroupFinder() {
-
-	}
-
 	/** {@inheritDoc} */
 	public Collection<String> findGroupsOfEtab(final Map<String, String> userInfo) {
 
@@ -88,11 +84,6 @@ public class ConcatenateGroupFinder implements IEtabGroupsFinder {
 		}
 
 		return groups;
-	}
-
-	/** Groups finders setter. */
-	public void setGroupsFinders(final List<IEtabGroupsFinder> groupsFinders) {
-		this.groupsFinders = groupsFinders;
 	}
 
 }

@@ -41,9 +41,6 @@ public class RegexGroupFinder implements IEtabGroupsFinder {
   @Autowired
 	private LdapGroupFinder groupsFinder;
 
-	/** [^:]*:Establishements:[^:]*_%UAI:*. */
-//	private String regularExpressionFilter;
-
   @Autowired
   RegexGroupFinderProperties properties;
 

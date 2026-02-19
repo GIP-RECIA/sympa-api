@@ -187,10 +187,6 @@ public class DomainService {
       this.sortOrder = true;
       this.sortOn = SympaListFields.address;
     }
-//    public UserSympaListComparator(SympaListFields field,boolean order) {
-//      this.sortOrder = order;
-//      this.sortOn = field;
-//    }
 
     public int compare(UserSympaList o1, UserSympaList o2) {
       int result = 0;
@@ -242,12 +238,4 @@ public class DomainService {
     }
     return serverListToUse;
   }
-
-//  public String getHomeUrl() throws Exception {
-//    String homeUrl="#";
-//    for(String serverKey: getServerListInternal().keySet()) {
-//        homeUrl=getServerListInternal().get(serverKey).getHomeUrl();
-//    }
-//    return homeUrl;
-//  }
 }

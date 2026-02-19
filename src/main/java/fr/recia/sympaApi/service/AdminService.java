@@ -159,13 +159,7 @@ public class AdminService {
 
   public AdminSympaListResponseForDisplay fetchCreateListTableData(final Map<String,String> userInfo, List<UserSympaListWithUrl> sympaList) throws Exception {
 
-
     AdminSympaListResponseForDisplay response = new AdminSympaListResponseForDisplay();
-
-
-    //	String establishementId = userInfo.get(UserInfoService.getPortalUaiAttribute());
-
-    //	EscoHomeController.LOG.debug("Entering loadCreateListTable.  UAI: [" + establishementId + "]");
 
     //Find the establishements email address domain
     final String domain = this.robotDomainNameResolver.resolveRobotDomainName();
@@ -244,8 +238,6 @@ public class AdminService {
     }
 
     return response;
-
-   // return responseMap;
   }
 
 }
