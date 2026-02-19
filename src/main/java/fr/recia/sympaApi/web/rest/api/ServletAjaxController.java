@@ -191,10 +191,7 @@ public class ServletAjaxController implements Serializable {
     LoadCreateOrUpdateListResponsePayload responsePayload = new LoadCreateOrUpdateListResponsePayload();
 
     responsePayload.setEditorsAliases(editorsAliases);
-//    responseMap.put("editorsAliases", editorsAliases);  //required
     responsePayload.setType(model.getModelName());
-
-//    responseMap.put("type", model.getModelName()); // required
 
     Pattern p = Pattern.compile("\\{((?!UAI).*)\\}");
     Matcher m = p.matcher(model.getListname());
@@ -202,14 +199,11 @@ public class ServletAjaxController implements Serializable {
     if (m.find()) {
       responsePayload.setTypeParam(modelParam);
       responsePayload.setTypeParamName(m.group(1));
-//      responseMap.put("typeParamName", m.group(1)); // required if found
-//      responseMap.put("typeParam", modelParam); // required if found
     }
 
     // TODO à mettre en cache redis et non session
     sessionAttributesHandler.setSessionAttribute(createListAdditionalGroupsCacheKey, new HashMap<String, List<String>>());
     responsePayload.setSubscribersGroup(modelSubscribers.getId().getGroupFilter());
-//    responseMap.put("subscribersGroup", modelSubscribers.getId().getGroupFilter()); // required
     return ResponseEntity.ok(responsePayload);
   }
 

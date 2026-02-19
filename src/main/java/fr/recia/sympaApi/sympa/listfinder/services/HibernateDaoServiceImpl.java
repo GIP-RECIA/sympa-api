@@ -89,29 +89,12 @@ public class HibernateDaoServiceImpl
 
     Optional<Model> modelOptional = modelRepository.findById(id);
     return modelOptional.orElse(null);
-
-
-//    List<Model> models = this.getHibernateTemplate().find(
-//      "FROM Model where id = ?", id);
-//    if ((models == null) || (models.size() < 1)) {
-//      return null;
-//    }
-//
-//    return models.get(0);
   }
 
   public ModelSubscribers getModelSubscriber(final Model model) {
 
     return modelSubscribersRepository.findByIdId(model.getId()).orElse(null);
 
-//
-//    List<ModelSubscribers> modelSubscribers = this.getHibernateTemplate().find(
-//      "FROM ModelSubscribers where id = ?", model.getId());
-//    if ((modelSubscribers == null) || (modelSubscribers.size() < 1)) {
-//      return null;
-//    }
-//
-//    return modelSubscribers.get(0);
   }
 
   /**
@@ -135,25 +118,6 @@ public class HibernateDaoServiceImpl
 
     return modelRequestRepository.findById(modelRequestId).orElse(null);
 
-//    List<ModelRequest> listModelRequest = this.getHibernateTemplate()
-//      .executeFind(new HibernateCallback() {
-//        public Object doInHibernate(final Session session) {
-//
-//          Query query = session
-//            .createQuery("FROM ModelRequest mr where mr.id.idRequest = :idRequest and mr.id.idModel = :idModel");
-//          query.setParameter("idRequest", preparedRequest.getId());
-//          query.setParameter("idModel", model.getId());
-//          return query.list();
-//        }
-//      });
-//
-//    if ((listModelRequest == null) || (listModelRequest.size() == 0)) {
-//      return null;
-//    }
-//
-//    ModelRequest modelRequest = listModelRequest.get(0);
-//
-//    return modelRequest;
   }
 
   // ////////////////////////////////////////////////////////////
@@ -167,7 +131,6 @@ public class HibernateDaoServiceImpl
       BasicMailingListModel mailingListModel = new BasicMailingListModel(model
         .getId().toString(),
         model.getListname(),
-        //model.getPattern().replaceAll("\\{RNE\\}", StringUtils.defaultString(establishementId)),
         this.userAttributeMapping.substitutePlaceholder(model.getPattern(), userInfo),
         model.getDescription());
       listMailingListModels.add(mailingListModel);
@@ -176,7 +139,4 @@ public class HibernateDaoServiceImpl
     return listMailingListModels;
   }
 
-//  public UserAttributeMapping getUserAttributeMapping() {
-//    return this.userAttributeMapping;
-//  }
 }

@@ -37,37 +37,4 @@ public class ModelSubscribers {
   @EmbeddedId
   ModelSubscribersId id;
 
-//	/**
-//	 * @return the id
-//	 */
-//	@Id
-//	@Column(name = "id")
-//	public BigInteger getId() {
-//		return id;
-//	}
-//
-//	/**
-//	 * @param id
-//	 *            the id to set
-//	 */
-//	public void setId(BigInteger id) {
-//		this.id = id;
-//	}
-//
-//	/**
-//	 * @return the groupFilter
-//	 */
-//	@Column(name = "group_filter")
-//	public String getGroupFilter() {
-//		return groupFilter;
-//	}
-//
-//	/**
-//	 * @param groupFilter
-//	 *            the groupFilter to set
-//	 */
-//	public void setGroupFilter(String groupFilter) {
-//		this.groupFilter = groupFilter;
-//	}
-
 }

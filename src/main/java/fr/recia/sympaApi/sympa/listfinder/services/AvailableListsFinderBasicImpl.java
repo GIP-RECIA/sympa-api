@@ -58,7 +58,6 @@ public class AvailableListsFinderBasicImpl implements IAvailableListsFinder {
 
 	/** Le mecanisme de recherche des groupes de l'etablissement injecte par Spring */
   @Autowired
-//	private LdapGroupFinder etabGroupsFinder;
   private ConcatenateGroupFinder etabGroupsFinder;
 
 
@@ -69,12 +68,6 @@ public class AvailableListsFinderBasicImpl implements IAvailableListsFinder {
 	/** Le mecanisme permettant de deduire (par pattern) les listes a creer, en fonction des groupes de l'etablissement */
   @Autowired
 	private IListsFromGroupsPatternMatcher listsFromGroupsPatternMatcher;
-
-//	/** {@inheritDoc} */
-//	@Override
-//	public void setExistingListsFinder(final IExistingListsFinder existingListFinder) {
-//		this.existingListsFinder = existingListFinder;
-//	}
 
 	/**
 	 * Retourne les listes qu'il est possible de creer pour cet etablissement a partir

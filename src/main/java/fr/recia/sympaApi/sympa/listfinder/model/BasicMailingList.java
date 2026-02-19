@@ -20,6 +20,8 @@ package fr.recia.sympaApi.sympa.listfinder.model;
 
 import fr.recia.sympaApi.sympa.listfinder.IMailingList;
 import fr.recia.sympaApi.sympa.listfinder.IMailingListModel;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.util.StringUtils;
 
 /**
@@ -29,6 +31,8 @@ import org.springframework.util.StringUtils;
  * @author GIP Recia
  *
  */
+@Getter
+@Setter
 public class BasicMailingList implements IMailingList, Comparable<BasicMailingList> {
 
 	/** Nom de la mailing liste	 */
@@ -112,39 +116,6 @@ public class BasicMailingList implements IMailingList, Comparable<BasicMailingLi
 		return (this.modelParameter == null) || (text == null) ? text : text.replaceAll("\\{((?!UAI).)*\\}", this.modelParameter);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * @return the description
-	 */
-	public String getDescription() {
-		return this.description;
-	}
-
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * @return the name
-	 */
-	public String getName() {
-		return this.name;
-	}
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * @return the model
-	 */
-	public IMailingListModel getModel() {
-		return this.model;
-	}
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * @return the modelParameter
-	 */
-	public String getModelParameter() {
-		return this.modelParameter;
-	}
 
 	/** {@inheritDoc} */
 	public int compareTo(final BasicMailingList list) {

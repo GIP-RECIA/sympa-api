@@ -46,63 +46,11 @@ public class ModelRequest {
     	UNCHECKED,
     	CHECKED
     }
-	
-	
-//
-//	/**
-//	 * @return the id
-//	 */
-//	public ModelRequestId getId() {
-//		return id;
-//	}
-//	/**
-//	 * @param id the id to set
-//	 */
-//	public void setId(ModelRequestId id) {
-//		this.id = id;
-//	}
-//	/**
-//	 * @return the category
-//	 */
-//	@Column(name = "category", columnDefinition="enum('MANDATORY','UNCHECKED','CHECKED')")
-//	public String getCategory() {
-//		return category;
-//	}
-//
+
 	public ModelRequestRequired getCategoryAsEnum() {
 		return ModelRequestRequired.valueOf(category);
 	}
-//	/**
-//	 * @param category the category to set
-//	 */
-//	public void setCategory(String category) {
-//		this.category = category;
-//	}
-//
-//	/**
-//	 * @return the idModel
-//	 */
-//	public BigInteger getIdModel() {
-//		return id.idModel;
-//	}
-//	/**
-//	 * @param idModel the idModel to set
-//	 */
-//	public void setIdModel(BigInteger idModel) {
-//		id.idModel = idModel;
-//	}
-//	/**
-//	 * @return the idRequest
-//	 */
-//	public BigInteger getIdRequest() {
-//		return id.idRequest;
-//	}
-//	/**
-//	 * @param idRequest the idRequest to set
-//	 */
-//	public void setIdRequest(BigInteger idRequest) {
-//		this.id.idRequest = idRequest;
-//	}
+
 	
 	
 	

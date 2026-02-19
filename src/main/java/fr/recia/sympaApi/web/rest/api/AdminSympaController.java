@@ -93,7 +93,6 @@ public class AdminSympaController {
 
   @GetMapping("/list")
   public ResponseEntity<AdminSympaListResponseForDisplay> fetchList(@RequestBody(required = false) SympaListRequestForm sympaListRequestForm) throws Exception {
-  //  public ResponseEntity<Map<String,Object>> fetchList(@RequestBody(required = false) SympaListRequestForm sympaListRequestForm) throws Exception {
 
     if(Objects.isNull(sympaListRequestForm)){
       sympaListRequestForm = new SympaListRequestForm(true, true, true);
@@ -101,56 +100,20 @@ public class AdminSympaController {
 
     Map<String,Object> map = new HashMap<>();
 
-
-
     Map<String, String> userInfo = new HashMap<>();
-
 
     //enhanceUserInfo => add siren
     userInfo.put(UserAttributesHandler.UAI_CURRENT, userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT).orElse(null));
 
     userInfo = this.getUserAttributeMapping().enhanceUserInfo(userInfo);
 
-//    userInfo.put(UserAttributesHandler.UAI_CURRENT, userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT).orElse(null));
-
-
-//    String uai = userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT).orElse(null);
-//    if(Objects.isNull(uai)) {
-//      throw new Exception("uai is null");
-//    }
-//
-//    if (StringUtils.hasText(uai)) {
-//      String siren = this.ldapEstablishment.getSiren(uai);
-//
-//      if (StringUtils.hasText(siren)) {
-//        userInfo.put(USER_ATTRIBUTE_SIREN_KEY, siren);
-//      }
-//    } else {
-//      log.warn(
-//        "No UAI attribute found in portal context !");
-//    }
-
-
-    //Fetch multi-valued attributes
-    Map<String, List<Object>> mvUserInfo = new HashMap<>();
-
     String uai = userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT).orElse(null);
 
     assert uai != null;
-    List<String> uaiAsList = List.of(uai);
-
-
-
-
-
 
     List<String> isMemberOf = userAttributesHandler.getAttributeList(UserAttributesHandler.IS_MEMBER_OF).orElse(null);
     assert isMemberOf != null;
 
-
-
-    mvUserInfo.put(UserAttributesHandler.IS_MEMBER_OF, new ArrayList<>(isMemberOf));
-    mvUserInfo.put(UserAttributesHandler.UAI_CURRENT, new ArrayList<>(uaiAsList));
 
     List<UserSympaListWithUrl> sympaList;
 
@@ -168,16 +131,8 @@ public class AdminSympaController {
     //this can be used to tell what lists belong to which establishment.
     sympaList = this.getDomainService().getWhich(this.formToCriterion.formToCriterion(sympaListRequestForm), false);
 
-//
-    List<CreateListInfo> createList = this.getDomainService().getCreateListInfo();
-
-
-//    map.put("sympaList", sympaList);
-//    map.put("createList", createList);
-
     List<String> isMemberOfList = userAttributesHandler.getAttributeList(UserAttributesHandler.IS_MEMBER_OF).orElse(null);
 
-//
     try {
       this.adminService.fetchIsAdmin(map, isMemberOfList, this.ldapPerson.getAdminRegex(), uai);
     } catch (Exception e) {
@@ -185,10 +140,7 @@ public class AdminSympaController {
     }
 
     if (Boolean.TRUE.equals(map.get("isListAdmin"))) {
-//        Map<String,Object>  tempMap = this.adminService.fetchCreateListTableData(map, userInfo, sympaList);
       AdminSympaListResponseForDisplay response = this.adminService.fetchCreateListTableData(userInfo, sympaList);
-
-      // responseMap.putAll(tempMap);
       return ResponseEntity.ok().body(response);
 
     }

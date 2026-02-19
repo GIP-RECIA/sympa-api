@@ -20,11 +20,15 @@ package fr.recia.sympaApi.sympa.listfinder.model;
 
 
 import fr.recia.sympaApi.sympa.listfinder.IMailingListModel;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * @author GIP RECIA 2013 - Maxime BOSSARD.
  *
  */
+@Getter
+@Setter
 public class BasicMailingListModel implements IMailingListModel {
 
 	/** id */
@@ -49,37 +53,6 @@ public class BasicMailingListModel implements IMailingListModel {
 		this.id = theId;
 		this.listname = theListname;
 		this.groupPatternToMatch = groupPattern;
-		this.description = description;
-	}
-
-	/**
-	 * @return the id
-	 */
-	public String getId() {
-		return this.id;
-	}
-	/**
-	 * @return the listname
-	 */
-	public String getListname() {
-		return this.listname;
-	}
-	/**
-	 * @return the groupPatternToMatch
-	 */
-	public String getGroupPatternToMatch() {
-		return this.groupPatternToMatch;
-	}
-	/**
-	 * @return the description
-	 */
-	public String getDescription() {
-		return this.description;
-	}
-	/**
-	 * @param description the description to set
-	 */
-	public void setDescription(final String description) {
 		this.description = description;
 	}
 
