@@ -19,17 +19,15 @@ import fr.recia.sympaApi.servlet.JsCreateListTableRow;
 import lombok.Getter;
 
 @Getter
-public class AdminSympaUpdatableList {
+public class AdminSympaUpdatableList extends AdminSympaCreatableList {
 
 
-  final String address;
-  final String subject;
+
   final String adminUrl;
   final String archivesUrl;
 
   public AdminSympaUpdatableList(JsCreateListTableRow tableRow){
-    this.address = tableRow.getName();
-    this.subject = tableRow.getSubject();
+    super(tableRow);
     this.adminUrl = tableRow.getUrls().getListAdminUrl();
     this.archivesUrl = tableRow.getUrls().getListArchivesUrl();
   }
