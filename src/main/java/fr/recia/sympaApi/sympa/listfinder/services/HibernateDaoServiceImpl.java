@@ -31,10 +31,8 @@ import fr.recia.sympaApi.sympa.listfinder.model.ModelSubscribers;
 import fr.recia.sympaApi.sympa.listfinder.model.PreparedRequest;
 import lombok.Getter;
 import lombok.Setter;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 
 import java.math.BigInteger;
 import java.util.ArrayList;

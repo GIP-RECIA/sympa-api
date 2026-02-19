@@ -24,7 +24,6 @@ import fr.recia.sympaApi.pojo.email.IEmailUtility;
 import fr.recia.sympaApi.servlet.JsCreateListTableRow;
 import fr.recia.sympaApi.sympa.admin.LdapPerson;
 import fr.recia.sympaApi.sympa.admin.RobotDomaineNameResolver;
-import fr.recia.sympaApi.sympa.listfinder.IDaoService;
 import fr.recia.sympaApi.sympa.listfinder.IMailingList;
 import fr.recia.sympaApi.sympa.listfinder.IMailingListModel;
 import fr.recia.sympaApi.sympa.listfinder.model.AvailableMailingListsFound;

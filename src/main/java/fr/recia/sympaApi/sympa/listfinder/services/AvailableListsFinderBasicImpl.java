@@ -16,9 +16,7 @@
 package fr.recia.sympaApi.sympa.listfinder.services;
 
 
-import fr.recia.sympaApi.groupfinder.IEtabGroupsFinder;
 import fr.recia.sympaApi.groupfinder.impl.ConcatenateGroupFinder;
-import fr.recia.sympaApi.groupfinder.impl.LdapGroupFinder;
 import fr.recia.sympaApi.sympa.listfinder.IAvailableListsFinder;
 import fr.recia.sympaApi.sympa.listfinder.IExistingListsFinder;
 import fr.recia.sympaApi.sympa.listfinder.IListsFromGroupsPatternMatcher;

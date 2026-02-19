@@ -20,12 +20,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.Column;
-import javax.persistence.Embeddable;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import java.io.Serializable;
-import java.math.BigInteger;
 
 /**
  * Object representing row in j_model_request table in the SympaRemote database. 

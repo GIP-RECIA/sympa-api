@@ -17,16 +17,15 @@ package fr.recia.sympaApi.sympa;
 
 import fr.recia.sympaApi.config.bean.CasProperties;
 import fr.recia.sympaApi.config.bean.ServerListMapProperties;
-import fr.recia.sympaApi.service.CASCredentialRetrieverService;
 import fr.recia.sympaApi.pojo.RobotSympaConf;
 import fr.recia.sympaApi.pojo.RobotSympaInfo;
+import fr.recia.sympaApi.service.CASCredentialRetrieverService;
 import fr.recia.sympaApi.utils.SessionAttributesHandler;
 import fr.recia.sympaApi.utils.UserAttributesHandler;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.cache.CacheManager;
 
 import java.util.HashMap;

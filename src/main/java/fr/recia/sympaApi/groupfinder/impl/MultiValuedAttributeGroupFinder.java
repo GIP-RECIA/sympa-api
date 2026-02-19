@@ -23,7 +23,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.LdapTemplate;
-import org.springframework.stereotype.Service;
 
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;

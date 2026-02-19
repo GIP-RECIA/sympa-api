@@ -17,15 +17,13 @@ package fr.recia.sympaApi.service;
 
 import fr.recia.sympaApi.config.bean.CasProperties;
 import fr.recia.sympaApi.config.bean.ServerListMapProperties;
-import fr.recia.sympaApi.pojo.SympaRobot;
-import fr.recia.sympaApi.sympa.SpringCachingSympaServerAxisWsImpl;
 import fr.recia.sympaApi.pojo.CreateListInfo;
 import fr.recia.sympaApi.pojo.RobotSympaConf;
-import fr.recia.sympaApi.sympa.ServerListMap;
 import fr.recia.sympaApi.pojo.SympaListCriterion;
+import fr.recia.sympaApi.pojo.SympaRobot;
 import fr.recia.sympaApi.pojo.UserSympaList;
 import fr.recia.sympaApi.pojo.UserSympaListWithUrl;
-
+import fr.recia.sympaApi.sympa.ServerListMap;
 import fr.recia.sympaApi.sympa.SpringCachingSympaServerAxisWsImpl;
 import fr.recia.sympaApi.utils.SessionAttributesHandler;
 import fr.recia.sympaApi.utils.UserAttributesHandler;

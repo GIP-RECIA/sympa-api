@@ -16,8 +16,6 @@
 package fr.recia.sympaApi.dto.response.admin;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import fr.recia.sympaApi.dto.response.UserSympaListDetail;
-import fr.recia.sympaApi.servlet.JsCreateListTableRow;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -16,10 +16,7 @@
 package fr.recia.sympaApi.dto.response.admin;
 
 import fr.recia.sympaApi.servlet.JsCreateListTableRow;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @Getter
 public class AdminSympaCreatableList {

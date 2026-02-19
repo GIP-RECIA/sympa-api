@@ -17,9 +17,6 @@ package fr.recia.sympaApi.sympa.admin;
 
 import fr.recia.sympaApi.utils.UserAttributesHandler;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

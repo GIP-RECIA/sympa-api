@@ -24,7 +24,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.axis.transport.http.HTTPConstants;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.security.core.Authentication;
@@ -34,7 +33,6 @@ import org.sympa.client.ws.axis.v544.SympaPort_PortType;
 import org.sympa.client.ws.axis.v544.SympaSOAP;
 import org.sympa.client.ws.axis.v544.SympaSOAPLocator;
 
-import javax.annotation.PostConstruct;
 import javax.xml.rpc.ServiceException;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -47,7 +45,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 @Slf4j

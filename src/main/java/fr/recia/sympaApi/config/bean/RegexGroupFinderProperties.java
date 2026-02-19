@@ -23,8 +23,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
 import javax.annotation.PostConstruct;
-import java.util.List;
-import java.util.Map;
 
 @ConfigurationProperties(prefix = "groupfinder.regex")
 @Data

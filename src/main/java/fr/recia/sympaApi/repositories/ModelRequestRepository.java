@@ -15,13 +15,11 @@
  */
 package fr.recia.sympaApi.repositories;
 
-import fr.recia.sympaApi.sympa.listfinder.model.Model;
 import fr.recia.sympaApi.sympa.listfinder.model.ModelRequest;
 import fr.recia.sympaApi.sympa.listfinder.model.ModelRequestId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.math.BigInteger;
 import java.util.Optional;
 
 @Repository

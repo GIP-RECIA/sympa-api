@@ -15,16 +15,15 @@
  */
 package fr.recia.sympaApi.web.rest.api;
 
+import fr.recia.sympaApi.dto.request.SympaListRequestForm;
 import fr.recia.sympaApi.dto.response.SympaListResponseForDisplay;
 import fr.recia.sympaApi.dto.response.UserSympaListDetail;
-import fr.recia.sympaApi.dto.request.SympaListRequestForm;
 import fr.recia.sympaApi.pojo.SympaListCriterion;
 import fr.recia.sympaApi.pojo.UserSympaListWithUrl;
 import fr.recia.sympaApi.service.DomainService;
 import fr.recia.sympaApi.service.DomainService.SympaListFields;
 import fr.recia.sympaApi.utils.UserAttributesHandler;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
