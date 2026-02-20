@@ -25,9 +25,8 @@ import org.jetbrains.annotations.NotNull;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoadCreateOrUpdateListRequestPayload {
+public class CreateOrUpdateListFormDataRequestPayload {
 
-  @NotNull
   String modelParam;
   @NotNull
   String modelId;

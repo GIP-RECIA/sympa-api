@@ -27,7 +27,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoadCreateOrUpdateListResponsePayload {
+public class CreateOrUpdateListFormDataResponsePayload {
 
   List<JsCreateListRow> editorsAliases;
   String type;
