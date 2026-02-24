@@ -305,11 +305,11 @@ public class AdminSympaController {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "[modelId] parameter is required");
     }
 
-    if (Objects.isNull(requestPayload.getModelName())) {
+    if (Objects.isNull(requestPayload.getType())) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "[modelName] parameter is required");
     }
 
-    String type = String.format("&type=%s", requestPayload.getModelName());   //var type = $("#createListURL_type").html() || " ";  MODEL NAME
+    String type = String.format("&type=%s", requestPayload.getType());   //var type = $("#createListURL_type").html() || " ";  MODEL NAME
 
     //add check of mandatory ?
     List<String> requiredAliases = allMandatoryPreparedRequestToStringList(requestPayload.getModelId()); // todo fetch required list

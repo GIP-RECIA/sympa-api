@@ -26,7 +26,7 @@ import lombok.Setter;
 @AllArgsConstructor
 public class CreateOrUpdateListRequestPayload {
 
-  String modelName;
+  String type;
   String modelId;
   String typeParam;
   String editorsAliases;
