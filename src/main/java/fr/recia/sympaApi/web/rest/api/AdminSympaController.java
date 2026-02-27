@@ -329,9 +329,9 @@ public class AdminSympaController {
       }
     }
 
-    String editorsAliases = Objects.isNull(requestPayload.getModelName()) ? "" : String.format("&editors_aliases=%s", requestPayload.getEditorsAliases()); //  args.get("editorAliases"));
-    String editorsGroups = Objects.isNull(requestPayload.getModelName()) ? "" : String.format("&editors_groups=%s", requestPayload.getEditorsGroups());
-    String typeParam = Objects.isNull(requestPayload.getModelName()) ? "" : String.format("&type_param=%s", requestPayload.getTypeParam());
+    String editorsAliases = Objects.isNull(requestPayload.getEditorsAliases()) ? "" : String.format("&editors_aliases=%s", requestPayload.getEditorsAliases()); //  args.get("editorAliases"));
+    String editorsGroups = Objects.isNull(requestPayload.getEditorsGroups()) ? "" : String.format("&editors_groups=%s", requestPayload.getEditorsGroups());
+    String typeParam = Objects.isNull(requestPayload.getTypeParam()) ? "" : String.format("&type_param=%s", requestPayload.getTypeParam());
     //todo test with missing type param when required
 
     // statics
