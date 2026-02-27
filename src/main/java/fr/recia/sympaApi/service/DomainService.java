@@ -27,6 +27,7 @@ import fr.recia.sympaApi.sympa.ServerListMap;
 import fr.recia.sympaApi.sympa.SpringCachingSympaServerAxisWsImpl;
 import fr.recia.sympaApi.utils.SessionAttributesHandler;
 import fr.recia.sympaApi.utils.UserAttributesHandler;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.DirectFieldAccessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
@@ -42,6 +43,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
+@Slf4j
 public class DomainService {
 
   public enum SympaListFields {
@@ -161,11 +163,9 @@ public class DomainService {
           } else {
             if ( o.equals(c.getCompareTo()) ) results++;
           }
-        } else {
-        //TODO  logger.debug("");
         }
       } catch ( Exception e) {
-        //TODO  logger.error("exception raised while introspecting object ",e);
+        log.error("exception raised while introspecting object ",e);
       }
     }
     if ( matchAll ) {
@@ -233,7 +233,7 @@ public class DomainService {
   public Map<String, SpringCachingSympaServerAxisWsImpl> getServerList() throws Exception {
     Map<String, SpringCachingSympaServerAxisWsImpl> serverListToUse = new HashMap<>();
     for(String serverKey: getServerListInternal().keySet()) {
-        //TODO   logger.debug("Add this server to the list for the current user : " + serverKey);
+        log.debug("Add this server to the list for the current user : " + serverKey);
         serverListToUse.put(serverKey, getServerListInternal().get(serverKey));
     }
     return serverListToUse;
