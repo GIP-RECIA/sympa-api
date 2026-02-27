@@ -127,17 +127,17 @@ public class AdminSympaController {
   /**
    * Base of error messages for list creation.
    */
-  private static final String CREATE_ERROR_MSG_BASE = "sympaCreateList";
+  private static final String CREATE_ERROR_MSG_BASE = "modal.response.create";
 
   /**
    * Base of error messages for list modification.
    */
-  private static final String UPDATE_ERROR_MSG_BASE = "sympaUpdateList";
+  private static final String UPDATE_ERROR_MSG_BASE = "modal.response.update";
 
   /**
    * Base of error messages for list closing.
    */
-  private static final String CLOSE_ERROR_MSG_BASE = "sympaCloseList";
+  private static final String CLOSE_ERROR_MSG_BASE = "modal.response.close";
 
   @GetMapping("/me")
   public ResponseEntity<Map<String,Object>> test(){
