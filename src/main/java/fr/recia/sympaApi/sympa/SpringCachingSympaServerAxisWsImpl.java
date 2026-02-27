@@ -15,6 +15,7 @@
  */
 package fr.recia.sympaApi.sympa;
 
+import fr.recia.sympaApi.config.bean.CacheProperties;
 import fr.recia.sympaApi.pojo.CreateListInfo;
 import fr.recia.sympaApi.pojo.SympaCredential;
 import fr.recia.sympaApi.pojo.SympaRobot;
@@ -24,6 +25,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.axis.transport.http.HTTPConstants;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.security.core.Authentication;
@@ -45,6 +47,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 @Slf4j
@@ -59,6 +62,8 @@ public class SpringCachingSympaServerAxisWsImpl {
   private Map<SympaRobot, SympaPort_PortType> portCache = new HashMap<>(8);
 
 
+  @Autowired
+  CacheProperties cacheProperties;
 
   /**
    * name of the sympa server
@@ -99,7 +104,7 @@ public class SpringCachingSympaServerAxisWsImpl {
   private CASCredentialRetrieverService credentialRetriever;
 
   public void init() {
-    cache = cacheManager.getCache("sympaServerCache"); //todo make cache name a const/property
+    cache = cacheManager.getCache(cacheProperties.getSpringCachingSympaAxisServerCacheName());
   }
 
   public CreateListInfo getCreateListInfo() {
@@ -344,9 +349,8 @@ public class SpringCachingSympaServerAxisWsImpl {
   }
 
   private void setCachedValue(String cacheKey, Object toCache) {
-    // todo re enable cache after test
-//    log.info(" setCachedValue cache is null ? = {}", Objects.isNull(cache));
-//    cache.put(cacheKey, toCache);
+    log.info(" setCachedValue cache is null ? = {}", Objects.isNull(cache));
+    cache.put(cacheKey, toCache);
   }
 
   private Object getCachedValue(String cacheKey) {

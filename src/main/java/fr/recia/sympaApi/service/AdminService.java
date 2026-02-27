@@ -15,6 +15,7 @@
  */
 package fr.recia.sympaApi.service;
 
+import fr.recia.sympaApi.config.bean.CacheProperties;
 import fr.recia.sympaApi.dto.response.admin.AdminSympaCreatableList;
 import fr.recia.sympaApi.dto.response.admin.AdminSympaListResponseForDisplay;
 import fr.recia.sympaApi.dto.response.admin.AdminSympaUpdatableList;
@@ -28,11 +29,15 @@ import fr.recia.sympaApi.sympa.listfinder.model.AvailableMailingListsFound;
 import fr.recia.sympaApi.sympa.listfinder.model.Model;
 import fr.recia.sympaApi.sympa.listfinder.services.AvailableListsFinderBasicImpl;
 import fr.recia.sympaApi.sympa.listfinder.services.HibernateDaoServiceImpl;
+import fr.recia.sympaApi.utils.UserAttributesHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -66,6 +71,9 @@ public class AdminService {
   }
 
   @Autowired
+  CacheProperties cacheProperties;
+
+  @Autowired
   RobotDomaineNameResolver robotDomainNameResolver;
 
   @Autowired
@@ -73,6 +81,19 @@ public class AdminService {
 
   @Autowired
   AvailableListsFinderBasicImpl availableListFinder;
+
+  @Autowired
+  UserAttributesHandler userAttributesHandler;
+
+  @Autowired
+  CacheManager cacheManager;
+
+  Cache cache;
+
+  @PostConstruct
+  public void init() {
+    cache = cacheManager.getCache(cacheProperties.getAdminServiceCacheName());
+  }
 
 
   public List<String> fetchEmailProfileList(final Map<String, List<Object>> mvUserInfo, final LdapPerson ldapPerson, final String uid) {
@@ -153,8 +174,22 @@ public class AdminService {
 
 
     //Get the mailing lists that we can create
-    final AvailableMailingListsFound availableLists =
-      this.availableListFinder.getAvailableAndNonExistingLists(userInfo, listMailingListModels);
+    AvailableMailingListsFound availableLists;
+
+    String uai = userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT).orElseThrow();
+
+    Cache.ValueWrapper vw = cache.get(uai);
+    if(Objects.nonNull(vw) && Objects.nonNull(vw.get()) && (vw.get() instanceof AvailableMailingListsFound)){
+      availableLists = (AvailableMailingListsFound) vw.get();
+    }else {
+      availableLists = this.availableListFinder.getAvailableAndNonExistingLists(userInfo, listMailingListModels);
+      try {
+        cache.put(uai, availableLists);
+      } catch (Exception e) {
+        log.error("Could not put availableLists in cache for uai: {}", uai);
+      }
+    }
+
     final Collection<IMailingList> creatableLists = availableLists.getCreatableLists();
     final Collection<IMailingList> updatableLists = availableLists.getUpdatableLists();
 

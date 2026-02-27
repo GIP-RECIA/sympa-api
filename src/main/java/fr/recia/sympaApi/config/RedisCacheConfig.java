@@ -15,7 +15,9 @@
  */
 package fr.recia.sympaApi.config;
 
+import fr.recia.sympaApi.config.bean.CacheProperties;
 import fr.recia.sympaApi.config.bean.RedisProperties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,23 +33,25 @@ import java.util.Map;
 @EnableCaching
 public class RedisCacheConfig {
 
+  @Autowired
+  CacheProperties cacheProperties;
+
   @Bean
   public RedisCacheManager cacheManager(
     RedisConnectionFactory connectionFactory,
     RedisProperties redisProperties) {
 
     //  default TTL
-    // TODO put durations in conf
     RedisCacheConfiguration defaultConfig = RedisCacheConfiguration.defaultCacheConfig()
       .computePrefixWith(cacheName -> redisProperties.getCachePrefix() + "::" + cacheName + "::")
-      .entryTtl(Duration.ofMinutes(10));
+      .entryTtl(Duration.ofMinutes(cacheProperties.getDefaultDurationHours()));
 
-    // TTL per key TODO : choose value for each key
+    // TTL per key
     Map<String, RedisCacheConfiguration> cacheConfigs = new HashMap<>();
-    cacheConfigs.put("sympaServerCache", defaultConfig.entryTtl(Duration.ofMinutes(30)));
-//    cacheConfigs.put("key1", defaultConfig.entryTtl(Duration.ofMinutes(5)));
- //   cacheConfigs.put("key2", defaultConfig.entryTtl(Duration.ofHours(1)));
 
+    for(Map.Entry<String, Integer> entry: cacheProperties.getCacheDurationHours().entrySet()){
+      cacheConfigs.put(entry.getKey(), defaultConfig.entryTtl(Duration.ofHours(entry.getValue())));
+    }
     return RedisCacheManager.builder(connectionFactory)
       .cacheDefaults(defaultConfig)
       .withInitialCacheConfigurations(cacheConfigs)
