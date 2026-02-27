@@ -157,7 +157,7 @@ public class AdminSympaController {
   }
 
 
-  @GetMapping("/list")
+  @GetMapping("/lists")
   public ResponseEntity<AdminSympaListResponseForDisplay> fetchList(@RequestBody(required = false) SympaListRequestForm sympaListRequestForm) throws Exception {
 
     if(Objects.isNull(sympaListRequestForm)){
