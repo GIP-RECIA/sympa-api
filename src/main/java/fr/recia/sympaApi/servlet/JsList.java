@@ -79,15 +79,4 @@ public class JsList {
 
     return null;
   }
-
-  // todo remove after test
-  public int countNodes() {
-    int count = 1;
-    for (JsList child : children) {
-      count += child.countNodes();
-    }
-    return count;
-  }
-	
-	
 }
