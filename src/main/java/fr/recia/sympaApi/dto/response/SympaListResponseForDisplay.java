@@ -28,7 +28,7 @@ import java.util.List;
 public class SympaListResponseForDisplay {
 
   String adminServiceUrl;
-  @JsonProperty("sympaList")
+  @JsonProperty("sympaLists")
   List<UserSympaListDetail> userSympaListDetailList;
 
 }
