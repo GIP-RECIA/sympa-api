@@ -462,6 +462,11 @@ public class AdminSympaController {
 
     // 2 check si le user est admin sur cet etab
     boolean isAdmin = robotSympaConf.isAdminRobotSympaByUai(userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT).orElseThrow(), userAttributesHandler.getAttributeList(UserAttributesHandler.IS_MEMBER_OF).orElseThrow());
+
+    if(!isAdmin){
+      return  ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new HashMap<>());
+    }
+
     if (!listSplit[1].equals(domainName)) {
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Current user is not an admin for this establishment");
     }
