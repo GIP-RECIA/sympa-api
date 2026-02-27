@@ -409,6 +409,8 @@ public class AdminSympaController {
           String errorMessageKey = baseErrorMsg + ".failure."
             + errorCodeNumber + "." + errorCodeText;
 
+          errorMessageKey = errorMessageKey.replace('_','-');
+
           responseMap.put("messageKey", errorMessageKey);
           //  message = this.context.getMessage(errorMessageKey, null, this.locale);
         }
