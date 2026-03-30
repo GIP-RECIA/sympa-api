@@ -341,20 +341,23 @@ public class SpringCachingSympaServerAxisWsImpl {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     String cacheKey = String.format("%1$s;%2$s;%3$s", getName(),"getWhich",authentication.getName());
     log.debug("cache key = "+cacheKey);
-    Object cached = getCachedValue(cacheKey);
-    if (cached != null) return (List<UserSympaListWithUrl>)cached;
+    List<UserSympaListWithUrl> cached = getCachedValue(cacheKey);
+    if (cached != null)  {
+      log.info("return from cache {}", cached.subList(0,5) );
+      return cached;
+    }
     List<UserSympaListWithUrl> result = getWhichCacheless(robot);
     setCachedValue(cacheKey,result);
     return result;
   }
 
-  private void setCachedValue(String cacheKey, Object toCache) {
-    log.info(" setCachedValue cache is null ? = {}", Objects.isNull(cache));
+  private void setCachedValue(String cacheKey, List<UserSympaListWithUrl> toCache) {
+    log.info("setCachedValue cache is null ? = {}", cache == null);
     cache.put(cacheKey, toCache);
   }
 
-  private Object getCachedValue(String cacheKey) {
-
+  @SuppressWarnings("unchecked")
+  private List<UserSympaListWithUrl> getCachedValue(String cacheKey) {
     Cache.ValueWrapper wrapper = cache.get(cacheKey);
     if (wrapper == null) {
       log.debug("no cache value for key {}", cacheKey);
@@ -362,7 +365,13 @@ public class SpringCachingSympaServerAxisWsImpl {
     }
     Object result = wrapper.get();
     log.debug("having cached value for key {}", cacheKey);
-    return result;
+
+    try {
+      return (List<UserSympaListWithUrl>) result;
+    } catch (Exception e) {
+      log.error("Could not cast cached value to List<UserSympaListWithUrl>, returning null instead");
+      return null;
+    }
   }
 
   @Override
