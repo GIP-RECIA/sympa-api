@@ -15,6 +15,7 @@
  */
 package fr.recia.sympaApi.service;
 
+import fr.recia.sympaApi.config.bean.CacheProperties;
 import fr.recia.sympaApi.config.bean.CasProperties;
 import fr.recia.sympaApi.config.bean.ServerListMapProperties;
 import fr.recia.sympaApi.pojo.CreateListInfo;
@@ -75,6 +76,9 @@ public class DomainService {
   @Autowired
   private CasProperties casProperties ;
 
+  @Autowired
+  CacheProperties cacheProperties;
+
   private final String SERVER_LIST_KEY = "serverList";
 
   private ServerListMap getServerListInternal() throws Exception {
@@ -88,10 +92,11 @@ public class DomainService {
       optional.get().setCredentialRetriever(this.credentialRetriever);
       optional.get().setCasProperties(this.casProperties);
       optional.get().setServerListMapProperties(this.serverListMapProperties);
+      optional.get().setCacheProperties(this.cacheProperties);
       return optional.get();
     }
 
-    return new ServerListMap(robotSympaConf, serverListMapProperties, credentialRetriever, userAttributesHandler, sessionAttributesHandler, cacheManager, casProperties);
+    return new ServerListMap(robotSympaConf, serverListMapProperties, credentialRetriever, userAttributesHandler, sessionAttributesHandler, cacheManager, casProperties, cacheProperties);
 
   }
 
@@ -127,6 +132,7 @@ public class DomainService {
 
   public List<UserSympaListWithUrl> getWhich(List<SympaListCriterion> criterions, boolean matchAll) throws Exception {
     List<UserSympaListWithUrl> sympaList = getWhich();
+    log.info("get wich in domain service {}", sympaList);
     if ( criterions == null || criterions.size() <= 0 ) return sympaList;
     List<UserSympaListWithUrl> filteredList = new ArrayList<>();
     for ( UserSympaListWithUrl item : sympaList ) {

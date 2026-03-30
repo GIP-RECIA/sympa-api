@@ -15,6 +15,7 @@
  */
 package fr.recia.sympaApi.sympa;
 
+import fr.recia.sympaApi.config.bean.CacheProperties;
 import fr.recia.sympaApi.config.bean.CasProperties;
 import fr.recia.sympaApi.config.bean.ServerListMapProperties;
 import fr.recia.sympaApi.pojo.RobotSympaConf;
@@ -38,7 +39,7 @@ import java.util.Objects;
 @NoArgsConstructor // only for deserialization
 public class ServerListMap extends HashMap<String, SpringCachingSympaServerAxisWsImpl> {
 
-  public ServerListMap(RobotSympaConf robotSympaConf, ServerListMapProperties serverListMapProperties, CASCredentialRetrieverService casCredentialRetriever, UserAttributesHandler userAttributesHandler, SessionAttributesHandler sessionAttributesHandler, CacheManager cacheManager, CasProperties casProperties) throws Exception {
+  public ServerListMap(RobotSympaConf robotSympaConf, ServerListMapProperties serverListMapProperties, CASCredentialRetrieverService casCredentialRetriever, UserAttributesHandler userAttributesHandler, SessionAttributesHandler sessionAttributesHandler, CacheManager cacheManager, CasProperties casProperties, CacheProperties cacheProperties) throws Exception {
     this.robotSympaConf = robotSympaConf;
     this.serverListMapProperties = serverListMapProperties;
     this.credentialRetriever = casCredentialRetriever;
@@ -46,6 +47,7 @@ public class ServerListMap extends HashMap<String, SpringCachingSympaServerAxisW
     this.sessionAttributesHandler = sessionAttributesHandler;
     this.cacheManager = cacheManager;
     this.casProperties = casProperties;
+    this.cacheProperties = cacheProperties;
 
     //no use of post construct since it must only be invoked at the "true" creation (when deserialized from session it will use the no args constructor)
     this.init();
@@ -66,6 +68,8 @@ public class ServerListMap extends HashMap<String, SpringCachingSympaServerAxisW
   private transient CasProperties  casProperties;
 
   private transient CacheManager cacheManager ;
+
+  private transient CacheProperties cacheProperties;
 
   //TODO read value from conf
 	private final  int timeout = 5000;
@@ -131,6 +135,7 @@ public class ServerListMap extends HashMap<String, SpringCachingSympaServerAxisW
 				server.setCredentialRetriever(getCredentialRetriever());
 				server.setCacheManager(getCacheManager());
 				server.setNewListForRoles(serverListMapProperties.getNewListForRoles());
+        server.setCacheProperties(getCacheProperties());
 				server.init();
 
         log.info("created server {} in creeSympaServer ", server);

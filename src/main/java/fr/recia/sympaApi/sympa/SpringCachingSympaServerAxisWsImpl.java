@@ -62,8 +62,7 @@ public class SpringCachingSympaServerAxisWsImpl {
   private Map<SympaRobot, SympaPort_PortType> portCache = new HashMap<>(8);
 
 
-  @Autowired
-  CacheProperties cacheProperties;
+  private CacheProperties cacheProperties;
 
   /**
    * name of the sympa server
