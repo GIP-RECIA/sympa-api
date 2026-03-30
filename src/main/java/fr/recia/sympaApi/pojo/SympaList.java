@@ -19,12 +19,23 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SympaList {
+public class SympaList implements Serializable {
   private static final long serialVersionUID = -4224626282671137797L;
   private String homepage;
   private String address;
   private String subject;
+
+  @Override
+  public String toString() {
+    return "SympaList{" +
+      "homepage='" + homepage + '\'' +
+      ", address='" + address + '\'' +
+      ", subject='" + subject + '\'' +
+      '}';
+  }
 }

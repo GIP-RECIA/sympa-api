@@ -19,14 +19,25 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserSympaList extends SympaList {
+public class UserSympaList extends SympaList implements Serializable {
 
 	private static final long serialVersionUID = -7632209925580241799L;
 
 	private boolean owner;
 	private boolean editor;
 	private boolean subscriber;
+
+  @Override
+  public String toString() {
+    return "UserSympaList{" +
+      "owner=" + owner +
+      ", editor=" + editor +
+      ", subscriber=" + subscriber +
+      '}';
+  }
 }

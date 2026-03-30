@@ -20,10 +20,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserSympaListWithUrl extends UserSympaList {
+public class UserSympaListWithUrl extends UserSympaList implements Serializable {
 
 	private static final long serialVersionUID = 2955582285925647743L;
 
@@ -31,4 +33,12 @@ public class UserSympaListWithUrl extends UserSympaList {
 	private String listAdminUrl;
   private String listArchivesUrl;
 
+  @Override
+  public String toString() {
+    return "UserSympaListWithUrl{" +
+      "listUrl='" + listUrl + '\'' +
+      ", listAdminUrl='" + listAdminUrl + '\'' +
+      ", listArchivesUrl='" + listArchivesUrl + '\'' +
+      '}';
+  }
 }
