@@ -166,22 +166,22 @@ public class AdminService {
 
     log.debug("Fetched models from SympaRemote db.  Count: " + listModels.size());
 
-
-
     List<IMailingListModel> listMailingListModels = this.daoService.getMailingListModels(listModels, userInfo);
 
-
-
-
     //Get the mailing lists that we can create
-    AvailableMailingListsFound availableLists;
+    AvailableMailingListsFound availableLists = null;
 
     String uai = userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT).orElseThrow();
 
     Cache.ValueWrapper vw = cache.get(uai);
     if(Objects.nonNull(vw) && Objects.nonNull(vw.get()) && (vw.get() instanceof AvailableMailingListsFound)){
       availableLists = (AvailableMailingListsFound) vw.get();
-    }else {
+      if(Objects.isNull(availableLists)){
+        log.warn("availableLists from cache is null despite having key");
+      }
+    }
+
+    if(Objects.isNull(availableLists)){
       availableLists = this.availableListFinder.getAvailableAndNonExistingLists(userInfo, listMailingListModels);
       try {
         cache.put(uai, availableLists);
