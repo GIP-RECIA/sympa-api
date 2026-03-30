@@ -35,6 +35,7 @@ public class CacheProperties {
 
   private String springCachingSympaAxisServerCacheName;
   private String adminServiceCacheName;
+  private String ldapFilterRequestCacheName;
   private int defaultDurationHours;
   private Map<String, Integer> cacheDurationHours;
 
@@ -50,6 +51,7 @@ public class CacheProperties {
     return "CacheProperties{" +
       "springCachingSympaAxisServerCacheName='" + springCachingSympaAxisServerCacheName + '\'' +
       ", adminServiceCacheName='" + adminServiceCacheName + '\'' +
+      ", ldapFilterRequestCacheName='" + ldapFilterRequestCacheName + '\'' +
       ", defaultDurationHours=" + defaultDurationHours +
       ", cacheDurationHours=" + cacheDurationHours +
       '}';

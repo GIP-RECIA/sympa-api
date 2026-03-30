@@ -15,6 +15,7 @@
  */
 package fr.recia.sympaApi.sympa.admin;
 
+import fr.recia.sympaApi.config.bean.CacheProperties;
 import fr.recia.sympaApi.sympa.listfinder.model.PreparedRequest;
 import fr.recia.sympaApi.utils.LdapUtils;
 import lombok.Getter;
@@ -22,10 +23,13 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
@@ -34,6 +38,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.Set;
 
 @Getter
@@ -81,6 +86,20 @@ public class LdapFilterSourceRequest implements Serializable {
   @Autowired
 	private LdapTemplate ldapTemplate;
 
+  @Autowired
+  private CacheManager cacheManager;
+
+  @Autowired
+  private CacheProperties cacheProperties;
+
+  private Cache cache;
+
+  @PostConstruct
+  public void postConstruct() {
+
+    cache = cacheManager.getCache(cacheProperties.getLdapFilterRequestCacheName());
+
+  }
 	static private String replaceAll(String in, String uai, String siren) {
 		String res = in;
 		if (uai != null) {
@@ -120,46 +139,50 @@ public class LdapFilterSourceRequest implements Serializable {
 				String base = replaceAll(suffix,uai, siren);
 				base = base.substring(0, base.indexOf(",dc="));
 				
-					// on test si on a déjà fait la requette 
+					// on test si on a déjà fait la requete
 				String request = String.format("%s:%s", filter, base);
-				if (request2name.containsKey(request)) {
-						// si oui on redonne la meme reponse (elle peut etre vide)
-          //todo retablir après debugage
-				 //	name = request2name.get(request);
-          //return name
-				}
 
-        {
-						// sinon on interroge le ldap
-            log.debug("PreparedRequest source="  + source+";");
-            log.debug("filter =" + filter + "; base =" + base+";");
+        Cache.ValueWrapper vw = cache.get(request);
 
-					Collection<String> mails =LdapUtils.ldapSearch(ldapTemplate, filter, base, 
-							new AttributesMapper() {
-								
-								@Override
-								public Object mapFromAttributes(Attributes attrs) throws NamingException {
-									Attribute attr = attrs.get("mail");
-									return attr.get();
-								}
-							}
-							
-							);
-						// si le resultat n'est pas vide
-					if (mails != null && ! mails.isEmpty()) {
-						Iterator<String> it = mails.iterator();			
-						String mail =  it.next();
-						String autre = "";
-						// on affiche  le premier mail a la suite du nom 
-						// et on indique s'il y en a d'autre
-						if (it.hasNext()) {
-							autre = "...";
-						}
-						name = String.format("%s: %s%s", preparedRequest.getDisplayName(), mail, autre );
-					} 
-						// le nom calcule peut etre vide
-				//	request2name.put(request, name);
-				}
+        // si trouvé dans le cache
+        if(Objects.nonNull(vw)&& Objects.nonNull(vw.get()) && vw.get() instanceof String){
+          log.debug("LdapFilterSourceRequest retrieved name from cache {};{}",request, name);
+          name = (String) vw.get();
+        }else {
+          // sinon on interroge le ldap
+          log.debug("LdapFilterSourceRequest PreparedRequest source="  + source+";");
+          log.debug(" LdapFilterSourceRequestfilter =" + filter + "; base =" + base+";");
+
+          Collection<String> mails =LdapUtils.ldapSearch(ldapTemplate, filter, base,
+            new AttributesMapper() {
+
+              @Override
+              public Object mapFromAttributes(Attributes attrs) throws NamingException {
+                Attribute attr = attrs.get("mail");
+                return attr.get();
+              }
+            }
+
+          );
+
+          // si le resultat n'est pas vide
+          if (mails != null && ! mails.isEmpty()) {
+            Iterator<String> it = mails.iterator();
+            String mail =  it.next();
+            String autre = "";
+            // on affiche  le premier mail a la suite du nom
+            // et on indique s'il y en a d'autre
+            if (it.hasNext()) {
+              autre = "...";
+            }
+            name = String.format("%s: %s%s", preparedRequest.getDisplayName(), mail, autre );
+          }
+          // le nom calcule peut etre vide
+          if(Objects.nonNull(name) && !name.isEmpty()){
+            log.debug("LdapFilterSourceRequest put name in cache {};{}",request, name);
+            cache.put(request, name);
+          }
+        }
 			} else {
 				name = preparedRequest.getDisplayName();
 			}
