@@ -543,7 +543,7 @@ public class AdminService {
   }
 
 
-  public boolean fetchIsAdmin(final List<String> isMemberOf, String adminRegex, final String uai) {
+  private boolean fetchIsAdmin(final List<String> isMemberOf, String adminRegex, final String uai) {
     // /////////////////////////////////////////////////////////
     // Determine if user is an admin or not
 
@@ -663,7 +663,7 @@ public class AdminService {
     return response;
   }
   @Nullable
-  public String errorCodeToMessageKey(String errorCode, String query) {
+  private String errorCodeToMessageKey(String errorCode, String query) {
     //Match a regular expression to determine if this is an error code in the
     //form Digit,CODE
     Pattern p = Pattern.compile("(\\d),(.*)");
@@ -691,7 +691,7 @@ public class AdminService {
     return null;
   }
 
-  public String postToSympaRemote(String sympaRemoteEndpointUrl, String query)  {
+  private String postToSympaRemote(String sympaRemoteEndpointUrl, String query)  {
     URI uri = URI.create(sympaRemoteEndpointUrl);
     String url = uri.toString();
 
@@ -714,7 +714,7 @@ public class AdminService {
   }
 
 
-  public String findErrorMessageBase(final String queryString) {
+  private String findErrorMessageBase(final String queryString) {
     String baseErrorMsg = null;
     Matcher opMatcher = this.operationPattern.matcher(queryString);
     if (opMatcher.find()) {
@@ -730,7 +730,7 @@ public class AdminService {
     return baseErrorMsg;
   }
 
-  public String retrieveSympaRemoteEndpointUrl() {
+  private String retrieveSympaRemoteEndpointUrl() {
 
     //todo redirect temporary to test sympa remote
 
@@ -764,11 +764,11 @@ public class AdminService {
 
 
 
-  public RobotSympaInfo getRobotInfo() {
+  private RobotSympaInfo getRobotInfo() {
     return robotSympaConf.getRobotSympaInfoByUai(userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT).orElseThrow(), userAttributesHandler.getAttributeList(UserAttributesHandler.IS_MEMBER_OF).orElseThrow(), true);
   }
 
-  public List<String> allMandatoryPreparedRequestToStringList(String modelId) {
+  private List<String> allMandatoryPreparedRequestToStringList(String modelId) {
     List<PreparedRequest> listPreparedRequest = this.daoService.getAllPreparedRequests();
     List<String> idToStringList = new ArrayList<>();
     Model model = this.daoService.getModel(new BigInteger(modelId));
