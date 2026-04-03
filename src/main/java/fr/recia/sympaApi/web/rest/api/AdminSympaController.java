@@ -26,7 +26,7 @@ import fr.recia.sympaApi.groupfinder.impl.RegexGroupFinder;
 import fr.recia.sympaApi.pojo.RobotSympaConf;
 import fr.recia.sympaApi.service.AdminService;
 import fr.recia.sympaApi.service.DomainService;
-import fr.recia.sympaApi.servlet.JsList;
+import fr.recia.sympaApi.servlet.JsTreeNode;
 import fr.recia.sympaApi.sympa.admin.EscoUserAttributeMapping;
 import fr.recia.sympaApi.sympa.admin.LdapFilterSourceRequest;
 import fr.recia.sympaApi.sympa.admin.LdapPerson;
@@ -204,7 +204,7 @@ public class AdminSympaController {
 
   @SuppressWarnings("unchecked")
   @GetMapping("/additionalGroupsTree")
-  public @ResponseBody ResponseEntity<List<JsList>> fetchAdditionalGroupsAsTree() {
+  public @ResponseBody ResponseEntity<List<JsTreeNode>> fetchAdditionalGroupsAsTree() {
 
     String uai = userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT).orElseThrow();
 
@@ -249,24 +249,24 @@ public class AdminSympaController {
       }
     }
 
-    List<JsList> rootNodes = new ArrayList<>();
+    List<JsTreeNode> rootNodes = new ArrayList<>();
 
-    List<JsList> allNodes = new ArrayList<>();
+    List<JsTreeNode> allNodes = new ArrayList<>();
 
     for (String groupStr : additionalGroups) {
       String[] levels = groupStr.split(":");
       int lastLevel = levels.length - 1;
       String nodeKey = "";
-      JsList previousNode = null;
+      JsTreeNode previousNode = null;
 
       for (int i = 0; i <= lastLevel; ++i) {
         String currentLevel = levels[i];
         nodeKey += i == 0 ? currentLevel : ":" + currentLevel;
 
-        JsList node = JsList.getMatchingNodeOnKey(allNodes, nodeKey);
+        JsTreeNode node = JsTreeNode.getMatchingNodeOnKey(allNodes, nodeKey);
 
         if (Objects.isNull(node)) {
-          node = new JsList();
+          node = new JsTreeNode();
           node.setData(currentLevel);
           node.setNodeKey(nodeKey);
           allNodes.add(node);
