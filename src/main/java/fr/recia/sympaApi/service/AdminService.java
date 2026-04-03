@@ -17,21 +17,29 @@ package fr.recia.sympaApi.service;
 
 import fr.recia.sympaApi.config.bean.CacheProperties;
 import fr.recia.sympaApi.dto.request.SympaListRequestForm;
+import fr.recia.sympaApi.dto.request.admin.CreateOrUpdateListFormDataRequestPayload;
 import fr.recia.sympaApi.dto.response.admin.AdminSympaCreatableList;
 import fr.recia.sympaApi.dto.response.admin.AdminSympaListResponseForDisplay;
 import fr.recia.sympaApi.dto.response.admin.AdminSympaUpdatableList;
+import fr.recia.sympaApi.dto.response.admin.CreateOrUpdateListFormDataResponsePayload;
 import fr.recia.sympaApi.pojo.UserSympaListWithUrl;
+import fr.recia.sympaApi.servlet.JsCreateListRow;
 import fr.recia.sympaApi.servlet.JsCreateListTableRow;
 import fr.recia.sympaApi.sympa.admin.EscoUserAttributeMapping;
+import fr.recia.sympaApi.sympa.admin.LdapFilterSourceRequest;
 import fr.recia.sympaApi.sympa.admin.LdapPerson;
 import fr.recia.sympaApi.sympa.admin.RobotDomaineNameResolver;
 import fr.recia.sympaApi.sympa.listfinder.IMailingList;
 import fr.recia.sympaApi.sympa.listfinder.IMailingListModel;
 import fr.recia.sympaApi.sympa.listfinder.model.AvailableMailingListsFound;
 import fr.recia.sympaApi.sympa.listfinder.model.Model;
+import fr.recia.sympaApi.sympa.listfinder.model.ModelRequest;
+import fr.recia.sympaApi.sympa.listfinder.model.ModelSubscribers;
+import fr.recia.sympaApi.sympa.listfinder.model.PreparedRequest;
 import fr.recia.sympaApi.sympa.listfinder.services.AvailableListsFinderBasicImpl;
 import fr.recia.sympaApi.sympa.listfinder.services.HibernateDaoServiceImpl;
 import fr.recia.sympaApi.utils.FormToCriterion;
+import fr.recia.sympaApi.utils.SessionAttributesHandler;
 import fr.recia.sympaApi.utils.UserAttributesHandler;
 import lombok.Getter;
 import lombok.Setter;
@@ -39,19 +47,23 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestBody;
 import reactor.util.annotation.Nullable;
 
 import javax.annotation.PostConstruct;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -108,7 +120,13 @@ public class AdminService {
   private FormToCriterion formToCriterion;
 
   @Autowired
-    private LdapPerson ldapPerson;
+  private LdapPerson ldapPerson;
+
+  @Autowired
+  private LdapFilterSourceRequest ldapFilterSourceRequest;
+
+  @Autowired
+  private SessionAttributesHandler sessionAttributesHandler;
 
   Cache cache;
 
@@ -116,6 +134,8 @@ public class AdminService {
   public void init() {
     cache = cacheManager.getCache(cacheProperties.getAdminServiceCacheName());
   }
+
+  final static String createListAdditionalGroupsCacheKey = "createListAdditionalGroupsCache";
 
 
   @Nullable
@@ -169,8 +189,72 @@ public class AdminService {
     return response;
   }
 
+  @Nullable
+  public CreateOrUpdateListFormDataResponsePayload createOrUpdateListFormData(@RequestBody CreateOrUpdateListFormDataRequestPayload requestPayload) {
+    log.info("------- BEGIN createOrUpdateListFormData ---------");
 
-  public List<String> fetchEmailProfileList(final Map<String, List<Object>> mvUserInfo, final LdapPerson ldapPerson, final String uid) {
+    String modelParam = requestPayload.getModelParam();
+    String modelId = requestPayload.getModelId();
+
+    log.debug("[createOrUpdateListFormData] model id from request {}", modelId);
+
+    Model model = this.daoService.getModel(new BigInteger(modelId));
+    ModelSubscribers modelSubscribers = this.daoService.getModelSubscriber(model);
+    log.debug("[createOrUpdateListFormData] Additional groups filter is " + modelSubscribers.getId().getGroupFilter());
+
+    List<JsCreateListRow> editorsAliases = new ArrayList<>();
+
+    List<PreparedRequest> listPreparedRequest = this.daoService.getAllPreparedRequests();
+
+    String uai = userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT).orElseThrow();
+    String siren =  userAttributesHandler.getAttribute(UserAttributesHandler.SIREN_CURRENT).orElseThrow();
+
+    for (PreparedRequest preparedRequest : listPreparedRequest) {
+      JsCreateListRow row = new JsCreateListRow();
+      ModelRequest modelRequest = this.daoService.getModelRequest(model, preparedRequest);
+      if (modelRequest != null) {
+        switch (modelRequest.getCategoryAsEnum()) {
+          case CHECKED:
+            row.setChecked(true);
+            row.setEditable(true);
+            break;
+          case UNCHECKED:
+            row.setChecked(false);
+            row.setEditable(true);
+            break;
+          case MANDATORY:
+            row.setChecked(true);
+            row.setEditable(false);
+            break;
+        }
+
+        //MADE pierre
+        String name = ldapFilterSourceRequest.makeDisplayName(preparedRequest, uai, siren);
+        if (name != null) {
+          row.setName(name);
+          row.setIdRequest(modelRequest.getId().getIdRequest().toString());
+          editorsAliases.add(row);
+        }
+      }
+    }
+
+    CreateOrUpdateListFormDataResponsePayload responsePayload = new CreateOrUpdateListFormDataResponsePayload();
+
+    responsePayload.setEditorsAliases(editorsAliases);
+    responsePayload.setType(model.getModelName());
+
+    Pattern p = Pattern.compile("\\{((?!UAI).*)\\}");
+    Matcher m = p.matcher(model.getListname());
+
+    if (m.find()) {
+      responsePayload.setTypeParam(modelParam);
+      responsePayload.setTypeParamName(m.group(1));
+    }
+
+    return responsePayload;
+  }
+
+    public List<String> fetchEmailProfileList(final Map<String, List<Object>> mvUserInfo, final LdapPerson ldapPerson, final String uid) {
     List<String> emailProfileList = null;
     //Check for at least the isMemberOfList which won't be empty should the multi-value map exist
     if ((mvUserInfo != null) && mvUserInfo.containsKey(ldapPerson.getMemberAttribute())) {
@@ -197,7 +281,6 @@ public class AdminService {
         log.error("Ldap person NOT found");
       }
     }
-
     return emailProfileList;
   }
 

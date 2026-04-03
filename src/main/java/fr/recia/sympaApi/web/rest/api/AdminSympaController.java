@@ -174,71 +174,7 @@ public class AdminSympaController {
 
   @PostMapping("/createOrUpdateListFormData")
   public ResponseEntity<CreateOrUpdateListFormDataResponsePayload> createOrUpdateListFormData(@RequestBody CreateOrUpdateListFormDataRequestPayload requestPayload) {
-    log.info("------- BEGIN loadCreateList ---------");
-
-    String modelParam = requestPayload.getModelParam();
-    String modelId = requestPayload.getModelId();
-
-    log.info("dao service  {}", daoService);
-    log.info("dao service  {}", modelId);
-
-    Model model = this.daoService.getModel(new BigInteger(modelId));
-    ModelSubscribers modelSubscribers = this.daoService.getModelSubscriber(model);
-    log.debug("Additional groups filter is " + modelSubscribers.getId().getGroupFilter());
-
-    List<JsCreateListRow> editorsAliases = new ArrayList<JsCreateListRow>();
-
-    List<PreparedRequest> listPreparedRequest = this.daoService.getAllPreparedRequests();
-
-    String uai = userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT).orElseThrow();
-    String siren =  userAttributesHandler.getAttribute(UserAttributesHandler.SIREN_CURRENT).orElseThrow();
-
-    for (PreparedRequest preparedRequest : listPreparedRequest) {
-      JsCreateListRow row = new JsCreateListRow();
-      ModelRequest modelRequest = this.daoService.getModelRequest(model, preparedRequest);
-      if (modelRequest != null) {
-        switch (modelRequest.getCategoryAsEnum()) {
-          case CHECKED:
-            row.setChecked(true);
-            row.setEditable(true);
-            break;
-          case UNCHECKED:
-            row.setChecked(false);
-            row.setEditable(true);
-            break;
-          case MANDATORY:
-            row.setChecked(true);
-            row.setEditable(false);
-            break;
-        }
-
-        //MADE pierre
-        String name = ldapFilterSourceRequest.makeDisplayName(preparedRequest, uai, siren);
-        if (name != null) {
-          row.setName(name);
-          row.setIdRequest(modelRequest.getId().getIdRequest().toString());
-          editorsAliases.add(row);
-        }
-      }
-    }
-
-    CreateOrUpdateListFormDataResponsePayload responsePayload = new CreateOrUpdateListFormDataResponsePayload();
-
-    responsePayload.setEditorsAliases(editorsAliases);
-    responsePayload.setType(model.getModelName());
-
-    Pattern p = Pattern.compile("\\{((?!UAI).*)\\}");
-    Matcher m = p.matcher(model.getListname());
-
-    if (m.find()) {
-      responsePayload.setTypeParam(modelParam);
-      responsePayload.setTypeParamName(m.group(1));
-    }
-
-    // TODO à mettre en cache redis et non session
-    sessionAttributesHandler.setSessionAttribute(createListAdditionalGroupsCacheKey, new HashMap<String, List<String>>());
-    responsePayload.setSubscribersGroup(modelSubscribers.getId().getGroupFilter());
-    return ResponseEntity.ok(responsePayload);
+    return ResponseEntity.ok(adminService.createOrUpdateListFormData(requestPayload));
   }
 
   @PostMapping("/createList")
