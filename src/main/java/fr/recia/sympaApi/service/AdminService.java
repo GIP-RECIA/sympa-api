@@ -16,11 +16,13 @@
 package fr.recia.sympaApi.service;
 
 import fr.recia.sympaApi.config.bean.CacheProperties;
+import fr.recia.sympaApi.dto.request.SympaListRequestForm;
 import fr.recia.sympaApi.dto.response.admin.AdminSympaCreatableList;
 import fr.recia.sympaApi.dto.response.admin.AdminSympaListResponseForDisplay;
 import fr.recia.sympaApi.dto.response.admin.AdminSympaUpdatableList;
 import fr.recia.sympaApi.pojo.UserSympaListWithUrl;
 import fr.recia.sympaApi.servlet.JsCreateListTableRow;
+import fr.recia.sympaApi.sympa.admin.EscoUserAttributeMapping;
 import fr.recia.sympaApi.sympa.admin.LdapPerson;
 import fr.recia.sympaApi.sympa.admin.RobotDomaineNameResolver;
 import fr.recia.sympaApi.sympa.listfinder.IMailingList;
@@ -29,13 +31,19 @@ import fr.recia.sympaApi.sympa.listfinder.model.AvailableMailingListsFound;
 import fr.recia.sympaApi.sympa.listfinder.model.Model;
 import fr.recia.sympaApi.sympa.listfinder.services.AvailableListsFinderBasicImpl;
 import fr.recia.sympaApi.sympa.listfinder.services.HibernateDaoServiceImpl;
+import fr.recia.sympaApi.utils.FormToCriterion;
 import fr.recia.sympaApi.utils.UserAttributesHandler;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
+import reactor.util.annotation.Nullable;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
@@ -47,6 +55,8 @@ import java.util.Objects;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+@Getter
+@Setter
 @Slf4j
 @Service
 public class AdminService {
@@ -88,11 +98,75 @@ public class AdminService {
   @Autowired
   CacheManager cacheManager;
 
+  @Autowired
+  DomainService domainService;
+
+  @Autowired
+  EscoUserAttributeMapping escoUserAttributeMapping;
+
+  @Autowired
+  private FormToCriterion formToCriterion;
+
+  @Autowired
+    private LdapPerson ldapPerson;
+
   Cache cache;
 
   @PostConstruct
   public void init() {
     cache = cacheManager.getCache(cacheProperties.getAdminServiceCacheName());
+  }
+
+
+  @Nullable
+  public AdminSympaListResponseForDisplay fetchLists(SympaListRequestForm sympaListRequestForm) throws Exception {
+
+    Map<String,Object> map = new HashMap<>();
+
+    Map<String, String> userInfo = new HashMap<>();
+
+    //enhanceUserInfo => add siren
+    userInfo.put(UserAttributesHandler.UAI_CURRENT, userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT).orElse(null));
+
+    userInfo = this.escoUserAttributeMapping.enhanceUserInfo(userInfo);
+
+    String uai = userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT).orElse(null);
+    assert uai != null;
+
+    List<String> isMemberOf = userAttributesHandler.getAttributeList(UserAttributesHandler.IS_MEMBER_OF).orElse(null);
+    assert isMemberOf != null;
+
+
+    List<UserSympaListWithUrl> sympaList;
+
+
+    final String uid = SecurityContextHolder.getContext().getAuthentication().getName();// userInfo.get(UserInfoService.getPortalUidAttribute());
+
+    Assert.hasText(uid, "UID shouldn't be empty !");
+    Assert.hasText(uai, "UAI shouldn't be empty !");
+
+    map.put("uai", uai);
+
+    boolean isAdmin;
+    try {
+      isAdmin =   this.fetchIsAdmin(isMemberOf, this.ldapPerson.getAdminRegex(), uai);
+    } catch (Exception e) {
+      isAdmin = false;
+      log.error("exception during fetchIsAdmin, defaulting value to false", e);
+    }
+
+    if(!isAdmin){
+      return null;
+    }
+
+    //Filter the user lists to make sure we only display lists that are in the current establishment.  This
+    //is done by comparing the domain of the list address (after the @).
+    //As domains are 1 to 1 with establishments
+    //this can be used to tell what lists belong to which establishment.
+    sympaList = this.getDomainService().getWhich(this.formToCriterion.formToCriterion(sympaListRequestForm), false);
+
+    AdminSympaListResponseForDisplay response = fetchCreateListTableData(userInfo, sympaList);
+    return response;
   }
 
 
@@ -128,27 +202,26 @@ public class AdminService {
   }
 
 
-  public void fetchIsAdmin(final Map<String, Object> map, final List<String> isMemberOfList, String adminRegex, final String uai) {
+  public boolean fetchIsAdmin(final List<String> isMemberOf, String adminRegex, final String uai) {
     // /////////////////////////////////////////////////////////
     // Determine if user is an admin or not
-
-    // Initialize to false
-    map.put("isListAdmin", false);
 
     if (StringUtils.hasText(uai)) {
       adminRegex = adminRegex.replaceAll(Pattern.quote("%UAI"), uai);
     }
 
-    if (isMemberOfList != null) {
-      for (String memberOf : isMemberOfList) {
+    if (isMemberOf != null) {
+      for (String memberOf : isMemberOf) {
         if (memberOf.matches(adminRegex)) {
-          map.put("isListAdmin", true);
-          return;
+          return true;
         }
       }
     } else {
-      log.warn("isMemberOfList is NULL!");
+      log.warn("isMemberOfList is NULL!"); //todo, exception if isMemberOf Null or empty ?
+      return false;
     }
+
+    return false;
 
   }
 

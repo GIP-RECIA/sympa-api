@@ -74,6 +74,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -159,60 +160,16 @@ public class AdminSympaController {
 
 
   @GetMapping("/lists")
-  public ResponseEntity<AdminSympaListResponseForDisplay> fetchList(@RequestBody(required = false) SympaListRequestForm sympaListRequestForm) throws Exception {
+  public ResponseEntity<AdminSympaListResponseForDisplay> fetchLists(@RequestBody(required = false) SympaListRequestForm sympaListRequestForm) throws Exception {
 
     if(Objects.isNull(sympaListRequestForm)){
       sympaListRequestForm = new SympaListRequestForm(true, true, true);
     }
 
-    Map<String,Object> map = new HashMap<>();
+    Optional<AdminSympaListResponseForDisplay> adminSympaListResponseForDisplayOptional = Optional.ofNullable(adminService.fetchLists(sympaListRequestForm));
 
-    Map<String, String> userInfo = new HashMap<>();
+    return adminSympaListResponseForDisplayOptional.map(adminSympaListResponseForDisplay -> ResponseEntity.ok().body(adminSympaListResponseForDisplay)).orElseGet(() -> ResponseEntity.internalServerError().body(null));
 
-    //enhanceUserInfo => add siren
-    userInfo.put(UserAttributesHandler.UAI_CURRENT, userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT).orElse(null));
-
-    userInfo = this.getUserAttributeMapping().enhanceUserInfo(userInfo);
-
-    String uai = userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT).orElse(null);
-
-    assert uai != null;
-
-    List<String> isMemberOf = userAttributesHandler.getAttributeList(UserAttributesHandler.IS_MEMBER_OF).orElse(null);
-    assert isMemberOf != null;
-
-
-    List<UserSympaListWithUrl> sympaList;
-
-
-    final String uid = SecurityContextHolder.getContext().getAuthentication().getName();// userInfo.get(UserInfoService.getPortalUidAttribute());
-
-    Assert.hasText(uid, "UID shouldn't be empty !");
-    Assert.hasText(uai, "UAI shouldn't be empty !");
-
-    map.put("uai", uai);
-
-    //Filter the user lists to make sure we only display lists that are in the current establishment.  This
-    //is done by comparing the domain of the list address (after the @).
-    //As domains are 1 to 1 with establishments
-    //this can be used to tell what lists belong to which establishment.
-    sympaList = this.getDomainService().getWhich(this.formToCriterion.formToCriterion(sympaListRequestForm), false);
-
-    List<String> isMemberOfList = userAttributesHandler.getAttributeList(UserAttributesHandler.IS_MEMBER_OF).orElse(null);
-
-    try {
-      this.adminService.fetchIsAdmin(map, isMemberOfList, this.ldapPerson.getAdminRegex(), uai);
-    } catch (Exception e) {
-      log.error("exception during fetchIsAdmin", e);
-    }
-
-    if (Boolean.TRUE.equals(map.get("isListAdmin"))) {
-      AdminSympaListResponseForDisplay response = this.adminService.fetchCreateListTableData(userInfo, sympaList);
-      return ResponseEntity.ok().body(response);
-
-    }
-
-    return ResponseEntity.internalServerError().body(null);
   }
 
   @PostMapping("/createOrUpdateListFormData")
