@@ -36,6 +36,7 @@ This project includes:
   error-prone annotations under Apache 2.0
   Hibernate Commons Annotations under GNU Library General Public License v2.1 or later
   Hibernate ORM - hibernate-core under GNU Library General Public License v2.1 or later
+  Hibernate Validator Engine under Apache License 2.0
   HikariCP under The Apache Software License, Version 2.0
   IntelliJ IDEA Annotations under The Apache Software License, Version 2.0
   istack common utility code runtime under Eclipse Distribution License - v 1.0
@@ -107,6 +108,7 @@ This project includes:
   spring-boot-starter-logging under Apache License, Version 2.0
   spring-boot-starter-security under Apache License, Version 2.0
   spring-boot-starter-tomcat under Apache License, Version 2.0
+  spring-boot-starter-validation under Apache License, Version 2.0
   spring-boot-starter-web under Apache License, Version 2.0
   spring-ldap-core under Apache License, Version 2.0
   spring-security-cas under Apache License, Version 2.0
