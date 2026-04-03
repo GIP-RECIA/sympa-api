@@ -44,19 +44,25 @@ import fr.recia.sympaApi.utils.UserAttributesHandler;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.client.RestTemplate;
 import reactor.util.annotation.Nullable;
 
 import javax.annotation.PostConstruct;
 import java.math.BigInteger;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -127,6 +133,27 @@ public class AdminService {
 
   @Autowired
   private SessionAttributesHandler sessionAttributesHandler;
+
+  @Autowired
+  private RestTemplate restTemplate;
+
+  private final Pattern operationPattern = Pattern.compile(".*operation=([^&]*).*");
+
+
+  /**
+   * Base of error messages for list creation.
+   */
+  private static final String CREATE_ERROR_MSG_BASE = "modal.response.create";
+
+  /**
+   * Base of error messages for list modification.
+   */
+  private static final String UPDATE_ERROR_MSG_BASE = "modal.response.update";
+
+  /**
+   * Base of error messages for list closing.
+   */
+  private static final String CLOSE_ERROR_MSG_BASE = "modal.response.close";
 
   Cache cache;
 
@@ -404,5 +431,74 @@ public class AdminService {
 
     return response;
   }
+  @Nullable
+  public String errorCodeToMessageKey(String errorCode, String query) {
+    //Match a regular expression to determine if this is an error code in the
+    //form Digit,CODE
+    Pattern p = Pattern.compile("(\\d),(.*)");
+    Matcher m = p.matcher(errorCode);
+    if (m.matches()) {
+      String errorCodeNumber = m.group(1);
+      String errorCodeText = m.group(2).toLowerCase();
+
+      //***Remove any (s) from the error code as ( ) are not valid characters in a resource key***
+      errorCodeText = errorCodeText.replaceAll(Pattern.quote("(s)"), "");
+      final String baseErrorMsg = this.findErrorMessageBase(query);
+      if (Strings.isNotEmpty(baseErrorMsg)) {
+
+        //Build a resource key in order to display a translated message
+        String errorMessageKey = baseErrorMsg + ".failure."
+          + errorCodeNumber + "." + errorCodeText;
+        log.debug("errorMessageKey: {}", errorMessageKey);
+        if (Strings.isNotEmpty(baseErrorMsg)) {
+          return errorMessageKey;
+        }
+        //0 means success, anything else, return an error code to let the ajax handler know something is amiss
+
+      }
+    }
+    return null;
+  }
+
+  public String postToSympaRemote(String sympaRemoteEndpointUrl, String query)  {
+    URI uri = URI.create(sympaRemoteEndpointUrl);
+    String url = uri.toString();
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+    HttpEntity<String> request = new HttpEntity<>(query, headers);
+
+    log.debug("Posting querystring [" + query + "]");
+    ResponseEntity<String> response = restTemplate.postForEntity(
+      url,
+      request,
+      String.class
+    );
+
+    log.debug("postToSympaRemote response statys code: {}", response.getStatusCode());
+    String errorCode = response.getBody();
+    log.debug("postToSympaRemote response body: {}", errorCode);
+    return errorCode;
+  }
+
+
+  public String findErrorMessageBase(final String queryString) {
+    String baseErrorMsg = null;
+    Matcher opMatcher = this.operationPattern.matcher(queryString);
+    if (opMatcher.find()) {
+      final String operation = opMatcher.group(1);
+      if ("CREATE".equals(operation)) {
+        baseErrorMsg = CREATE_ERROR_MSG_BASE;
+      } else if ("UPDATE".equals(operation)) {
+        baseErrorMsg = UPDATE_ERROR_MSG_BASE;
+      } else if ("CLOSE".equals(operation)) {
+        baseErrorMsg = CLOSE_ERROR_MSG_BASE;
+      }
+    }
+    return baseErrorMsg;
+  }
+
+
 
 }

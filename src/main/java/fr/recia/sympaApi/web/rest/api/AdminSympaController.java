@@ -244,10 +244,10 @@ public class AdminSympaController {
 
     log.debug("Connecting to SympaRemote with the url [" + sympaRemoteEndpointUrl + "]");
 
-    String errorCode = postToSympaRemote(sympaRemoteEndpointUrl, queryCreatedFromInputs);
+    String errorCode = adminService.postToSympaRemote(sympaRemoteEndpointUrl, queryCreatedFromInputs);
 
     if(Objects.nonNull(errorCode)){
-      responseMap.put("messageKey", errorCodeToMessageKey(errorCode, queryCreatedFromInputs));
+      responseMap.put("messageKey", adminService.errorCodeToMessageKey(errorCode, queryCreatedFromInputs));
       if(responseMap.get("messageKey").contains("0")){
         return ResponseEntity.internalServerError().body(responseMap);
       }
@@ -298,10 +298,10 @@ public class AdminSympaController {
     final String sympaRemoteEndpointUrl = this.retrieveSympaRemoteEndpointUrl();
     this.log.debug("Connecting to SympaRemote with the url [" + sympaRemoteEndpointUrl + "]");
 
-    String errorCode = postToSympaRemote(sympaRemoteEndpointUrl, queryCreatedFromInputs);
+    String errorCode = adminService.postToSympaRemote(sympaRemoteEndpointUrl, queryCreatedFromInputs);
 
     if(Objects.nonNull(errorCode)){
-     responseMap.put("messageKey", errorCodeToMessageKey(errorCode, queryCreatedFromInputs));
+     responseMap.put("messageKey", adminService.errorCodeToMessageKey(errorCode, queryCreatedFromInputs));
      if(responseMap.get("messageKey").contains("0")){
        return ResponseEntity.internalServerError().body(responseMap);
      }
@@ -309,56 +309,7 @@ public class AdminSympaController {
     return ResponseEntity.ok(responseMap);
   }
 
-  @Nullable
-  private String errorCodeToMessageKey(String errorCode, String query) {
-    //Match a regular expression to determine if this is an error code in the
-    //form Digit,CODE
-    Pattern p = Pattern.compile("(\\d),(.*)");
-    Matcher m = p.matcher(errorCode);
-    if (m.matches()) {
-      String errorCodeNumber = m.group(1);
-      String errorCodeText = m.group(2).toLowerCase();
 
-      //***Remove any (s) from the error code as ( ) are not valid characters in a resource key***
-      errorCodeText = errorCodeText.replaceAll(Pattern.quote("(s)"), "");
-      final String baseErrorMsg = this.findErrorMessageBase(query);
-      if (Strings.isNotEmpty(baseErrorMsg)) {
-
-        //Build a resource key in order to display a translated message
-        String errorMessageKey = baseErrorMsg + ".failure."
-          + errorCodeNumber + "." + errorCodeText;
-        log.debug("errorMessageKey: {}", errorMessageKey);
-        if (Strings.isNotEmpty(baseErrorMsg)) {
-          return errorMessageKey;
-        }
-        //0 means success, anything else, return an error code to let the ajax handler know something is amiss
-
-      }
-    }
-    return null;
-  }
-
-  private String postToSympaRemote(String sympaRemoteEndpointUrl, String query)  {
-    URI uri = URI.create(sympaRemoteEndpointUrl);
-    String url = uri.toString();
-
-    HttpHeaders headers = new HttpHeaders();
-    headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-
-    HttpEntity<String> request = new HttpEntity<>(query, headers);
-
-    log.debug("Posting querystring [" + query + "]");
-    ResponseEntity<String> response = restTemplate.postForEntity(
-      url,
-      request,
-      String.class
-    );
-
-    log.debug("postToSympaRemote response statys code: {}", response.getStatusCode());
-    String errorCode = response.getBody();
-    log.debug("postToSympaRemote response body: {}", errorCode);
-    return errorCode;
-  }
 
   final static String createListAdditionalGroupsCacheKey = "createListAdditionalGroupsCache";
 
