@@ -47,7 +47,10 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -58,16 +61,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.math.BigInteger;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -121,6 +119,9 @@ public class AdminSympaController {
 
   @Autowired
   protected RegexGroupFinder jsTreeGroupFinder;
+
+  @Autowired
+  private RestTemplate restTemplate;
 
   private final Pattern operationPattern = Pattern.compile(".*operation=([^&]*).*");
 
@@ -347,90 +348,28 @@ public class AdminSympaController {
 
     responseMap.put("queryCreatedFromInputs", queryCreatedFromInputs);
 
-    try {
-      // Get SympaRemote database Id
-      final String sympaRemoteDatabaseId = this.retrieveSympaRemoteDatabaseId();
-      final String queryStringWithDbId = queryCreatedFromInputs + "&databaseId=" + sympaRemoteDatabaseId;
+    // Get SympaRemote database Id
+    final String sympaRemoteDatabaseId = this.retrieveSympaRemoteDatabaseId();
+    final String queryStringWithDbId = queryCreatedFromInputs + "&databaseId=" + sympaRemoteDatabaseId;
 
 
-      responseMap.put("sympaRemoteDatabaseId", sympaRemoteDatabaseId);
-      responseMap.put("queryStringWithDbId", queryStringWithDbId);
+    responseMap.put("sympaRemoteDatabaseId", sympaRemoteDatabaseId);
+    responseMap.put("queryStringWithDbId", queryStringWithDbId);
 
-      // Get SympaRemote endpoint URL
-      final String sympaRemoteEndpointUrl = this.retrieveSympaRemoteEndpointUrl();
-      responseMap.put("sympaRemoteEndpointUrl", sympaRemoteEndpointUrl);
-
-
-      log.debug("Connecting to SympaRemote with the url [" + sympaRemoteEndpointUrl + "]");
-      URL uri = new URL(sympaRemoteEndpointUrl);
-
-      URLConnection urlConnection = uri.openConnection();
-
-      //Use POST to hit the SympaRemote web application
-      urlConnection.setDoOutput(true);
-      OutputStreamWriter wr = new OutputStreamWriter(urlConnection.getOutputStream());
-
-      log.debug("Posting querystring [" + queryStringWithDbId + "]");
-      //Send the queryString
-      wr.write(queryStringWithDbId);
-      wr.flush();
-
-      BufferedReader in = new BufferedReader(
-        new InputStreamReader(
-          urlConnection.getInputStream()));
-      StringBuffer input = new StringBuffer();
-      String inputLine;
-
-      log.debug("create List response: ");
-      while ((inputLine = in.readLine()) != null) {
-        log.debug(inputLine);
-        input.append(inputLine);
-      }
-
-      in.close();
-      String errorCode = input.toString();
-
-      //Match a regular expression to determine if this is an error code in the
-      //form Digit,CODE
-      Pattern p = Pattern.compile("(\\d),(.*)");
-      Matcher m = p.matcher(errorCode);
-      if (m.matches()) {
-        String errorCodeNumber = m.group(1);
-        String errorCodeText = m.group(2).toLowerCase();
-
-        //***Remove any (s) from the error code as ( ) are not valid characters in a resource key***
-        errorCodeText = errorCodeText.replaceAll(Pattern.quote("(s)"), "");
-        String message = errorCodeText;
+    // Get SympaRemote endpoint URL
+    final String sympaRemoteEndpointUrl = this.retrieveSympaRemoteEndpointUrl();
+    responseMap.put("sympaRemoteEndpointUrl", sympaRemoteEndpointUrl);
 
 
-        final String baseErrorMsg = this.findErrorMessageBase(queryStringWithDbId);
-        if (Strings.isNotEmpty(baseErrorMsg)) {
-          //Build a resource key in order to display a translated message
-          String errorMessageKey = baseErrorMsg + ".failure."
-            + errorCodeNumber + "." + errorCodeText;
+    log.debug("Connecting to SympaRemote with the url [" + sympaRemoteEndpointUrl + "]");
 
-          errorMessageKey = errorMessageKey.replace('_','-');
+    String errorCode = postToSympaRemote(sympaRemoteEndpointUrl, queryCreatedFromInputs);
 
-          responseMap.put("messageKey", errorMessageKey);
-          //  message = this.context.getMessage(errorMessageKey, null, this.locale);
-        }
-
-        responseMap.put("message", message);
-
-
-        //0 means success, anything else, return an error code to let the ajax handler know something is amiss
-        if (!errorCodeNumber.equals("0")) {
-          return ResponseEntity.internalServerError().body(responseMap);
-        }
-
-        return ResponseEntity.ok(responseMap);
-      }
-
-    } catch (IOException ex) {
-      log.error("URL exception", ex);
+    if(Objects.nonNull(errorCode)){
+      return processErrorCode(errorCode, queryCreatedFromInputs);
     }
 
-    return ResponseEntity.ok().body(responseMap);
+    return ResponseEntity.ok(responseMap);
   }
 
 
@@ -439,9 +378,6 @@ public class AdminSympaController {
 
     Map<String, String> responseMap = new HashMap<>();
 
-    if (Objects.isNull(requestPayload.getListName())) {
-
-    }
 
     String listName = String.format("&listname=%s", requestPayload.getListName());
 
@@ -475,74 +411,68 @@ public class AdminSympaController {
     // --- FIN CHECK ---
 
 
-    try {
-      final String sympaRemoteEndpointUrl = this.retrieveSympaRemoteEndpointUrl();
-      this.log.debug("Connecting to SympaRemote with the url [" + sympaRemoteEndpointUrl + "]");
-      URL uri = new URL(sympaRemoteEndpointUrl);
+    final String sympaRemoteEndpointUrl = this.retrieveSympaRemoteEndpointUrl();
+    this.log.debug("Connecting to SympaRemote with the url [" + sympaRemoteEndpointUrl + "]");
 
-      URLConnection urlConnection = uri.openConnection();
+    String errorCode = postToSympaRemote(sympaRemoteEndpointUrl, queryCreatedFromInputs);
 
-      //Use POST to hit the SympaRemote web application
-      urlConnection.setDoOutput(true);
-      OutputStreamWriter wr = new OutputStreamWriter(urlConnection.getOutputStream());
-      this.log.debug("Posting querystring [" + queryCreatedFromInputs + "]");
-      //Send the queryString
-      wr.write(queryCreatedFromInputs);
-      wr.flush();
+    if(Objects.nonNull(errorCode)){
+     return processErrorCode(errorCode, queryCreatedFromInputs);
+    }
+    return ResponseEntity.ok(responseMap);
+  }
 
-      BufferedReader in = new BufferedReader(
-        new InputStreamReader(
-          urlConnection.getInputStream()));
-      StringBuffer input = new StringBuffer();
-      String inputLine;
+  private ResponseEntity<Map<String, String>> processErrorCode(String errorCode, String query) {
+    Map<String, String> responseMap = new HashMap<>();
+    //Match a regular expression to determine if this is an error code in the
+    //form Digit,CODE
+    Pattern p = Pattern.compile("(\\d),(.*)");
+    Matcher m = p.matcher(errorCode);
+    if (m.matches()) {
+      String errorCodeNumber = m.group(1);
+      String errorCodeText = m.group(2).toLowerCase();
 
-      this.log.debug("create List response: ");
-      while ((inputLine = in.readLine()) != null) {
-        this.log.debug(inputLine);
-        input.append(inputLine);
-      }
-
-      in.close();
-      String errorCode = input.toString();
-
-      //Match a regular expression to determine if this is an error code in the
-      //form Digit,CODE
-      Pattern p = Pattern.compile("(\\d),(.*)");
-      Matcher m = p.matcher(errorCode);
-      if (m.matches()) {
-        String errorCodeNumber = m.group(1);
-        String errorCodeText = m.group(2).toLowerCase();
-
-        //***Remove any (s) from the error code as ( ) are not valid characters in a resource key***
-        errorCodeText = errorCodeText.replaceAll(Pattern.quote("(s)"), "");
+      //***Remove any (s) from the error code as ( ) are not valid characters in a resource key***
+      errorCodeText = errorCodeText.replaceAll(Pattern.quote("(s)"), "");
+      final String baseErrorMsg = this.findErrorMessageBase(query);
+      if (Strings.isNotEmpty(baseErrorMsg)) {
 
         //Build a resource key in order to display a translated message
-        String errorMessageKey = CLOSE_ERROR_MSG_BASE + ".failure."
+        String errorMessageKey = baseErrorMsg + ".failure."
           + errorCodeNumber + "." + errorCodeText;
-
-        // String message = this.context.getMessage(errorMessageKey, null, this.locale);
-        responseMap.put("errorMessageKey", errorMessageKey);
-
-        log.info("");
-
+        log.debug("errorMessageKey: {}", errorMessageKey);
+        if (Strings.isNotEmpty(baseErrorMsg)) {
+          responseMap.put("errorMessageKey", errorMessageKey);
+        }
         //0 means success, anything else, return an error code to let the ajax handler know something is amiss
         if (!errorCodeNumber.equals("0")) {
-//          responseMap.put("message", message);
           return ResponseEntity.internalServerError().body(responseMap);
-          //   response.setStatus(500);
         }
-
-//        responseMap.put("message", message);
-        return ResponseEntity.ok(responseMap);
       }
-
-    } catch (MalformedURLException ex) {
-      log.error("URL exception", ex);
-    } catch (IOException ex) {
-      log.error("URL exception", ex);
     }
-
     return ResponseEntity.ok(responseMap);
+  }
+
+  private String postToSympaRemote(String sympaRemoteEndpointUrl, String query)  {
+    URI uri = URI.create(sympaRemoteEndpointUrl);
+    String url = uri.toString();
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+
+    HttpEntity<String> request = new HttpEntity<>(query, headers);
+
+    log.debug("Posting querystring [" + query + "]");
+    ResponseEntity<String> response = restTemplate.postForEntity(
+      url,
+      request,
+      String.class
+    );
+
+    log.debug("postToSympaRemote response statys code: {}", response.getStatusCode());
+    String errorCode = response.getBody();
+    log.debug("postToSympaRemote response body: {}", errorCode);
+    return errorCode;
   }
 
   final static String createListAdditionalGroupsCacheKey = "createListAdditionalGroupsCache";
