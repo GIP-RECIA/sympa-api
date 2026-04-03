@@ -182,18 +182,41 @@ public class AdminSympaController {
   @PostMapping("/createList")
   public ResponseEntity<Map<String, String>> createList(@RequestBody @Validated CreateOrUpdateListRequestPayload requestPayload) {
     String operation = "operation=CREATE"; //always in this RequestMapping
-    return createOrUpdate(requestPayload, operation);
+    String messageKey = createOrUpdate(requestPayload, operation);
+
+    if(Objects.nonNull(messageKey)) {
+      Map<String, String> responseMap = new HashMap<>();
+      responseMap.put("messageKey", messageKey);
+      if (responseMap.get("messageKey").contains("0")) {
+        return ResponseEntity.internalServerError().body(responseMap);
+      } else {
+        return ResponseEntity.ok(responseMap);
+      }
+    }
+    return ResponseEntity.ok(null);
   }
 
   @PostMapping("/updateList")
   public ResponseEntity<Map<String, String>> updateList(@RequestBody @Validated CreateOrUpdateListRequestPayload requestPayload) {
     //todo check if update cause exception if dont already exist
     String operation = "operation=UPDATE"; //always in this RequestMapping
-    return createOrUpdate(requestPayload, operation);
+    String messageKey = createOrUpdate(requestPayload, operation);
+
+    if(Objects.nonNull(messageKey)) {
+      Map<String, String> responseMap = new HashMap<>();
+      responseMap.put("messageKey", messageKey);
+      if (responseMap.get("messageKey").contains("0")) {
+        return ResponseEntity.internalServerError().body(responseMap);
+      } else {
+        return ResponseEntity.ok(responseMap);
+      }
+    }
+    return ResponseEntity.ok(null);
   }
 
 
-  public ResponseEntity<Map<String, String>> createOrUpdate(CreateOrUpdateListRequestPayload requestPayload, String operation) {
+  @Nullable
+  public String createOrUpdate(CreateOrUpdateListRequestPayload requestPayload, String operation) {
     Map<String, String> responseMap = new HashMap<>();
 
     String type = String.format("&type=%s", requestPayload.getType());   //var type = $("#createListURL_type").html() || " ";  MODEL NAME
@@ -247,13 +270,9 @@ public class AdminSympaController {
     String errorCode = adminService.postToSympaRemote(sympaRemoteEndpointUrl, queryCreatedFromInputs);
 
     if(Objects.nonNull(errorCode)){
-      responseMap.put("messageKey", adminService.errorCodeToMessageKey(errorCode, queryCreatedFromInputs));
-      if(responseMap.get("messageKey").contains("0")){
-        return ResponseEntity.internalServerError().body(responseMap);
-      }
+        return adminService.errorCodeToMessageKey(errorCode, queryCreatedFromInputs);
     }
-
-    return ResponseEntity.ok(responseMap);
+    return null;
   }
 
 
