@@ -20,16 +20,25 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.constraints.NotBlank;
+
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class CreateOrUpdateListRequestPayload {
 
-  String type;
+  @NotBlank(message = "[type] mustn't be empty")
+  String type; //todo rename to modelName ?
+
+  @NotBlank(message = "[modelId] mustn't be empty")
   String modelId;
-  String typeParam;
+
+  @NotBlank(message = "[editorsAliases] mustn't be empty")
   String editorsAliases;
+
   String editorsGroups;
+
+  String typeParam;
 
 }
