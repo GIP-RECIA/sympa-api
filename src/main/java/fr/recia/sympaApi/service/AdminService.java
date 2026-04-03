@@ -26,11 +26,13 @@ import fr.recia.sympaApi.dto.response.admin.AdminSympaListResponseForDisplay;
 import fr.recia.sympaApi.dto.response.admin.AdminSympaUpdatableList;
 import fr.recia.sympaApi.dto.response.admin.CreateOrUpdateListFormDataResponsePayload;
 import fr.recia.sympaApi.exception.IsNotAdminException;
+import fr.recia.sympaApi.groupfinder.impl.RegexGroupFinder;
 import fr.recia.sympaApi.pojo.RobotSympaConf;
 import fr.recia.sympaApi.pojo.RobotSympaInfo;
 import fr.recia.sympaApi.pojo.UserSympaListWithUrl;
 import fr.recia.sympaApi.servlet.JsCreateListRow;
 import fr.recia.sympaApi.servlet.JsCreateListTableRow;
+import fr.recia.sympaApi.servlet.JsTreeNode;
 import fr.recia.sympaApi.sympa.admin.EscoUserAttributeMapping;
 import fr.recia.sympaApi.sympa.admin.LdapFilterSourceRequest;
 import fr.recia.sympaApi.sympa.admin.LdapPerson;
@@ -73,6 +75,7 @@ import java.math.BigInteger;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -155,6 +158,9 @@ public class AdminService {
   @Autowired
   protected RobotDomaineNameResolver robotDomaineNameResolver;
 
+  @Autowired
+  protected RegexGroupFinder jsTreeGroupFinder;
+
   private final Pattern operationPattern = Pattern.compile(".*operation=([^&]*).*");
 
 
@@ -182,6 +188,104 @@ public class AdminService {
 
   final static String createListAdditionalGroupsCacheKey = "createListAdditionalGroupsCache";
 
+
+  @SuppressWarnings("unchecked")
+  public List<JsTreeNode> fetchAdditionalGroupsTree(){
+    String uai = userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT).orElseThrow();
+
+
+    List<String> additionalGroups = null;
+    Map<String, List<String>> createListAdditionalGroupsCache = null;
+
+    try {
+      //First check if we have results cached
+
+      //todo put in REDIS cache, not session cache, in case two user from the same etabs use the service before cache expiry
+      createListAdditionalGroupsCache = (Map<String, List<String>>)
+        sessionAttributesHandler.getSessionAttribute(createListAdditionalGroupsCacheKey, Map.class).orElse(null);
+
+    } catch (Exception ex) {
+      log.error("", ex);
+    }
+
+    if ((createListAdditionalGroupsCache != null)
+      && createListAdditionalGroupsCache.containsKey(uai)) {
+      additionalGroups = createListAdditionalGroupsCache.get(uai);
+      this.log.debug("Fetched additional groups from cache, size: " + additionalGroups.size());
+    }
+
+    //if the list was not in the cache, then fetch them
+    if (additionalGroups == null) {
+      //Fetch the list of available lists
+
+      // Construct user info map to call the groups finder.
+      Map<String, String> userInfo = new HashMap<String, String>();
+      String uaiUserPropertyKey = UserAttributesHandler.UAI_CURRENT;
+      userInfo.put(uaiUserPropertyKey, uai);
+
+      Collection<String> additionalGroupsColl = this.jsTreeGroupFinder.findGroupsOfEtab(userInfo);
+
+      additionalGroups = new ArrayList<>(additionalGroupsColl);
+      Collections.sort(additionalGroups);
+
+      //Stock in cache for later retrieval
+      if (createListAdditionalGroupsCache != null) {
+        createListAdditionalGroupsCache.put(uai, additionalGroups);
+      }
+    }
+
+    List<JsTreeNode> rootNodes = new ArrayList<>();
+
+    List<JsTreeNode> allNodes = new ArrayList<>();
+
+    for (String groupStr : additionalGroups) {
+      String[] levels = groupStr.split(":");
+      int lastLevel = levels.length - 1;
+      String nodeKey = "";
+      JsTreeNode previousNode = null;
+
+      for (int i = 0; i <= lastLevel; ++i) {
+        String currentLevel = levels[i];
+        nodeKey += i == 0 ? currentLevel : ":" + currentLevel;
+
+        JsTreeNode node = JsTreeNode.getMatchingNodeOnKey(allNodes, nodeKey);
+
+        if (Objects.isNull(node)) {
+          node = new JsTreeNode();
+          node.setData(currentLevel);
+          node.setNodeKey(nodeKey);
+          allNodes.add(node);
+
+          if (i == 0) {
+            rootNodes.add(node);
+          }
+          if (i != 0) {
+            previousNode.getChildren().add(node);
+          }
+        }
+
+
+        if (i == lastLevel) {
+          node.getMetadata().put("groupName", groupStr);
+          node.getAttr().put("rel", "group");
+          //si groupe remettre clé entière en nom ou recombiner dans le JS ?
+          node.setFolder(false);
+        } else {
+          node.getAttr().put("rel", "folder");
+          node.setFolder(true);
+        }
+
+        //Set the html id of the nodes.  This is needed in order for the JSTree to work properly.  Must not contain special characters as jsTree does not handle them well.
+        //As such, a hashcode is used which is unique enough and doesn't use special characters
+        node.getAttr().put("id", "nodeId" + (groupStr + i).hashCode());
+        node.setId("nodeId" + (groupStr + i).hashCode());
+
+        previousNode = node;
+      }
+
+    }
+    return rootNodes;
+  }
 
   @Nullable
   public AdminSympaListResponseForDisplay fetchLists(SympaListRequestForm sympaListRequestForm) throws Exception {
