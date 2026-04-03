@@ -15,7 +15,6 @@
  */
 package fr.recia.sympaApi.web.rest.api;
 
-import fr.recia.sympaApi.config.bean.DebugProperties;
 import fr.recia.sympaApi.config.custom.impl.UserCustomImplementation;
 import fr.recia.sympaApi.dto.request.SympaListRequestForm;
 import fr.recia.sympaApi.dto.request.admin.CloseListRequestPayload;
@@ -25,7 +24,6 @@ import fr.recia.sympaApi.dto.response.admin.AdminSympaListResponseForDisplay;
 import fr.recia.sympaApi.dto.response.admin.CreateOrUpdateListFormDataResponsePayload;
 import fr.recia.sympaApi.groupfinder.impl.RegexGroupFinder;
 import fr.recia.sympaApi.pojo.RobotSympaConf;
-import fr.recia.sympaApi.pojo.RobotSympaInfo;
 import fr.recia.sympaApi.service.AdminService;
 import fr.recia.sympaApi.service.DomainService;
 import fr.recia.sympaApi.servlet.JsList;
@@ -33,9 +31,6 @@ import fr.recia.sympaApi.sympa.admin.EscoUserAttributeMapping;
 import fr.recia.sympaApi.sympa.admin.LdapFilterSourceRequest;
 import fr.recia.sympaApi.sympa.admin.LdapPerson;
 import fr.recia.sympaApi.sympa.admin.RobotDomaineNameResolver;
-import fr.recia.sympaApi.sympa.listfinder.model.Model;
-import fr.recia.sympaApi.sympa.listfinder.model.ModelRequest;
-import fr.recia.sympaApi.sympa.listfinder.model.PreparedRequest;
 import fr.recia.sympaApi.sympa.listfinder.services.HibernateDaoServiceImpl;
 import fr.recia.sympaApi.utils.FormToCriterion;
 import fr.recia.sympaApi.utils.SessionAttributesHandler;
@@ -59,7 +54,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.util.annotation.Nullable;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -195,7 +189,7 @@ public class AdminSympaController {
     String type = String.format("&type=%s", requestPayload.getType());   //var type = $("#createListURL_type").html() || " ";  MODEL NAME
 
     //add check of mandatory ?
-    List<String> requiredAliases = allMandatoryPreparedRequestToStringList(requestPayload.getModelId()); // todo fetch required list
+    List<String> requiredAliases = adminService.allMandatoryPreparedRequestToStringList(requestPayload.getModelId()); // todo fetch required list
 
     log.debug("Required aliases list {}", requiredAliases);
     if (!requiredAliases.isEmpty()) {
@@ -227,7 +221,7 @@ public class AdminSympaController {
     responseMap.put("queryCreatedFromInputs", queryCreatedFromInputs);
 
     // Get SympaRemote database Id
-    final String sympaRemoteDatabaseId = this.retrieveSympaRemoteDatabaseId();
+    final String sympaRemoteDatabaseId = adminService.retrieveSympaRemoteDatabaseId();
     final String queryStringWithDbId = queryCreatedFromInputs + "&databaseId=" + sympaRemoteDatabaseId;
 
 
@@ -235,7 +229,7 @@ public class AdminSympaController {
     responseMap.put("queryStringWithDbId", queryStringWithDbId);
 
     // Get SympaRemote endpoint URL
-    final String sympaRemoteEndpointUrl = this.retrieveSympaRemoteEndpointUrl();
+    final String sympaRemoteEndpointUrl = adminService.retrieveSympaRemoteEndpointUrl();
     responseMap.put("sympaRemoteEndpointUrl", sympaRemoteEndpointUrl);
 
 
@@ -288,7 +282,7 @@ public class AdminSympaController {
     // --- FIN CHECK ---
 
 
-    final String sympaRemoteEndpointUrl = this.retrieveSympaRemoteEndpointUrl();
+    final String sympaRemoteEndpointUrl = this.adminService.retrieveSympaRemoteEndpointUrl();
     this.log.debug("Connecting to SympaRemote with the url [" + sympaRemoteEndpointUrl + "]");
 
     String errorCode = adminService.postToSympaRemote(sympaRemoteEndpointUrl, queryCreatedFromInputs);
@@ -408,61 +402,9 @@ public class AdminSympaController {
   }
 
 
-  @Autowired
-  DebugProperties debugProperties;
-
-  protected String retrieveSympaRemoteEndpointUrl() {
-
-    //todo redirect temporary to test sympa remote
-
-    if(debugProperties.isUseTestSympaRemote()){
-      return debugProperties.getTestSympaRemoteUri();
-    }
-
-    RobotSympaInfo rsi = getRobotInfo();
-    String sympaRemoteEndpointUrl = null;
-    if (rsi != null) {
-      sympaRemoteEndpointUrl = rsi.getSympaRemoteUrl();
-    } else {
-      log.debug("RobotSympaInfo est null");
-    }
-    return sympaRemoteEndpointUrl;
-  }
-
-  /**
-   * Retrieve the Sympa Remote endpoint URL from the HTTP session. or userInfo
-   */
-  protected String retrieveSympaRemoteDatabaseId() {
-    RobotSympaInfo rsi = getRobotInfo();
-    String sympaRemoteDatabaseId = null;
-    if (rsi != null) {
-      sympaRemoteDatabaseId = rsi.getSympaRemoteDatabaseId();
-    } else {
-      log.debug("RobotSympaInfo est null");
-    }
-    return sympaRemoteDatabaseId;
-  }
 
 
 
-  protected RobotSympaInfo getRobotInfo() {
-    return robotSympaConf.getRobotSympaInfoByUai(userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT).orElseThrow(), userAttributesHandler.getAttributeList(UserAttributesHandler.IS_MEMBER_OF).orElseThrow(), true);
-  }
-
-  protected List<String> allMandatoryPreparedRequestToStringList(String modelId) {
-    List<PreparedRequest> listPreparedRequest = this.daoService.getAllPreparedRequests();
-    List<String> idToStringList = new ArrayList<>();
-    Model model = this.daoService.getModel(new BigInteger(modelId));
-    for (PreparedRequest preparedRequest : listPreparedRequest) {
-      ModelRequest modelRequest = this.daoService.getModelRequest(model, preparedRequest);
-      if (modelRequest != null) {
-        if (modelRequest.getCategoryAsEnum() == ModelRequest.ModelRequestRequired.MANDATORY) {
-          idToStringList.add(preparedRequest.getId().toString());
-        }
-      }
-    }
-    return idToStringList;
-  }
 
 
 

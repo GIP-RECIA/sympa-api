@@ -16,12 +16,15 @@
 package fr.recia.sympaApi.service;
 
 import fr.recia.sympaApi.config.bean.CacheProperties;
+import fr.recia.sympaApi.config.bean.DebugProperties;
 import fr.recia.sympaApi.dto.request.SympaListRequestForm;
 import fr.recia.sympaApi.dto.request.admin.CreateOrUpdateListFormDataRequestPayload;
 import fr.recia.sympaApi.dto.response.admin.AdminSympaCreatableList;
 import fr.recia.sympaApi.dto.response.admin.AdminSympaListResponseForDisplay;
 import fr.recia.sympaApi.dto.response.admin.AdminSympaUpdatableList;
 import fr.recia.sympaApi.dto.response.admin.CreateOrUpdateListFormDataResponsePayload;
+import fr.recia.sympaApi.pojo.RobotSympaConf;
+import fr.recia.sympaApi.pojo.RobotSympaInfo;
 import fr.recia.sympaApi.pojo.UserSympaListWithUrl;
 import fr.recia.sympaApi.servlet.JsCreateListRow;
 import fr.recia.sympaApi.servlet.JsCreateListTableRow;
@@ -136,6 +139,12 @@ public class AdminService {
 
   @Autowired
   private RestTemplate restTemplate;
+
+  @Autowired
+  private RobotSympaConf robotSympaConf;
+
+  @Autowired
+  DebugProperties debugProperties;
 
   private final Pattern operationPattern = Pattern.compile(".*operation=([^&]*).*");
 
@@ -497,6 +506,59 @@ public class AdminService {
       }
     }
     return baseErrorMsg;
+  }
+
+  public String retrieveSympaRemoteEndpointUrl() {
+
+    //todo redirect temporary to test sympa remote
+
+    if(debugProperties.isUseTestSympaRemote()){
+      return debugProperties.getTestSympaRemoteUri();
+    }
+
+    RobotSympaInfo rsi = getRobotInfo();
+    String sympaRemoteEndpointUrl = null;
+    if (rsi != null) {
+      sympaRemoteEndpointUrl = rsi.getSympaRemoteUrl();
+    } else {
+      log.debug("RobotSympaInfo est null");
+    }
+    return sympaRemoteEndpointUrl;
+  }
+
+  /**
+   * Retrieve the Sympa Remote endpoint URL from the HTTP session. or userInfo
+   */
+  public String retrieveSympaRemoteDatabaseId() {
+    RobotSympaInfo rsi = getRobotInfo();
+    String sympaRemoteDatabaseId = null;
+    if (rsi != null) {
+      sympaRemoteDatabaseId = rsi.getSympaRemoteDatabaseId();
+    } else {
+      log.debug("RobotSympaInfo est null");
+    }
+    return sympaRemoteDatabaseId;
+  }
+
+
+
+  public RobotSympaInfo getRobotInfo() {
+    return robotSympaConf.getRobotSympaInfoByUai(userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT).orElseThrow(), userAttributesHandler.getAttributeList(UserAttributesHandler.IS_MEMBER_OF).orElseThrow(), true);
+  }
+
+  public List<String> allMandatoryPreparedRequestToStringList(String modelId) {
+    List<PreparedRequest> listPreparedRequest = this.daoService.getAllPreparedRequests();
+    List<String> idToStringList = new ArrayList<>();
+    Model model = this.daoService.getModel(new BigInteger(modelId));
+    for (PreparedRequest preparedRequest : listPreparedRequest) {
+      ModelRequest modelRequest = this.daoService.getModelRequest(model, preparedRequest);
+      if (modelRequest != null) {
+        if (modelRequest.getCategoryAsEnum() == ModelRequest.ModelRequestRequired.MANDATORY) {
+          idToStringList.add(preparedRequest.getId().toString());
+        }
+      }
+    }
+    return idToStringList;
   }
 
 
