@@ -22,7 +22,6 @@ import fr.recia.sympaApi.dto.request.admin.CreateOrUpdateListRequestPayload;
 import fr.recia.sympaApi.dto.request.admin.CreateOrUpdateListFormDataRequestPayload;
 import fr.recia.sympaApi.dto.response.admin.AdminSympaListResponseForDisplay;
 import fr.recia.sympaApi.dto.response.admin.CreateOrUpdateListFormDataResponsePayload;
-import fr.recia.sympaApi.groupfinder.impl.RegexGroupFinder;
 import fr.recia.sympaApi.pojo.RobotSympaConf;
 import fr.recia.sympaApi.service.AdminService;
 import fr.recia.sympaApi.service.DomainService;
@@ -50,9 +49,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -197,11 +193,6 @@ public class AdminSympaController {
 
   }
 
-
-
-  final static String createListAdditionalGroupsCacheKey = "createListAdditionalGroupsCache";
-
-  @SuppressWarnings("unchecked")
   @GetMapping("/additionalGroupsTree")
   public @ResponseBody ResponseEntity<List<JsTreeNode>> fetchAdditionalGroupsAsTree() {
     return ResponseEntity.ok(adminService.fetchAdditionalGroupsTree());
