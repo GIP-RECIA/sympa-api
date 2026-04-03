@@ -178,6 +178,7 @@ public class AdminSympaController {
         return ResponseEntity.ok(responseMap);
       }
     }
+
     return ResponseEntity.ok(null);
   }
 
@@ -186,7 +187,7 @@ public class AdminSympaController {
 
 
   @PostMapping("/closeList")
-  public @ResponseBody ResponseEntity<Map<String, String>> doCloseList(@RequestBody CloseListRequestPayload requestPayload) throws Exception {
+  public @ResponseBody ResponseEntity<Map<String, String>> closeList(@RequestBody CloseListRequestPayload requestPayload) throws Exception {
 
     Map<String, String> responseMap = new HashMap<>();
 
