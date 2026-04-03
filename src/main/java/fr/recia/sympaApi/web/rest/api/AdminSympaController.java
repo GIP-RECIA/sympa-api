@@ -208,8 +208,8 @@ public class AdminSympaController {
   final static String createListAdditionalGroupsCacheKey = "createListAdditionalGroupsCache";
 
   @SuppressWarnings("unchecked")
-  @GetMapping("/jstreeData")
-  public @ResponseBody ResponseEntity<List<JsList>> jstreeData() {
+  @GetMapping("/additionalGroupsTree")
+  public @ResponseBody ResponseEntity<List<JsList>> fetchAdditionalGroupsAsTree() {
 
     String uai = userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT).orElseThrow();
 
