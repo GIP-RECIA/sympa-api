@@ -24,6 +24,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.RedisSerializationContext;
 
 import java.time.Duration;
 import java.util.HashMap;
@@ -44,7 +46,12 @@ public class RedisCacheConfig {
     //  default TTL
     RedisCacheConfiguration defaultConfig = RedisCacheConfiguration.defaultCacheConfig()
       .computePrefixWith(cacheName -> redisProperties.getCachePrefix() + "::" + cacheName + "::")
-      .entryTtl(Duration.ofMinutes(cacheProperties.getDefaultDurationHours()));
+      .entryTtl(Duration.ofMinutes(cacheProperties.getDefaultDurationHours()))
+      .serializeValuesWith(
+        RedisSerializationContext.SerializationPair.fromSerializer(
+          new GenericJackson2JsonRedisSerializer()
+        )
+      );
 
     // TTL per key
     Map<String, RedisCacheConfiguration> cacheConfigs = new HashMap<>();

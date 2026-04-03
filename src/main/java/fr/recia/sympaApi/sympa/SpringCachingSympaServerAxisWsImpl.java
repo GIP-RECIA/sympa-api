@@ -15,28 +15,25 @@
  */
 package fr.recia.sympaApi.sympa;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import fr.recia.sympaApi.config.bean.CacheProperties;
 import fr.recia.sympaApi.pojo.CreateListInfo;
 import fr.recia.sympaApi.pojo.SympaCredential;
 import fr.recia.sympaApi.pojo.SympaRobot;
 import fr.recia.sympaApi.pojo.UserSympaListWithUrl;
 import fr.recia.sympaApi.service.CASCredentialRetrieverService;
+import fr.recia.sympaApi.utils.CacheHandler;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.axis.transport.http.HTTPConstants;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.sympa.client.ws.axis.v544.SOAPStub;
 import org.sympa.client.ws.axis.v544.SympaPort_PortType;
-import org.sympa.client.ws.axis.v544.SympaSOAP;
 import org.sympa.client.ws.axis.v544.SympaSOAPLocator;
 
 import javax.xml.rpc.ServiceException;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -47,7 +44,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 
 @Slf4j
@@ -55,9 +51,6 @@ import java.util.Set;
 @Setter
 public class SpringCachingSympaServerAxisWsImpl {
 
-  private CacheManager cacheManager = null;
-
-  private Cache cache = null;
 
   private Map<SympaRobot, SympaPort_PortType> portCache = new HashMap<>(8);
 
@@ -102,8 +95,9 @@ public class SpringCachingSympaServerAxisWsImpl {
 
   private CASCredentialRetrieverService credentialRetriever;
 
+  private CacheHandler cacheHandler;
+
   public void init() {
-    cache = cacheManager.getCache(cacheProperties.getSpringCachingSympaAxisServerCacheName());
   }
 
   public CreateListInfo getCreateListInfo() {
@@ -337,47 +331,24 @@ public class SpringCachingSympaServerAxisWsImpl {
   @SuppressWarnings("unchecked")
   public List<UserSympaListWithUrl> getWhich(SympaRobot robot) {
     // cacheKey = serverInstance/methodName/useridentifier
+    String cacheName = cacheProperties.getSpringCachingSympaAxisServerCacheName();
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     String cacheKey = String.format("%1$s;%2$s;%3$s", getName(),"getWhich",authentication.getName());
     log.debug("cache key = "+cacheKey);
-    List<UserSympaListWithUrl> cached = getCachedValue(cacheKey);
+    List<UserSympaListWithUrl> cached = cacheHandler.getFromCache(cacheName, cacheKey, new TypeReference<>() {
+    });
     if (cached != null)  {
       log.info("return from cache {}", cached.subList(0,5) );
       return cached;
     }
     List<UserSympaListWithUrl> result = getWhichCacheless(robot);
-    setCachedValue(cacheKey,result);
+     cacheHandler.putObjectInCache(cacheName, cacheKey, result);
     return result;
-  }
-
-  private void setCachedValue(String cacheKey, List<UserSympaListWithUrl> toCache) {
-    log.info("setCachedValue cache is null ? = {}", cache == null);
-    cache.put(cacheKey, toCache);
-  }
-
-  @SuppressWarnings("unchecked")
-  private List<UserSympaListWithUrl> getCachedValue(String cacheKey) {
-    Cache.ValueWrapper wrapper = cache.get(cacheKey);
-    if (wrapper == null) {
-      log.debug("no cache value for key {}", cacheKey);
-      return null;
-    }
-    Object result = wrapper.get();
-    log.debug("having cached value for key {}", cacheKey);
-
-    try {
-      return (List<UserSympaListWithUrl>) result;
-    } catch (Exception e) {
-      log.error("Could not cast cached value to List<UserSympaListWithUrl>, returning null instead");
-      return null;
-    }
   }
 
   @Override
   public String toString() {
     return "SpringCachingSympaServerAxisWsImpl{" +
-      "cacheManager=" + cacheManager +
-      ", cache=" + cache +
       ", portCache=" + portCache +
       ", name='" + name + '\'' +
       ", homeUrl='" + homeUrl + '\'' +

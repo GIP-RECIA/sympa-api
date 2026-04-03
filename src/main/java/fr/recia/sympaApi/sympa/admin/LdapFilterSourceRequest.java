@@ -15,21 +15,20 @@
  */
 package fr.recia.sympaApi.sympa.admin;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import fr.recia.sympaApi.config.bean.CacheProperties;
 import fr.recia.sympaApi.sympa.listfinder.model.PreparedRequest;
+import fr.recia.sympaApi.utils.CacheHandler;
 import fr.recia.sympaApi.utils.LdapUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
 import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.LdapTemplate;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
@@ -86,20 +85,15 @@ public class LdapFilterSourceRequest implements Serializable {
   @Autowired
 	private LdapTemplate ldapTemplate;
 
-  @Autowired
-  private CacheManager cacheManager;
 
   @Autowired
   private CacheProperties cacheProperties;
+  
+  @Autowired
+  private CacheHandler cacheHandler;
 
-  private Cache cache;
+  
 
-  @PostConstruct
-  public void postConstruct() {
-
-    cache = cacheManager.getCache(cacheProperties.getLdapFilterRequestCacheName());
-
-  }
 	static private String replaceAll(String in, String uai, String siren) {
 		String res = in;
 		if (uai != null) {
@@ -142,12 +136,13 @@ public class LdapFilterSourceRequest implements Serializable {
 					// on test si on a déjà fait la requete
 				String request = String.format("%s:%s", filter, base);
 
-        Cache.ValueWrapper vw = cache.get(request);
+
+        String nameFromCache = cacheHandler.getFromCache(cacheProperties.getLdapFilterRequestCacheName(), request, new TypeReference<>() {});
 
         // si trouvé dans le cache
-        if(Objects.nonNull(vw)&& Objects.nonNull(vw.get()) && vw.get() instanceof String){
-          log.debug("LdapFilterSourceRequest retrieved name from cache {};{}",request, name);
-          name = (String) vw.get();
+        if(Objects.nonNull(nameFromCache)){
+
+          name = nameFromCache;
         }else {
           // sinon on interroge le ldap
           log.debug("LdapFilterSourceRequest PreparedRequest source="  + source+";");
@@ -180,7 +175,7 @@ public class LdapFilterSourceRequest implements Serializable {
           // le nom calcule peut etre vide
           if(Objects.nonNull(name) && !name.isEmpty()){
             log.debug("LdapFilterSourceRequest put name in cache {};{}",request, name);
-            cache.put(request, name);
+            cacheHandler.putObjectInCache(cacheProperties.getLdapFilterRequestCacheName(), request, name );
           }
         }
 			} else {

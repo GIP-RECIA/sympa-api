@@ -21,13 +21,13 @@ import fr.recia.sympaApi.config.bean.ServerListMapProperties;
 import fr.recia.sympaApi.pojo.RobotSympaConf;
 import fr.recia.sympaApi.pojo.RobotSympaInfo;
 import fr.recia.sympaApi.service.CASCredentialRetrieverService;
+import fr.recia.sympaApi.utils.CacheHandler;
 import fr.recia.sympaApi.utils.SessionAttributesHandler;
 import fr.recia.sympaApi.utils.UserAttributesHandler;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.cache.CacheManager;
 
 import java.util.HashMap;
 import java.util.List;
@@ -39,15 +39,15 @@ import java.util.Objects;
 @NoArgsConstructor // only for deserialization
 public class ServerListMap extends HashMap<String, SpringCachingSympaServerAxisWsImpl> {
 
-  public ServerListMap(RobotSympaConf robotSympaConf, ServerListMapProperties serverListMapProperties, CASCredentialRetrieverService casCredentialRetriever, UserAttributesHandler userAttributesHandler, SessionAttributesHandler sessionAttributesHandler, CacheManager cacheManager, CasProperties casProperties, CacheProperties cacheProperties) throws Exception {
+  public ServerListMap(RobotSympaConf robotSympaConf, ServerListMapProperties serverListMapProperties, CASCredentialRetrieverService casCredentialRetriever, UserAttributesHandler userAttributesHandler, SessionAttributesHandler sessionAttributesHandler, CasProperties casProperties, CacheProperties cacheProperties, CacheHandler cacheHandler) throws Exception {
     this.robotSympaConf = robotSympaConf;
     this.serverListMapProperties = serverListMapProperties;
     this.credentialRetriever = casCredentialRetriever;
     this.userAttributesHandler = userAttributesHandler;
     this.sessionAttributesHandler = sessionAttributesHandler;
-    this.cacheManager = cacheManager;
     this.casProperties = casProperties;
     this.cacheProperties = cacheProperties;
+    this.cacheHandler = cacheHandler;
 
     //no use of post construct since it must only be invoked at the "true" creation (when deserialized from session it will use the no args constructor)
     this.init();
@@ -67,7 +67,7 @@ public class ServerListMap extends HashMap<String, SpringCachingSympaServerAxisW
 
   private transient CasProperties  casProperties;
 
-  private transient CacheManager cacheManager ;
+  private transient CacheHandler cacheHandler ;
 
   private transient CacheProperties cacheProperties;
 
@@ -133,9 +133,9 @@ public class ServerListMap extends HashMap<String, SpringCachingSympaServerAxisW
 				server.setEndPointUrl(rsi.getSoapUrl());
 				server.setTimeout(timeout);
 				server.setCredentialRetriever(getCredentialRetriever());
-				server.setCacheManager(getCacheManager());
 				server.setNewListForRoles(serverListMapProperties.getNewListForRoles());
         server.setCacheProperties(getCacheProperties());
+        server.setCacheHandler(getCacheHandler());
 				server.init();
 
         log.info("created server {} in creeSympaServer ", server);

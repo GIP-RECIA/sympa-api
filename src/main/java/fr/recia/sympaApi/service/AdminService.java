@@ -15,6 +15,7 @@
  */
 package fr.recia.sympaApi.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import fr.recia.sympaApi.config.bean.CacheProperties;
 import fr.recia.sympaApi.config.bean.DebugProperties;
 import fr.recia.sympaApi.dto.request.SympaListRequestForm;
@@ -46,6 +47,7 @@ import fr.recia.sympaApi.sympa.listfinder.model.ModelSubscribers;
 import fr.recia.sympaApi.sympa.listfinder.model.PreparedRequest;
 import fr.recia.sympaApi.sympa.listfinder.services.AvailableListsFinderBasicImpl;
 import fr.recia.sympaApi.sympa.listfinder.services.HibernateDaoServiceImpl;
+import fr.recia.sympaApi.utils.CacheHandler;
 import fr.recia.sympaApi.utils.FormToCriterion;
 import fr.recia.sympaApi.utils.SessionAttributesHandler;
 import fr.recia.sympaApi.utils.UserAttributesHandler;
@@ -54,8 +56,6 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -70,7 +70,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.util.annotation.Nullable;
 
-import javax.annotation.PostConstruct;
 import java.math.BigInteger;
 import java.net.URI;
 import java.util.ArrayList;
@@ -124,9 +123,7 @@ public class AdminService {
 
   @Autowired
   UserAttributesHandler userAttributesHandler;
-
-  @Autowired
-  CacheManager cacheManager;
+;
 
   @Autowired
   DomainService domainService;
@@ -156,6 +153,9 @@ public class AdminService {
   DebugProperties debugProperties;
 
   @Autowired
+  private CacheHandler cacheHandler;
+
+  @Autowired
   protected RobotDomaineNameResolver robotDomaineNameResolver;
 
   @Autowired
@@ -179,12 +179,6 @@ public class AdminService {
    */
   private static final String CLOSE_ERROR_MSG_BASE = "modal.response.close";
 
-  Cache cache;
-
-  @PostConstruct
-  public void init() {
-    cache = cacheManager.getCache(cacheProperties.getAdminServiceCacheName());
-  }
 
   final static String createListAdditionalGroupsCacheKey = "createListAdditionalGroupsCache";
 
@@ -587,21 +581,15 @@ public class AdminService {
 
     String uai = userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT).orElseThrow();
 
-    Cache.ValueWrapper vw = cache.get(uai);
-    if(Objects.nonNull(vw) && Objects.nonNull(vw.get()) && (vw.get() instanceof AvailableMailingListsFound)){
-      availableLists = (AvailableMailingListsFound) vw.get();
-      if(Objects.isNull(availableLists)){
-        log.warn("availableLists from cache is null despite having key");
-      }
-    }
 
-    if(Objects.isNull(availableLists)){
+    AvailableMailingListsFound availableMailingListsFound = cacheHandler.getFromCache(cacheProperties.getAdminServiceCacheName(), uai, new TypeReference<>() {
+    });
+
+    if(Objects.nonNull(availableMailingListsFound)){
+      availableLists = availableMailingListsFound;
+    } else {
       availableLists = this.availableListFinder.getAvailableAndNonExistingLists(userInfo, listMailingListModels);
-      try {
-        cache.put(uai, availableLists);
-      } catch (Exception e) {
-        log.error("Could not put availableLists in cache for uai: {}", uai);
-      }
+        cacheHandler.putObjectInCache(cacheProperties.getAdminServiceCacheName(), uai, availableLists);
     }
 
     final Collection<IMailingList> creatableLists = availableLists.getCreatableLists();

@@ -21,6 +21,7 @@ package fr.recia.sympaApi.sympa.listfinder.model;
 
 import fr.recia.sympaApi.sympa.listfinder.IMailingList;
 
+import java.io.Serializable;
 import java.util.Collection;
 
 /**
@@ -29,7 +30,9 @@ import java.util.Collection;
  * @author GIP RECIA 2013 - Maxime BOSSARD.
  *
  */
-public class AvailableMailingListsFound {
+public class AvailableMailingListsFound  implements Serializable {
+
+	private static final long serialVersionUID = 2955582247625647743L;
 
 	private Collection<IMailingList> creatableLists;
 

@@ -26,12 +26,12 @@ import fr.recia.sympaApi.pojo.UserSympaList;
 import fr.recia.sympaApi.pojo.UserSympaListWithUrl;
 import fr.recia.sympaApi.sympa.ServerListMap;
 import fr.recia.sympaApi.sympa.SpringCachingSympaServerAxisWsImpl;
+import fr.recia.sympaApi.utils.CacheHandler;
 import fr.recia.sympaApi.utils.SessionAttributesHandler;
 import fr.recia.sympaApi.utils.UserAttributesHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.DirectFieldAccessor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -70,13 +70,13 @@ public class DomainService {
   private UserAttributesHandler userAttributesHandler;
 
   @Autowired
-  private CacheManager cacheManager ;
-
-  @Autowired
   private CasProperties casProperties ;
 
   @Autowired
   CacheProperties cacheProperties;
+
+  @Autowired
+  CacheHandler cacheHandler;
 
   private final String SERVER_LIST_KEY = "serverList";
 
@@ -86,16 +86,16 @@ public class DomainService {
       // re-inject because these attributes are not puts in cache
       optional.get().setUserAttributesHandler(this.userAttributesHandler);
       optional.get().setSessionAttributesHandler(this.sessionAttributesHandler);
-      optional.get().setCacheManager(this.cacheManager);
       optional.get().setRobotSympaConf(this.robotSympaConf);
       optional.get().setCredentialRetriever(this.credentialRetriever);
       optional.get().setCasProperties(this.casProperties);
       optional.get().setServerListMapProperties(this.serverListMapProperties);
       optional.get().setCacheProperties(this.cacheProperties);
+      optional.get().setCacheHandler(this.cacheHandler);
       return optional.get();
     }
 
-    return new ServerListMap(robotSympaConf, serverListMapProperties, credentialRetriever, userAttributesHandler, sessionAttributesHandler, cacheManager, casProperties, cacheProperties);
+    return new ServerListMap(robotSympaConf, serverListMapProperties, credentialRetriever, userAttributesHandler, sessionAttributesHandler, casProperties, cacheProperties, cacheHandler);
 
   }
 
