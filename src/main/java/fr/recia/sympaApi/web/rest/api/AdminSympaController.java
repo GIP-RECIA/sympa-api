@@ -64,6 +64,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
+import reactor.util.annotation.Nullable;
 
 import java.math.BigInteger;
 import java.net.URI;
@@ -246,7 +247,10 @@ public class AdminSympaController {
     String errorCode = postToSympaRemote(sympaRemoteEndpointUrl, queryCreatedFromInputs);
 
     if(Objects.nonNull(errorCode)){
-      return processErrorCode(errorCode, queryCreatedFromInputs);
+      responseMap.put("messageKey", errorCodeToMessageKey(errorCode, queryCreatedFromInputs));
+      if(responseMap.get("messageKey").contains("0")){
+        return ResponseEntity.internalServerError().body(responseMap);
+      }
     }
 
     return ResponseEntity.ok(responseMap);
@@ -297,13 +301,16 @@ public class AdminSympaController {
     String errorCode = postToSympaRemote(sympaRemoteEndpointUrl, queryCreatedFromInputs);
 
     if(Objects.nonNull(errorCode)){
-     return processErrorCode(errorCode, queryCreatedFromInputs);
+     responseMap.put("messageKey", errorCodeToMessageKey(errorCode, queryCreatedFromInputs));
+     if(responseMap.get("messageKey").contains("0")){
+       return ResponseEntity.internalServerError().body(responseMap);
+     }
     }
     return ResponseEntity.ok(responseMap);
   }
 
-  private ResponseEntity<Map<String, String>> processErrorCode(String errorCode, String query) {
-    Map<String, String> responseMap = new HashMap<>();
+  @Nullable
+  private String errorCodeToMessageKey(String errorCode, String query) {
     //Match a regular expression to determine if this is an error code in the
     //form Digit,CODE
     Pattern p = Pattern.compile("(\\d),(.*)");
@@ -322,15 +329,13 @@ public class AdminSympaController {
           + errorCodeNumber + "." + errorCodeText;
         log.debug("errorMessageKey: {}", errorMessageKey);
         if (Strings.isNotEmpty(baseErrorMsg)) {
-          responseMap.put("errorMessageKey", errorMessageKey);
+          return errorMessageKey;
         }
         //0 means success, anything else, return an error code to let the ajax handler know something is amiss
-        if (!errorCodeNumber.equals("0")) {
-          return ResponseEntity.internalServerError().body(responseMap);
-        }
+
       }
     }
-    return ResponseEntity.ok(responseMap);
+    return null;
   }
 
   private String postToSympaRemote(String sympaRemoteEndpointUrl, String query)  {
