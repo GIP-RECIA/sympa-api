@@ -18,12 +18,14 @@ package fr.recia.sympaApi.service;
 import fr.recia.sympaApi.config.bean.CacheProperties;
 import fr.recia.sympaApi.config.bean.DebugProperties;
 import fr.recia.sympaApi.dto.request.SympaListRequestForm;
+import fr.recia.sympaApi.dto.request.admin.CloseListRequestPayload;
 import fr.recia.sympaApi.dto.request.admin.CreateOrUpdateListFormDataRequestPayload;
 import fr.recia.sympaApi.dto.request.admin.CreateOrUpdateListRequestPayload;
 import fr.recia.sympaApi.dto.response.admin.AdminSympaCreatableList;
 import fr.recia.sympaApi.dto.response.admin.AdminSympaListResponseForDisplay;
 import fr.recia.sympaApi.dto.response.admin.AdminSympaUpdatableList;
 import fr.recia.sympaApi.dto.response.admin.CreateOrUpdateListFormDataResponsePayload;
+import fr.recia.sympaApi.exception.IsNotAdminException;
 import fr.recia.sympaApi.pojo.RobotSympaConf;
 import fr.recia.sympaApi.pojo.RobotSympaInfo;
 import fr.recia.sympaApi.pojo.UserSympaListWithUrl;
@@ -149,6 +151,9 @@ public class AdminService {
 
   @Autowired
   DebugProperties debugProperties;
+
+  @Autowired
+  protected RobotDomaineNameResolver robotDomaineNameResolver;
 
   private final Pattern operationPattern = Pattern.compile(".*operation=([^&]*).*");
 
@@ -292,6 +297,54 @@ public class AdminService {
     }
 
     return responsePayload;
+  }
+
+
+  @Nullable
+  public String closeList(CloseListRequestPayload requestPayload){
+    String listName = String.format("&listname=%s", requestPayload.getListName());
+
+    // statics
+    String operation = "operation=CLOSE"; //always in this RequestMapping
+    String queryCreatedFromInputs = operation + listName;
+
+
+    // --- DEBUT CHECK ---
+    // 1 check si le domaine de la liste à supprimer correspond au domaine courant
+    // todo use trim !!!
+    String[] listSplit = listName.split("@");
+    Assert.isTrue(listSplit.length == 2, "List should have been split in 2 part around '@'");
+    String domainName = robotDomaineNameResolver.resolveRobotDomainName();
+    log.info("doCloseList check domain name {} against from the list {}", domainName, listSplit[1]);
+    if (!listSplit[1].equals(domainName)) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "List domain does not match current user establishment");
+    }
+
+    // 2 check si le user est admin sur cet etab
+    boolean isAdmin = robotSympaConf.isAdminRobotSympaByUai(userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT).orElseThrow(), userAttributesHandler.getAttributeList(UserAttributesHandler.IS_MEMBER_OF).orElseThrow());
+
+    if(!isAdmin){
+      throw new IsNotAdminException("");
+    }
+
+    if (!listSplit[1].equals(domainName)) {
+      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Current user is not an admin for this establishment");
+    }
+    // --- FIN CHECK ---
+
+
+    final String sympaRemoteEndpointUrl = retrieveSympaRemoteEndpointUrl();
+    log.debug("Connecting to SympaRemote with the url [" + sympaRemoteEndpointUrl + "]");
+
+    String errorCode = postToSympaRemote(sympaRemoteEndpointUrl, queryCreatedFromInputs);
+
+
+    Map<String, String> responseMap = new HashMap<>();
+
+    if(Objects.nonNull(errorCode)){
+      return errorCodeToMessageKey(errorCode, queryCreatedFromInputs);
+    }
+    return null;
   }
 
   @Nullable

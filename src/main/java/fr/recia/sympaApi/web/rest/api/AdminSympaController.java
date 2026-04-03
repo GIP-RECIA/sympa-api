@@ -187,55 +187,20 @@ public class AdminSympaController {
 
 
   @PostMapping("/closeList")
-  public @ResponseBody ResponseEntity<Map<String, String>> closeList(@RequestBody CloseListRequestPayload requestPayload) throws Exception {
+  public @ResponseBody ResponseEntity<Map<String, String>> closeList(@RequestBody CloseListRequestPayload requestPayload) {
+    String messageKey = adminService.closeList(requestPayload);
 
-    Map<String, String> responseMap = new HashMap<>();
-
-
-    String listName = String.format("&listname=%s", requestPayload.getListName());
-
-    // statics
-    String operation = "operation=CLOSE"; //always in this RequestMapping
-    String queryCreatedFromInputs = operation + listName;
-    responseMap.put("queryCreatedFromInputs", queryCreatedFromInputs);
-
-
-    // --- DEBUT CHECK ---
-    // 1 check si le domaine de la liste à supprimer correspond au domaine courant
-    // todo use trim !!!
-    String[] listSplit = listName.split("@");
-    Assert.isTrue(listSplit.length == 2, "List should have been split in 2 part around '@'");
-    String domainName = robotDomaineNameResolver.resolveRobotDomainName();
-    log.info("doCloseList check domain name {} against from the list {}", domainName, listSplit[1]);
-    if (!listSplit[1].equals(domainName)) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "List domain does not match current user establishment");
+    if (Objects.nonNull(messageKey)) {
+      Map<String, String> responseMap = new HashMap<>();
+      responseMap.put("messageKey", messageKey);
+      if (responseMap.get("messageKey").contains("0")) {
+        return ResponseEntity.internalServerError().body(responseMap);
+      } else {
+        return ResponseEntity.ok(responseMap);
+      }
     }
+    return ResponseEntity.internalServerError().body(null);
 
-    // 2 check si le user est admin sur cet etab
-    boolean isAdmin = robotSympaConf.isAdminRobotSympaByUai(userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT).orElseThrow(), userAttributesHandler.getAttributeList(UserAttributesHandler.IS_MEMBER_OF).orElseThrow());
-
-    if(!isAdmin){
-      return  ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new HashMap<>());
-    }
-
-    if (!listSplit[1].equals(domainName)) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Current user is not an admin for this establishment");
-    }
-    // --- FIN CHECK ---
-
-
-    final String sympaRemoteEndpointUrl = this.adminService.retrieveSympaRemoteEndpointUrl();
-    this.log.debug("Connecting to SympaRemote with the url [" + sympaRemoteEndpointUrl + "]");
-
-    String errorCode = adminService.postToSympaRemote(sympaRemoteEndpointUrl, queryCreatedFromInputs);
-
-    if(Objects.nonNull(errorCode)){
-     responseMap.put("messageKey", adminService.errorCodeToMessageKey(errorCode, queryCreatedFromInputs));
-     if(responseMap.get("messageKey").contains("0")){
-       return ResponseEntity.internalServerError().body(responseMap);
-     }
-    }
-    return ResponseEntity.ok(responseMap);
   }
 
 
