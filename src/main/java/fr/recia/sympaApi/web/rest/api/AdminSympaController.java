@@ -55,6 +55,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.Assert;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -178,13 +179,13 @@ public class AdminSympaController {
   }
 
   @PostMapping("/createList")
-  public ResponseEntity<Map<String, String>> createList(@RequestBody CreateOrUpdateListRequestPayload requestPayload) {
+  public ResponseEntity<Map<String, String>> createList(@RequestBody @Validated CreateOrUpdateListRequestPayload requestPayload) {
     String operation = "operation=CREATE"; //always in this RequestMapping
     return createOrUpdate(requestPayload, operation);
   }
 
   @PostMapping("/updateList")
-  public ResponseEntity<Map<String, String>> updateList(@RequestBody CreateOrUpdateListRequestPayload requestPayload) {
+  public ResponseEntity<Map<String, String>> updateList(@RequestBody @Validated CreateOrUpdateListRequestPayload requestPayload) {
     //todo check if update cause exception if dont already exist
     String operation = "operation=UPDATE"; //always in this RequestMapping
     return createOrUpdate(requestPayload, operation);
@@ -194,15 +195,6 @@ public class AdminSympaController {
   public ResponseEntity<Map<String, String>> createOrUpdate(CreateOrUpdateListRequestPayload requestPayload, String operation) {
     Map<String, String> responseMap = new HashMap<>();
 
-    // use request args
-    if (Objects.isNull(requestPayload.getModelId())) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "[modelId] parameter is required");
-    }
-
-    if (Objects.isNull(requestPayload.getType())) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "[modelName] parameter is required");
-    }
-
     String type = String.format("&type=%s", requestPayload.getType());   //var type = $("#createListURL_type").html() || " ";  MODEL NAME
 
     //add check of mandatory ?
@@ -210,11 +202,6 @@ public class AdminSympaController {
 
     log.debug("Required aliases list {}", requiredAliases);
     if (!requiredAliases.isEmpty()) {
-
-      //si le champ n'est pas présent
-      if (Objects.isNull(requestPayload.getEditorsAliases())) {
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "[editorsAliases] parameter is required");
-      }
 
       // si il manque au moins un groupe "MANDATORY" on tombe en erreur
       if (!new HashSet<>(List.of(requestPayload.getEditorsAliases().split("\\$"))).containsAll(requiredAliases)) {
