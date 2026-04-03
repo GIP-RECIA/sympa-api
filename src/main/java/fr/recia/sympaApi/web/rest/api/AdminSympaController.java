@@ -116,23 +116,6 @@ public class AdminSympaController {
   @Autowired
   private RestTemplate restTemplate;
 
-  private final Pattern operationPattern = Pattern.compile(".*operation=([^&]*).*");
-
-  /**
-   * Base of error messages for list creation.
-   */
-  private static final String CREATE_ERROR_MSG_BASE = "modal.response.create";
-
-  /**
-   * Base of error messages for list modification.
-   */
-  private static final String UPDATE_ERROR_MSG_BASE = "modal.response.update";
-
-  /**
-   * Base of error messages for list closing.
-   */
-  private static final String CLOSE_ERROR_MSG_BASE = "modal.response.close";
-
   @GetMapping("/me")
   public ResponseEntity<Map<String,Object>> test(){
     Map<String, Object> responseMap = new HashMap<>();
@@ -460,21 +443,7 @@ public class AdminSympaController {
     return sympaRemoteDatabaseId;
   }
 
-  protected String findErrorMessageBase(final String queryString) {
-    String baseErrorMsg = null;
-    Matcher opMatcher = this.operationPattern.matcher(queryString);
-    if (opMatcher.find()) {
-      final String operation = opMatcher.group(1);
-      if ("CREATE".equals(operation)) {
-        baseErrorMsg = CREATE_ERROR_MSG_BASE;
-      } else if ("UPDATE".equals(operation)) {
-        baseErrorMsg = UPDATE_ERROR_MSG_BASE;
-      } else if ("CLOSE".equals(operation)) {
-        baseErrorMsg = CLOSE_ERROR_MSG_BASE;
-      }
-    }
-    return baseErrorMsg;
-  }
+
 
   protected RobotSympaInfo getRobotInfo() {
     return robotSympaConf.getRobotSympaInfoByUai(userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT).orElseThrow(), userAttributesHandler.getAttributeList(UserAttributesHandler.IS_MEMBER_OF).orElseThrow(), true);
