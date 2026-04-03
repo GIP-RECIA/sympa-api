@@ -149,7 +149,7 @@ public class AdminSympaController {
   @PostMapping("/createList")
   public ResponseEntity<Map<String, String>> createList(@RequestBody @Validated CreateOrUpdateListRequestPayload requestPayload) {
     String operation = "operation=CREATE"; //always in this RequestMapping
-    String messageKey = createOrUpdate(requestPayload, operation);
+    String messageKey = adminService.createOrUpdate(requestPayload, operation);
 
     if(Objects.nonNull(messageKey)) {
       Map<String, String> responseMap = new HashMap<>();
@@ -167,7 +167,7 @@ public class AdminSympaController {
   public ResponseEntity<Map<String, String>> updateList(@RequestBody @Validated CreateOrUpdateListRequestPayload requestPayload) {
     //todo check if update cause exception if dont already exist
     String operation = "operation=UPDATE"; //always in this RequestMapping
-    String messageKey = createOrUpdate(requestPayload, operation);
+    String messageKey = adminService.createOrUpdate(requestPayload, operation);
 
     if(Objects.nonNull(messageKey)) {
       Map<String, String> responseMap = new HashMap<>();
@@ -182,66 +182,7 @@ public class AdminSympaController {
   }
 
 
-  @Nullable
-  public String createOrUpdate(CreateOrUpdateListRequestPayload requestPayload, String operation) {
-    Map<String, String> responseMap = new HashMap<>();
 
-    String type = String.format("&type=%s", requestPayload.getType());   //var type = $("#createListURL_type").html() || " ";  MODEL NAME
-
-    //add check of mandatory ?
-    List<String> requiredAliases = adminService.allMandatoryPreparedRequestToStringList(requestPayload.getModelId()); // todo fetch required list
-
-    log.debug("Required aliases list {}", requiredAliases);
-    if (!requiredAliases.isEmpty()) {
-
-      // si il manque au moins un groupe "MANDATORY" on tombe en erreur
-      if (!new HashSet<>(List.of(requestPayload.getEditorsAliases().split("\\$"))).containsAll(requiredAliases)) {
-        log.debug("Required aliases list {}", requestPayload.getEditorsAliases());
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "[editorsAliases] parameter is missing required value(s)");
-        //todo reason is not transmitted to browser
-      }
-    }
-
-    String editorsAliases = Objects.isNull(requestPayload.getEditorsAliases()) ? "" : String.format("&editors_aliases=%s", requestPayload.getEditorsAliases()); //  args.get("editorAliases"));
-    String editorsGroups = Objects.isNull(requestPayload.getEditorsGroups()) ? "" : String.format("&editors_groups=%s", requestPayload.getEditorsGroups());
-    String typeParam = Objects.isNull(requestPayload.getTypeParam()) ? "" : String.format("&type_param=%s", requestPayload.getTypeParam());
-    //todo test with missing type param when required
-
-    // statics
-    String policy = "&policy=newsletter"; // always
-
-    // ces valeurs doivent venir du user info
-    String siren = String.format("&siren=%s", userAttributesHandler.getAttribute(UserAttributesHandler.SIREN_CURRENT).orElseThrow());
-    String rne = String.format("&rne=%s", userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT).orElseThrow());
-    String uai = String.format("&uai=%s", userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT).orElseThrow());
-
-    String queryCreatedFromInputs = operation + policy +
-      type + siren + rne + uai + editorsAliases + editorsGroups + typeParam;
-
-    responseMap.put("queryCreatedFromInputs", queryCreatedFromInputs);
-
-    // Get SympaRemote database Id
-    final String sympaRemoteDatabaseId = adminService.retrieveSympaRemoteDatabaseId();
-    final String queryStringWithDbId = queryCreatedFromInputs + "&databaseId=" + sympaRemoteDatabaseId;
-
-
-    responseMap.put("sympaRemoteDatabaseId", sympaRemoteDatabaseId);
-    responseMap.put("queryStringWithDbId", queryStringWithDbId);
-
-    // Get SympaRemote endpoint URL
-    final String sympaRemoteEndpointUrl = adminService.retrieveSympaRemoteEndpointUrl();
-    responseMap.put("sympaRemoteEndpointUrl", sympaRemoteEndpointUrl);
-
-
-    log.debug("Connecting to SympaRemote with the url [" + sympaRemoteEndpointUrl + "]");
-
-    String errorCode = adminService.postToSympaRemote(sympaRemoteEndpointUrl, queryCreatedFromInputs);
-
-    if(Objects.nonNull(errorCode)){
-        return adminService.errorCodeToMessageKey(errorCode, queryCreatedFromInputs);
-    }
-    return null;
-  }
 
 
   @PostMapping("/closeList")

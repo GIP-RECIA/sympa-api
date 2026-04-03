@@ -19,6 +19,7 @@ import fr.recia.sympaApi.config.bean.CacheProperties;
 import fr.recia.sympaApi.config.bean.DebugProperties;
 import fr.recia.sympaApi.dto.request.SympaListRequestForm;
 import fr.recia.sympaApi.dto.request.admin.CreateOrUpdateListFormDataRequestPayload;
+import fr.recia.sympaApi.dto.request.admin.CreateOrUpdateListRequestPayload;
 import fr.recia.sympaApi.dto.response.admin.AdminSympaCreatableList;
 import fr.recia.sympaApi.dto.response.admin.AdminSympaListResponseForDisplay;
 import fr.recia.sympaApi.dto.response.admin.AdminSympaUpdatableList;
@@ -53,6 +54,7 @@ import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -61,6 +63,7 @@ import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.server.ResponseStatusException;
 import reactor.util.annotation.Nullable;
 
 import javax.annotation.PostConstruct;
@@ -69,6 +72,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -288,6 +292,67 @@ public class AdminService {
     }
 
     return responsePayload;
+  }
+
+  @Nullable
+  public String createOrUpdate(CreateOrUpdateListRequestPayload requestPayload, String operation) {
+    Map<String, String> responseMap = new HashMap<>();
+
+    String type = String.format("&type=%s", requestPayload.getType());   //var type = $("#createListURL_type").html() || " ";  MODEL NAME
+
+    //add check of mandatory ?
+    List<String> requiredAliases = allMandatoryPreparedRequestToStringList(requestPayload.getModelId()); // todo fetch required list
+
+    log.debug("Required aliases list {}", requiredAliases);
+    if (!requiredAliases.isEmpty()) {
+
+      // si il manque au moins un groupe "MANDATORY" on tombe en erreur
+      if (!new HashSet<>(List.of(requestPayload.getEditorsAliases().split("\\$"))).containsAll(requiredAliases)) {
+        log.debug("Required aliases list {}", requestPayload.getEditorsAliases());
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "[editorsAliases] parameter is missing required value(s)");
+        //todo reason is not transmitted to browser
+      }
+    }
+
+    String editorsAliases = Objects.isNull(requestPayload.getEditorsAliases()) ? "" : String.format("&editors_aliases=%s", requestPayload.getEditorsAliases()); //  args.get("editorAliases"));
+    String editorsGroups = Objects.isNull(requestPayload.getEditorsGroups()) ? "" : String.format("&editors_groups=%s", requestPayload.getEditorsGroups());
+    String typeParam = Objects.isNull(requestPayload.getTypeParam()) ? "" : String.format("&type_param=%s", requestPayload.getTypeParam());
+    //todo test with missing type param when required
+
+    // statics
+    String policy = "&policy=newsletter"; // always
+
+    // ces valeurs doivent venir du user info
+    String siren = String.format("&siren=%s", userAttributesHandler.getAttribute(UserAttributesHandler.SIREN_CURRENT).orElseThrow());
+    String rne = String.format("&rne=%s", userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT).orElseThrow());
+    String uai = String.format("&uai=%s", userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT).orElseThrow());
+
+    String queryCreatedFromInputs = operation + policy +
+      type + siren + rne + uai + editorsAliases + editorsGroups + typeParam;
+
+    responseMap.put("queryCreatedFromInputs", queryCreatedFromInputs);
+
+    // Get SympaRemote database Id
+    final String sympaRemoteDatabaseId = retrieveSympaRemoteDatabaseId();
+    final String queryStringWithDbId = queryCreatedFromInputs + "&databaseId=" + sympaRemoteDatabaseId;
+
+
+    responseMap.put("sympaRemoteDatabaseId", sympaRemoteDatabaseId);
+    responseMap.put("queryStringWithDbId", queryStringWithDbId);
+
+    // Get SympaRemote endpoint URL
+    final String sympaRemoteEndpointUrl = retrieveSympaRemoteEndpointUrl();
+    responseMap.put("sympaRemoteEndpointUrl", sympaRemoteEndpointUrl);
+
+
+    log.debug("Connecting to SympaRemote with the url [" + sympaRemoteEndpointUrl + "]");
+
+    String errorCode = postToSympaRemote(sympaRemoteEndpointUrl, queryCreatedFromInputs);
+
+    if(Objects.nonNull(errorCode)){
+      return errorCodeToMessageKey(errorCode, queryCreatedFromInputs);
+    }
+    return null;
   }
 
     public List<String> fetchEmailProfileList(final Map<String, List<Object>> mvUserInfo, final LdapPerson ldapPerson, final String uid) {
