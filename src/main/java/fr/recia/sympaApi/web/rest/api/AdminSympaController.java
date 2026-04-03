@@ -26,10 +26,8 @@ import fr.recia.sympaApi.dto.response.admin.CreateOrUpdateListFormDataResponsePa
 import fr.recia.sympaApi.groupfinder.impl.RegexGroupFinder;
 import fr.recia.sympaApi.pojo.RobotSympaConf;
 import fr.recia.sympaApi.pojo.RobotSympaInfo;
-import fr.recia.sympaApi.pojo.UserSympaListWithUrl;
 import fr.recia.sympaApi.service.AdminService;
 import fr.recia.sympaApi.service.DomainService;
-import fr.recia.sympaApi.servlet.JsCreateListRow;
 import fr.recia.sympaApi.servlet.JsList;
 import fr.recia.sympaApi.sympa.admin.EscoUserAttributeMapping;
 import fr.recia.sympaApi.sympa.admin.LdapFilterSourceRequest;
@@ -37,7 +35,6 @@ import fr.recia.sympaApi.sympa.admin.LdapPerson;
 import fr.recia.sympaApi.sympa.admin.RobotDomaineNameResolver;
 import fr.recia.sympaApi.sympa.listfinder.model.Model;
 import fr.recia.sympaApi.sympa.listfinder.model.ModelRequest;
-import fr.recia.sympaApi.sympa.listfinder.model.ModelSubscribers;
 import fr.recia.sympaApi.sympa.listfinder.model.PreparedRequest;
 import fr.recia.sympaApi.sympa.listfinder.services.HibernateDaoServiceImpl;
 import fr.recia.sympaApi.utils.FormToCriterion;
@@ -45,12 +42,8 @@ import fr.recia.sympaApi.utils.SessionAttributesHandler;
 import fr.recia.sympaApi.utils.UserAttributesHandler;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -67,7 +60,6 @@ import org.springframework.web.server.ResponseStatusException;
 import reactor.util.annotation.Nullable;
 
 import java.math.BigInteger;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -77,8 +69,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Slf4j
 @Getter
