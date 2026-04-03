@@ -131,7 +131,6 @@ public class DomainService {
 
   public List<UserSympaListWithUrl> getWhich(List<SympaListCriterion> criterions, boolean matchAll) throws Exception {
     List<UserSympaListWithUrl> sympaList = getWhich();
-    log.info("get wich in domain service {}", sympaList);
     if ( criterions == null || criterions.size() <= 0 ) return sympaList;
     List<UserSympaListWithUrl> filteredList = new ArrayList<>();
     for ( UserSympaListWithUrl item : sympaList ) {
