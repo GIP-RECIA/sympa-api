@@ -46,7 +46,7 @@ public class RedisCacheConfig {
     //  default TTL
     RedisCacheConfiguration defaultConfig = RedisCacheConfiguration.defaultCacheConfig()
       .computePrefixWith(cacheName -> redisProperties.getCachePrefix() + "::" + cacheName + "::")
-      .entryTtl(Duration.ofMinutes(cacheProperties.getDefaultDurationHours()))
+      .entryTtl(Duration.ofHours(cacheProperties.getDefaultDurationHours()))
       .serializeValuesWith(
         RedisSerializationContext.SerializationPair.fromSerializer(
           new GenericJackson2JsonRedisSerializer()
