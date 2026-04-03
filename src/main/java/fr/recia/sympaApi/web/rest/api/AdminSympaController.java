@@ -231,6 +231,7 @@ public class AdminSympaController {
       if (!new HashSet<>(List.of(requestPayload.getEditorsAliases().split("\\$"))).containsAll(requiredAliases)) {
         log.debug("Required aliases list {}", requestPayload.getEditorsAliases());
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "[editorsAliases] parameter is missing required value(s)");
+        //todo reason is not transmitted to browser
       }
     }
 
