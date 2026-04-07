@@ -21,6 +21,7 @@ package fr.recia.sympaApi.sympa.listfinder.model;
 import fr.recia.sympaApi.sympa.listfinder.IMailingList;
 import fr.recia.sympaApi.sympa.listfinder.IMailingListModel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.util.StringUtils;
 
@@ -33,6 +34,7 @@ import org.springframework.util.StringUtils;
  */
 @Getter
 @Setter
+@NoArgsConstructor
 public class BasicMailingList implements IMailingList, Comparable<BasicMailingList> {
 
 	/** Nom de la mailing liste	 */

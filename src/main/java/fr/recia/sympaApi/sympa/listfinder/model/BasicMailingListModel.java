@@ -21,6 +21,7 @@ package fr.recia.sympaApi.sympa.listfinder.model;
 
 import fr.recia.sympaApi.sympa.listfinder.IMailingListModel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
@@ -29,6 +30,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
+@NoArgsConstructor
 public class BasicMailingListModel implements IMailingListModel {
 
 	/** id */
