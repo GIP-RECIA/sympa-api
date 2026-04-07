@@ -32,13 +32,6 @@ import java.util.Map;
 public interface IAvailableListsFinder {
 
 	/**
-	 *  Permet de fournir le mecanisme de recuperation des listes existantes.
-	 * 
-	 *  @param existingListFinder le mecanisme de recuperation des listes existantes
-	 */
-	public void setExistingListsFinder(IExistingListsFinder existingListFinder);
-
-	/**
 	 * Methode retournant le resultat final, c'est a dire la liste des mailing lists
 	 * qu'il est possible de creer dans l'interface, en s'assurant de ne pas proposer celles deja existantes.
 	 * 

@@ -17,8 +17,8 @@ package fr.recia.sympaApi.sympa.listfinder.services;
 
 
 import fr.recia.sympaApi.groupfinder.impl.ConcatenateGroupFinder;
+import fr.recia.sympaApi.service.DomainService;
 import fr.recia.sympaApi.sympa.listfinder.IAvailableListsFinder;
-import fr.recia.sympaApi.sympa.listfinder.IExistingListsFinder;
 import fr.recia.sympaApi.sympa.listfinder.IListsFromGroupsPatternMatcher;
 import fr.recia.sympaApi.sympa.listfinder.IMailingList;
 import fr.recia.sympaApi.sympa.listfinder.IMailingListModel;
@@ -29,8 +29,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -62,15 +65,16 @@ public class AvailableListsFinderBasicImpl implements IAvailableListsFinder {
   private ConcatenateGroupFinder etabGroupsFinder;
 
 
-	/** Le mecanisme de recuperation des listes existantes de l'etablissement injecte par Spring */
+
   @Autowired
-	private IExistingListsFinder existingListsFinder;
+  private DomainService domainService;
+
 
 	/** Le mecanisme permettant de deduire (par pattern) les listes a creer, en fonction des groupes de l'etablissement */
   @Autowired
 	private IListsFromGroupsPatternMatcher listsFromGroupsPatternMatcher;
 
-	/**
+  /**
 	 * Retourne les listes qu'il est possible de creer pour cet etablissement a partir
 	 * de l'ensemble des modeles connus.
 	 * Chaque modele possede un pattern de groupe qui, s'il est respecte, autorise
@@ -114,7 +118,7 @@ public class AvailableListsFinderBasicImpl implements IAvailableListsFinder {
     }
 
     AvailableListsFinderBasicImpl.log.debug("Finding existing lists with userInfo [" + userInfo.toString() + "]");
-		Collection<String> existingLists = this.existingListsFinder.findExistingLists(userInfo);
+		Collection<String> existingLists = findExistingLists();
 		AvailableListsFinderBasicImpl.log.debug("Existing lists found " + existingLists.size());
 
     Map<String, IMailingList> creatableListsMap = creatableLists.stream().collect(Collectors.toMap(m -> m.getName().toLowerCase(), Function.identity()));
@@ -130,4 +134,24 @@ public class AvailableListsFinderBasicImpl implements IAvailableListsFinder {
     AvailableListsFinderBasicImpl.log.debug("Available lists count " + creatableLists.size());
 		return availableLists;
 	}
+
+  public Collection<String> findExistingLists() throws Exception {
+
+    List<String> listsAddressesSet = this.domainService.getLists().stream().map(x -> x.getAddress().toLowerCase()).collect(Collectors.toList());
+    List<String> existingLists = new ArrayList<>();
+
+    for (String address : listsAddressesSet) {
+      String[] splitAddress = address.split("@");
+      if (splitAddress.length != 2) {
+        log.warn("Unexpected address, @ not found : " + address);
+        continue;
+      }
+      final String namePart = splitAddress[0];
+      log.debug("Adding existing list {}", namePart);
+      existingLists.add(namePart);
+    }
+
+    return existingLists;
+  }
+
 }
