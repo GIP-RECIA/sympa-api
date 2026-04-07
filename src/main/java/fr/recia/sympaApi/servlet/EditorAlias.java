@@ -13,26 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package fr.recia.sympaApi.dto.response.admin;
+package fr.recia.sympaApi.servlet;
 
-import fr.recia.sympaApi.servlet.EditorAlias;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-
+/**
+ * Class used to represent a row representing a 
+ * group that can be subscribed to a list in the create list screen.
+ * 
+ * @author Eric Groning
+ *
+ */
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
-public class CreateOrUpdateListFormDataResponsePayload {
-
-  List<EditorAlias> editorsAliases;
-  String type;
-  String typeParam;
-  String typeParamName;
-  String subscribersGroup;
+public class EditorAlias {
+	//Name of the group
+	String name;
+	
+	//True if the group will be part of the mailing list
+	Boolean checked;
+	
+	//True if the user can toggle the checked value
+	Boolean editable;
+	
+	//Database id of the group
+	String idRequest;
 
 }

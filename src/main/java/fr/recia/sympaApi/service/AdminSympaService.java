@@ -31,7 +31,7 @@ import fr.recia.sympaApi.groupfinder.impl.RegexGroupFinder;
 import fr.recia.sympaApi.pojo.RobotSympaConf;
 import fr.recia.sympaApi.pojo.RobotSympaInfo;
 import fr.recia.sympaApi.pojo.UserSympaListWithUrl;
-import fr.recia.sympaApi.servlet.JsCreateListRow;
+import fr.recia.sympaApi.servlet.EditorAlias;
 import fr.recia.sympaApi.servlet.JsCreateListTableRow;
 import fr.recia.sympaApi.servlet.JsTreeNode;
 import fr.recia.sympaApi.sympa.admin.EscoUserAttributeMapping;
@@ -345,7 +345,7 @@ public class AdminSympaService {
     ModelSubscribers modelSubscribers = this.daoService.getModelSubscriber(model);
     log.debug("[createOrUpdateListFormData] Additional groups filter is " + modelSubscribers.getId().getGroupFilter());
 
-    List<JsCreateListRow> editorsAliases = new ArrayList<>();
+    List<EditorAlias> editorsAliases = new ArrayList<>();
 
     List<PreparedRequest> listPreparedRequest = this.daoService.getAllPreparedRequests();
 
@@ -353,7 +353,7 @@ public class AdminSympaService {
     String siren =  userAttributesHandler.getAttribute(UserAttributesHandler.SIREN_CURRENT).orElseThrow();
 
     for (PreparedRequest preparedRequest : listPreparedRequest) {
-      JsCreateListRow row = new JsCreateListRow();
+      EditorAlias row = new EditorAlias();
       ModelRequest modelRequest = this.daoService.getModelRequest(model, preparedRequest);
       if (modelRequest != null) {
         switch (modelRequest.getCategoryAsEnum()) {
