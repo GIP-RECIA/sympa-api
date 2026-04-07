@@ -40,23 +40,11 @@ import java.util.Map;
 
 @Component
 @Slf4j
-public class EscoUserAttributeMapping extends UserAttributeMapping implements InitializingBean {
+public class EscoUserAttributeMapping extends UserAttributeMapping {
 
 
   @Autowired
   UserAttributesHandler userAttributesHandler;
-
-
-	/** Ldap Person searcher. */
-  @Setter
-  @Autowired
-  private LdapPerson ldapPerson;
-
-	@Override
-	public void afterPropertiesSet() throws Exception {
-		Assert.notNull(this.ldapPerson, "No LdapPerson injected !");
-	}
-
 	/**
 	 * Add informations in user info map.
 	 * 
