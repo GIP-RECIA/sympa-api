@@ -21,6 +21,7 @@ import fr.recia.sympaApi.dto.response.SympaListResponseForDisplay;
 import fr.recia.sympaApi.dto.response.UserSympaListDetail;
 import fr.recia.sympaApi.pojo.SympaListCriterion;
 import fr.recia.sympaApi.pojo.UserSympaListWithUrl;
+import fr.recia.sympaApi.utils.FormToCriterion;
 import fr.recia.sympaApi.utils.UserAttributesHandler;
 import lombok.Getter;
 import lombok.Setter;
@@ -40,28 +41,19 @@ public class SympaService {
   DomainService domainService;
 
   @Autowired
+  FormToCriterion formToCriterion;
+
+  @Autowired
   UserAttributesHandler userAttributesHandler;
 
   public SympaListResponseForDisplay fetchSympaList(SympaListRequestForm sympaListRequestForm) throws Exception {
 
-    List<UserSympaListWithUrl> sympaList = domainService.getWhich(formToCriterion(sympaListRequestForm),false);
+    List<UserSympaListWithUrl> sympaList = domainService.getWhich(formToCriterion.formToCriterion(sympaListRequestForm),false);
     SympaListResponseForDisplay response = new SympaListResponseForDisplay();
     response.setAdminServiceUrl(userAttributesHandler.getIsAdminSympa().orElse(null));
     response.setUserSympaListDetailList(sympaList.stream().map(UserSympaListDetail::new).collect(Collectors.toList()));
     return response;
 
-  }
-
-  private List<SympaListCriterion> formToCriterion(SympaListRequestForm form) {
-    if ( form == null ) return null;
-    List<SympaListCriterion> crits = new ArrayList<>();
-    if ( form.isEditor() )
-      crits.add(new SympaListCriterion(DomainService.SympaListFields.editor, true));
-    if ( form.isOwner() )
-      crits.add(new SympaListCriterion(DomainService.SympaListFields.owner,true));
-    if ( form.isSubscriber() )
-      crits.add(new SympaListCriterion(DomainService.SympaListFields.subscriber, true));
-    return crits;
   }
 
 }

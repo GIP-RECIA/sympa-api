@@ -27,7 +27,7 @@ import java.util.List;
 public class FormToCriterion {
   public List<SympaListCriterion> formToCriterion(SympaListRequestForm form) {
     if ( form == null ) return null;
-    List<SympaListCriterion> crits = new ArrayList<SympaListCriterion>();
+    List<SympaListCriterion> crits = new ArrayList<>();
     if ( form.isEditor() )
       crits.add(new SympaListCriterion(DomainService.SympaListFields.editor, true));
     if ( form.isOwner() )
