@@ -20,6 +20,8 @@ package fr.recia.sympaApi.sympa.listfinder.model;
 
 
 import fr.recia.sympaApi.sympa.listfinder.IMailingList;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -30,6 +32,8 @@ import java.util.Collection;
  * @author GIP RECIA 2013 - Maxime BOSSARD.
  *
  */
+@Getter
+@Setter
 public class AvailableMailingListsFound  implements Serializable {
 
 	private static final long serialVersionUID = 2955582247625647743L;
@@ -37,21 +41,5 @@ public class AvailableMailingListsFound  implements Serializable {
 	private Collection<IMailingList> creatableLists;
 
 	private Collection<IMailingList> updatableLists;
-
-	public Collection<IMailingList> getCreatableLists() {
-		return this.creatableLists;
-	}
-
-	public void setCreatableLists(final Collection<IMailingList> creatableLists) {
-		this.creatableLists = creatableLists;
-	}
-
-	public Collection<IMailingList> getUpdatableLists() {
-		return this.updatableLists;
-	}
-
-	public void setUpdatableLists(final Collection<IMailingList> updatableLists) {
-		this.updatableLists = updatableLists;
-	}
 
 }
