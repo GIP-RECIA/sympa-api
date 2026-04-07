@@ -78,6 +78,10 @@ public class CacheHandler {
   @Nullable
   public <T> T getFromCache(String cacheName, String cacheKey, TypeReference<T> typeRef){
 
+    if(cacheProperties.isIgnoreCache()){
+      return null;
+    }
+
     Cache cache = getCacheFromName(cacheName);
 
     Cache.ValueWrapper wrapper = cache.get(cacheKey);

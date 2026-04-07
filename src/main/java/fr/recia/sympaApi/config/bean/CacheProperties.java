@@ -38,13 +38,7 @@ public class CacheProperties {
   private String ldapFilterRequestCacheName;
   private int defaultDurationHours;
   private Map<String, Integer> cacheDurationHours;
-
-
-  @PostConstruct
-  public void postConstruct() {
-
-    log.info("CacheProperties {}", this);
-  }
+  private boolean ignoreCache = false;
 
   @Override
   public String toString() {
@@ -54,6 +48,14 @@ public class CacheProperties {
       ", ldapFilterRequestCacheName='" + ldapFilterRequestCacheName + '\'' +
       ", defaultDurationHours=" + defaultDurationHours +
       ", cacheDurationHours=" + cacheDurationHours +
+      ", ignoreCache=" + ignoreCache +
       '}';
   }
+
+  @PostConstruct
+  public void postConstruct() {
+
+    log.info("CacheProperties {}", this);
+  }
+
 }
