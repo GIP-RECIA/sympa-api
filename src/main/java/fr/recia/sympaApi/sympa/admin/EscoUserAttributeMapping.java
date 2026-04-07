@@ -46,15 +46,6 @@ public class EscoUserAttributeMapping extends UserAttributeMapping implements In
   @Autowired
   UserAttributesHandler userAttributesHandler;
 
-	/** Ldap establishment searcher.
-   * -- SETTER --
-   *  Mapping setter.
-   *
-   * @param ldapEstablishment the ldapEstablishment
-   */
-  @Setter
-  @Autowired
-	private LdapEstablishment ldapEstablishment;
 
 	/** Ldap Person searcher. */
   @Setter
@@ -63,7 +54,6 @@ public class EscoUserAttributeMapping extends UserAttributeMapping implements In
 
 	@Override
 	public void afterPropertiesSet() throws Exception {
-		Assert.notNull(this.ldapEstablishment, "No LdapEstablishment injected !");
 		Assert.notNull(this.ldapPerson, "No LdapPerson injected !");
 	}
 
@@ -87,19 +77,7 @@ public class EscoUserAttributeMapping extends UserAttributeMapping implements In
 	 * @param userInfo modifiable attribute map.
 	 */
 	private void addSirenToUserInfo(final Map<String, String> userInfo) {
-		String uai = userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT).orElse(null);  // userInfo.get(UserInfoService.getPortalUaiAttribute());
-
-		if (StringUtils.hasText(uai)) {
-			String siren = this.ldapEstablishment.getSiren(uai);
-
-			if (StringUtils.hasText(siren)) {
-				userInfo.put(UserAttributeMapping.USER_ATTRIBUTE_SIREN_KEY, siren);
-			}
-		} else {
-			log.warn(
-					"No UAI attribute found in portal context !");
-		}
-
+    userInfo.put(UserAttributeMapping.USER_ATTRIBUTE_SIREN_KEY, userAttributesHandler.getAttribute(UserAttributesHandler.SIREN_CURRENT).orElseThrow());
 	}
 
 }
