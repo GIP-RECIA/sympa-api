@@ -141,18 +141,6 @@ public class DomainService {
     return filteredList;
   }
 
-
-  public List<CreateListInfo> getCreateListInfo() throws Exception {
-    Collection<SpringCachingSympaServerAxisWsImpl> srvList = getServerList().values();
-    List<CreateListInfo> result = new ArrayList<>();
-    for ( SpringCachingSympaServerAxisWsImpl s : srvList ) {
-      CreateListInfo infos = s.getCreateListInfo();
-      if ( infos != null )
-        result.add(infos);
-    }
-    return result;
-  }
-
   private boolean matchCriterions(UserSympaList item, List<SympaListCriterion> crits, boolean matchAll) {
     if ( item == null || crits == null || crits.size() <= 0 ) return false;
     DirectFieldAccessor accessor = new DirectFieldAccessor(item);

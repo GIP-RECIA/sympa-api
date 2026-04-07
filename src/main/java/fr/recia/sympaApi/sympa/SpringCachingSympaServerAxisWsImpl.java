@@ -97,18 +97,6 @@ public class SpringCachingSympaServerAxisWsImpl {
 
   private CacheHandler cacheHandler;
 
-  public void init() {
-  }
-
-  public CreateListInfo getCreateListInfo() {
-
-    CreateListInfo infos  = new CreateListInfo();
-    infos.setServerName(getName());
-    infos.setAccessUrl(generateConnectUrl(getNewListUrl()));
-
-    return infos;
-  }
-
   protected String generateListUrl(final String listHomepage) {
     return this.generateConnectUrl(listHomepage);
   }

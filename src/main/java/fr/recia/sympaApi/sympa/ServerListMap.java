@@ -136,7 +136,6 @@ public class ServerListMap extends HashMap<String, SpringCachingSympaServerAxisW
 				server.setNewListForRoles(serverListMapProperties.getNewListForRoles());
         server.setCacheProperties(getCacheProperties());
         server.setCacheHandler(getCacheHandler());
-				server.init();
 
         log.info("created server {} in creeSympaServer ", server);
 
