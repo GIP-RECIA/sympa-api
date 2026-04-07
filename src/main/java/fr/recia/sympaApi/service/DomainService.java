@@ -20,6 +20,7 @@ import fr.recia.sympaApi.config.bean.CasProperties;
 import fr.recia.sympaApi.config.bean.ServerListMapProperties;
 import fr.recia.sympaApi.pojo.CreateListInfo;
 import fr.recia.sympaApi.pojo.RobotSympaConf;
+import fr.recia.sympaApi.pojo.SympaList;
 import fr.recia.sympaApi.pojo.SympaListCriterion;
 import fr.recia.sympaApi.pojo.SympaRobot;
 import fr.recia.sympaApi.pojo.UserSympaList;
@@ -114,17 +115,15 @@ public class DomainService {
     return result;
   }
 
-  public List<UserSympaListWithUrl> getLists() throws Exception {
+  public List<SympaList> getLists() throws Exception {
     Collection<SpringCachingSympaServerAxisWsImpl> srvList = getServerList().values();
-    List<UserSympaListWithUrl> result = new ArrayList<>();
+    List<SympaList> result = new ArrayList<>();
     for ( SpringCachingSympaServerAxisWsImpl s : srvList ) {
-      List<UserSympaListWithUrl> srvResult = s.getLists(SympaRobot.getDefaultRobot());
+      List<SympaList> srvResult = s.getLists(SympaRobot.getDefaultRobot());
       if ( (srvResult != null) && (!srvResult.isEmpty()) ) {
         result.addAll(srvResult);
       }
     }
-    // default sort on list address
-    sortResults(result);
     return result;
   }
 

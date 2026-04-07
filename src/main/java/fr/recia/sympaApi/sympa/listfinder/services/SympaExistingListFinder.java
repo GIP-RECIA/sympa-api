@@ -15,6 +15,7 @@
  */
 package fr.recia.sympaApi.sympa.listfinder.services;
 
+import fr.recia.sympaApi.pojo.SympaList;
 import fr.recia.sympaApi.pojo.UserSympaListWithUrl;
 import fr.recia.sympaApi.service.DomainService;
 import fr.recia.sympaApi.sympa.admin.LdapPerson;
@@ -55,13 +56,13 @@ public class SympaExistingListFinder implements IExistingListsFinder {
 	public Collection<String> findExistingLists(final Map<String, String> userInfo) throws Exception {
 		log.debug("Finding existing lists...");
 
-		List<UserSympaListWithUrl> lists = this.domainService.getLists();
+		List<SympaList> lists = this.domainService.getLists();
 
 		log.debug("Total lists returned : " + lists.size());
 
 		List<String> existingLists = new ArrayList<>();
 
-		for (UserSympaListWithUrl list : lists) {
+		for (SympaList list : lists) {
 			String[] address = list.getAddress().split("@");
 			if (address.length != 2) {
 				log.warn("Unexpected address, @ not found : " + list.getAddress());

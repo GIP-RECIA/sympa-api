@@ -19,6 +19,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import fr.recia.sympaApi.config.bean.CacheProperties;
 import fr.recia.sympaApi.pojo.CreateListInfo;
 import fr.recia.sympaApi.pojo.SympaCredential;
+import fr.recia.sympaApi.pojo.SympaList;
 import fr.recia.sympaApi.pojo.SympaRobot;
 import fr.recia.sympaApi.pojo.UserSympaListWithUrl;
 import fr.recia.sympaApi.service.CASCredentialRetrieverService;
@@ -250,7 +251,7 @@ public class SpringCachingSympaServerAxisWsImpl {
     return result;
   }
 
-  public List<UserSympaListWithUrl> getLists(final SympaRobot robot) {
+  public List<SympaList> getLists(final SympaRobot robot) {
     // first of all; get a fresh new port if needed
     if(this.portCache.get(robot)!=null) {
       try {
@@ -289,7 +290,7 @@ public class SpringCachingSympaServerAxisWsImpl {
       log.error("lists() failed !",e);
       return null;
     }
-    List<UserSympaListWithUrl> result = new ArrayList<>();
+    List<SympaList> result = new ArrayList<>();
     if ( lists != null ) {
       for (String l : lists) {
         Map<String, String> listeInfos = stringToMap(l);
