@@ -291,20 +291,11 @@ public class AdminSympaService {
 
     userInfo = this.escoUserAttributeMapping.enhanceUserInfo(userInfo);
 
-    String uai = userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT).orElse(null);
-    assert uai != null;
+    String uai = userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT).orElseThrow();
 
-    List<String> isMemberOf = userAttributesHandler.getAttributeList(UserAttributesHandler.IS_MEMBER_OF).orElse(null);
-    assert isMemberOf != null;
-
+    List<String> isMemberOf = userAttributesHandler.getAttributeList(UserAttributesHandler.IS_MEMBER_OF).orElseThrow();
 
     List<UserSympaListWithUrl> sympaList;
-
-
-    final String uid = SecurityContextHolder.getContext().getAuthentication().getName();// userInfo.get(UserInfoService.getPortalUidAttribute());
-
-    Assert.hasText(uid, "UID shouldn't be empty !");
-    Assert.hasText(uai, "UAI shouldn't be empty !");
 
     boolean isAdmin;
     try {
