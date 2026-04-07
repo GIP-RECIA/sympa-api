@@ -284,8 +284,6 @@ public class AdminSympaService {
   @Nullable
   public AdminSympaListResponseForDisplay fetchLists(SympaListRequestForm sympaListRequestForm) throws Exception {
 
-    Map<String,Object> map = new HashMap<>();
-
     Map<String, String> userInfo = new HashMap<>();
 
     //enhanceUserInfo => add siren
@@ -307,8 +305,6 @@ public class AdminSympaService {
 
     Assert.hasText(uid, "UID shouldn't be empty !");
     Assert.hasText(uai, "UAI shouldn't be empty !");
-
-    map.put("uai", uai);
 
     boolean isAdmin;
     try {
