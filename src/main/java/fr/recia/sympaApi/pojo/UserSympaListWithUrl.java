@@ -25,9 +25,7 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserSympaListWithUrl extends UserSympaList implements Serializable {
-
-	private static final long serialVersionUID = 2955582285925647743L;
+public class UserSympaListWithUrl extends UserSympaList {
 
 	private String listUrl;
 	private String listAdminUrl;
@@ -36,6 +34,7 @@ public class UserSympaListWithUrl extends UserSympaList implements Serializable 
   @Override
   public String toString() {
     return "UserSympaListWithUrl{" +
+      "super=" + super.toString() +
       "listUrl='" + listUrl + '\'' +
       ", listAdminUrl='" + listAdminUrl + '\'' +
       ", listArchivesUrl='" + listArchivesUrl + '\'' +

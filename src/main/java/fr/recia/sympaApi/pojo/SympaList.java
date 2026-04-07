@@ -24,8 +24,7 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SympaList implements Serializable {
-  private static final long serialVersionUID = -4224626282671137797L;
+public class SympaList {
   private String homepage;
   private String address;
   private String subject;

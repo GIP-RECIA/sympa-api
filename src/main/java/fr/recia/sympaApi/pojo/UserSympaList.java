@@ -24,9 +24,7 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserSympaList extends SympaList implements Serializable {
-
-	private static final long serialVersionUID = -7632209925580241799L;
+public class UserSympaList extends SympaList {
 
 	private boolean owner;
 	private boolean editor;
@@ -35,6 +33,7 @@ public class UserSympaList extends SympaList implements Serializable {
   @Override
   public String toString() {
     return "UserSympaList{" +
+      "super=" + super.toString() +
       "owner=" + owner +
       ", editor=" + editor +
       ", subscriber=" + subscriber +
