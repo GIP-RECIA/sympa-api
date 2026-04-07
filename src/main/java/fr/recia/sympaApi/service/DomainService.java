@@ -100,7 +100,7 @@ public class DomainService {
   }
 
 
-  public List<UserSympaListWithUrl> getWhich() throws Exception {
+  private List<UserSympaListWithUrl> getWhich() throws Exception {
     Collection<SpringCachingSympaServerAxisWsImpl> srvList = getServerList().values();
     List<UserSympaListWithUrl> result = new ArrayList<>();
     for ( SpringCachingSympaServerAxisWsImpl s : srvList ) {
