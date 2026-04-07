@@ -30,9 +30,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeSet;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Implementation basique du 'module' permettant de sortir la liste des
@@ -116,15 +117,13 @@ public class AvailableListsFinderBasicImpl implements IAvailableListsFinder {
 		Collection<String> existingLists = this.existingListsFinder.findExistingLists(userInfo);
 		AvailableListsFinderBasicImpl.log.debug("Existing lists found " + existingLists.size());
 
-		Iterator<IMailingList> itLists = creatableLists.iterator();
-    while (itLists.hasNext()) {
-      IMailingList list = itLists.next();
+    Map<String, IMailingList> creatableListsMap = creatableLists.stream().collect(Collectors.toMap(m -> m.getName().toLowerCase(), Function.identity()));
 
-      // On test si la liste fait partie des listes existantes
-      if (existingLists.contains(list.getName().toLowerCase())) {
-        updatableLists.add(list);
-        itLists.remove();
-        AvailableListsFinderBasicImpl.log.debug("List " + list + " already exists, removing");
+    for(String existingList: existingLists ){
+      existingList = existingList.toLowerCase();
+      if(creatableListsMap.containsKey(existingList)){
+        updatableLists.add(creatableListsMap.get(existingList));
+        creatableLists.remove(creatableListsMap.get(existingList));
       }
     }
 
