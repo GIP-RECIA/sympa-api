@@ -88,7 +88,7 @@ import java.util.stream.Collectors;
 @Setter
 @Slf4j
 @Service
-public class AdminService {
+public class AdminSympaService {
 
   protected List<JsCreateListTableRow> convertMailingListsToJsListTableTow(
     final String domain, final Collection<IMailingList> creatableLists) {

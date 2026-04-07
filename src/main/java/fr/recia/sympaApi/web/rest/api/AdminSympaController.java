@@ -23,7 +23,7 @@ import fr.recia.sympaApi.dto.request.admin.CreateOrUpdateListFormDataRequestPayl
 import fr.recia.sympaApi.dto.response.admin.AdminSympaListResponseForDisplay;
 import fr.recia.sympaApi.dto.response.admin.CreateOrUpdateListFormDataResponsePayload;
 import fr.recia.sympaApi.pojo.RobotSympaConf;
-import fr.recia.sympaApi.service.AdminService;
+import fr.recia.sympaApi.service.AdminSympaService;
 import fr.recia.sympaApi.service.DomainService;
 import fr.recia.sympaApi.servlet.JsTreeNode;
 import fr.recia.sympaApi.sympa.admin.EscoUserAttributeMapping;
@@ -81,7 +81,7 @@ public class AdminSympaController {
   private DomainService domainService;
 
   @Autowired
-  private AdminService adminService;
+  private AdminSympaService adminSympaService;
 
   @Autowired
   protected RobotDomaineNameResolver robotDomaineNameResolver;
@@ -125,7 +125,7 @@ public class AdminSympaController {
       sympaListRequestForm = new SympaListRequestForm(true, true, true);
     }
 
-    Optional<AdminSympaListResponseForDisplay> adminSympaListResponseForDisplayOptional = Optional.ofNullable(adminService.fetchLists(sympaListRequestForm));
+    Optional<AdminSympaListResponseForDisplay> adminSympaListResponseForDisplayOptional = Optional.ofNullable(adminSympaService.fetchLists(sympaListRequestForm));
 
     return adminSympaListResponseForDisplayOptional.map(adminSympaListResponseForDisplay -> ResponseEntity.ok().body(adminSympaListResponseForDisplay)).orElseGet(() -> ResponseEntity.internalServerError().body(null));
 
@@ -133,13 +133,13 @@ public class AdminSympaController {
 
   @PostMapping("/createOrUpdateListFormData")
   public ResponseEntity<CreateOrUpdateListFormDataResponsePayload> createOrUpdateListFormData(@RequestBody CreateOrUpdateListFormDataRequestPayload requestPayload) {
-    return ResponseEntity.ok(adminService.createOrUpdateListFormData(requestPayload));
+    return ResponseEntity.ok(adminSympaService.createOrUpdateListFormData(requestPayload));
   }
 
   @PostMapping("/createList")
   public ResponseEntity<Map<String, String>> createList(@RequestBody @Validated CreateOrUpdateListRequestPayload requestPayload) {
     String operation = "operation=CREATE"; //always in this RequestMapping
-    String messageKey = adminService.createOrUpdate(requestPayload, operation);
+    String messageKey = adminSympaService.createOrUpdate(requestPayload, operation);
 
     if(Objects.nonNull(messageKey)) {
       Map<String, String> responseMap = new HashMap<>();
@@ -157,7 +157,7 @@ public class AdminSympaController {
   public ResponseEntity<Map<String, String>> updateList(@RequestBody @Validated CreateOrUpdateListRequestPayload requestPayload) {
     //todo check if update cause exception if dont already exist
     String operation = "operation=UPDATE"; //always in this RequestMapping
-    String messageKey = adminService.createOrUpdate(requestPayload, operation);
+    String messageKey = adminSympaService.createOrUpdate(requestPayload, operation);
 
     if(Objects.nonNull(messageKey)) {
       Map<String, String> responseMap = new HashMap<>();
@@ -178,7 +178,7 @@ public class AdminSympaController {
 
   @PostMapping("/closeList")
   public @ResponseBody ResponseEntity<Map<String, String>> closeList(@RequestBody CloseListRequestPayload requestPayload) {
-    String messageKey = adminService.closeList(requestPayload);
+    String messageKey = adminSympaService.closeList(requestPayload);
 
     if (Objects.nonNull(messageKey)) {
       Map<String, String> responseMap = new HashMap<>();
@@ -195,7 +195,7 @@ public class AdminSympaController {
 
   @GetMapping("/additionalGroupsTree")
   public @ResponseBody ResponseEntity<List<JsTreeNode>> fetchAdditionalGroupsAsTree() {
-    return ResponseEntity.ok(adminService.fetchAdditionalGroupsTree());
+    return ResponseEntity.ok(adminSympaService.fetchAdditionalGroupsTree());
   }
 
 
