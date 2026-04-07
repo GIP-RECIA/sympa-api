@@ -18,7 +18,6 @@ package fr.recia.sympaApi.sympa.listfinder.services;
 import fr.recia.sympaApi.pojo.SympaList;
 import fr.recia.sympaApi.pojo.UserSympaListWithUrl;
 import fr.recia.sympaApi.service.DomainService;
-import fr.recia.sympaApi.sympa.admin.LdapPerson;
 import fr.recia.sympaApi.sympa.listfinder.IExistingListsFinder;
 import lombok.Getter;
 import lombok.Setter;
@@ -45,12 +44,8 @@ import java.util.Map;
 @Service
 public class SympaExistingListFinder implements IExistingListsFinder {
 
-
   @Autowired
 	private DomainService domainService;
-
-  @Autowired
-	private LdapPerson ldapPerson;
 
 	/** {@inheritDoc} */
 	public Collection<String> findExistingLists(final Map<String, String> userInfo) throws Exception {
