@@ -32,67 +32,27 @@ import org.springframework.stereotype.Service;
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
-import java.io.Serializable;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Objects;
-import java.util.Set;
 
 @Getter
 @Setter
 @Slf4j
 @Service
-public class LdapFilterSourceRequest implements Serializable {
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -6561990436374565291L;
+public class LdapFilterSourceRequest {
 
-
-
-
-
-	
-	
-	
 	private static String UAIregex = "\\{UAI\\}";
 	private static String SIRENregex = "\\{SIREN\\}";
-	
-	// les valeurs pour former la requette ldap de recherche le siren d'un etab connaissant son uai.
-	// Ici on a les valeurs par défauts elles peuvent êtres modifiées via les setters.
-	// declaration du bean dans escoLdapContext.
-	private String objectClassEtab= "ENTStructure";
-	private String ldapAttrSiren = "ENTStructureSiren";
-	private String ldapAttrUai="ENTStructureUAI";
-	private String ldapBaseRdnEtab = "ou=structures";
-	private String filtreLdapSearchSirenByUaiFormat="(&(objectClass=%s)(%s=%s))";
-	
-	/*
-	 * Le bean est de session on memorise ici les requettes ldap de cette session: 
-	 */
-	private transient HashMap<String, String> request2name = new HashMap<String, String>();
-	
-	private String functionSources;
-	
-	
-
-	private transient Set<String> sourceSet = new HashSet<String>();
-	
-	private transient int pourtest = 0;
 
   @Autowired
 	private LdapTemplate ldapTemplate;
-
 
   @Autowired
   private CacheProperties cacheProperties;
   
   @Autowired
   private CacheHandler cacheHandler;
-
-  
 
 	static private String replaceAll(String in, String uai, String siren) {
 		String res = in;
@@ -117,8 +77,6 @@ public class LdapFilterSourceRequest implements Serializable {
 	 * @return
 	 */
 	public String makeDisplayName(PreparedRequest preparedRequest, String uai, String siren) {
-      log.debug("MakeDisplayName POUR TEST=" + pourtest++);
-		
 		
 		String name = null;
 		if (preparedRequest != null) {
@@ -184,19 +142,5 @@ public class LdapFilterSourceRequest implements Serializable {
 			
 		}
 		return name;
-	}
-	
-	private Set<String> getSourceSet(){
-		if (sourceSet.isEmpty() && functionSources != null) {
-			for (String src : functionSources.split("\\s+")) {
-				sourceSet.add(src);
-			}
-		}
-		return sourceSet;
-	}
-
-	public void setFunctionSources(String sources) {
-		this.functionSources = sources;
-		sourceSet.clear();
 	}
 }
