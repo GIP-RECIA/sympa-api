@@ -185,7 +185,7 @@ public class AdminSympaService {
 
   @SuppressWarnings("unchecked")
   public List<JsTreeNode> fetchAdditionalGroupsTree(){
-    String uai = userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT).orElseThrow();
+    String uai = userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT);
 
 
     List<String> additionalGroups = null;
@@ -287,13 +287,13 @@ public class AdminSympaService {
     Map<String, String> userInfo = new HashMap<>();
 
     //enhanceUserInfo => add siren
-    userInfo.put(UserAttributesHandler.UAI_CURRENT, userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT).orElse(null));
+    userInfo.put(UserAttributesHandler.UAI_CURRENT, userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT));
 
     userInfo = this.escoUserAttributeMapping.enhanceUserInfo(userInfo);
 
-    String uai = userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT).orElseThrow();
+    String uai = userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT);
 
-    List<String> isMemberOf = userAttributesHandler.getAttributeList(UserAttributesHandler.IS_MEMBER_OF).orElseThrow();
+    List<String> isMemberOf = userAttributesHandler.getAttributeList(UserAttributesHandler.IS_MEMBER_OF);
 
     List<UserSympaListWithUrl> sympaList;
 
@@ -336,8 +336,8 @@ public class AdminSympaService {
 
     List<PreparedRequest> listPreparedRequest = this.daoService.getAllPreparedRequests();
 
-    String uai = userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT).orElseThrow();
-    String siren =  userAttributesHandler.getAttribute(UserAttributesHandler.SIREN_CURRENT).orElseThrow();
+    String uai = userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT);
+    String siren =  userAttributesHandler.getAttribute(UserAttributesHandler.SIREN_CURRENT);
 
     for (PreparedRequest preparedRequest : listPreparedRequest) {
       EditorAlias row = new EditorAlias();
@@ -406,7 +406,7 @@ public class AdminSympaService {
     }
 
     // 2 check si le user est admin sur cet etab
-    boolean isAdmin = robotSympaConf.isAdminRobotSympaByUai(userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT).orElseThrow(), userAttributesHandler.getAttributeList(UserAttributesHandler.IS_MEMBER_OF).orElseThrow());
+    boolean isAdmin = robotSympaConf.isAdminRobotSympaByUai(userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT), userAttributesHandler.getAttributeList(UserAttributesHandler.IS_MEMBER_OF));
 
     if(!isAdmin){
       throw new IsNotAdminException("");
@@ -461,9 +461,9 @@ public class AdminSympaService {
     String policy = "&policy=newsletter"; // always
 
     // ces valeurs doivent venir du user info
-    String siren = String.format("&siren=%s", userAttributesHandler.getAttribute(UserAttributesHandler.SIREN_CURRENT).orElseThrow());
-    String rne = String.format("&rne=%s", userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT).orElseThrow());
-    String uai = String.format("&uai=%s", userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT).orElseThrow());
+    String siren = String.format("&siren=%s", userAttributesHandler.getAttribute(UserAttributesHandler.SIREN_CURRENT));
+    String rne = String.format("&rne=%s", userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT));
+    String uai = String.format("&uai=%s", userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT));
 
     String queryCreatedFromInputs = operation + policy +
       type + siren + rne + uai + editorsAliases + editorsGroups + typeParam;
@@ -566,7 +566,7 @@ public class AdminSympaService {
     //Get the mailing lists that we can create
     AvailableMailingListsFound availableLists = null;
 
-    String uai = userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT).orElseThrow();
+    String uai = userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT);
 
 
     AvailableMailingListsFound availableMailingListsFound = cacheHandler.getFromCache(cacheProperties.getAdminServiceCacheName(), uai, new TypeReference<>() {
@@ -740,7 +740,7 @@ public class AdminSympaService {
 
 
   private RobotSympaInfo getRobotInfo() {
-    return robotSympaConf.getRobotSympaInfoByUai(userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT).orElseThrow(), userAttributesHandler.getAttributeList(UserAttributesHandler.IS_MEMBER_OF).orElseThrow(), true);
+    return robotSympaConf.getRobotSympaInfoByUai(userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT), userAttributesHandler.getAttributeList(UserAttributesHandler.IS_MEMBER_OF), true);
   }
 
   private List<String> allMandatoryPreparedRequestToStringList(String modelId) {

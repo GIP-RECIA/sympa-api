@@ -90,21 +90,13 @@ public class ServerListMap extends HashMap<String, SpringCachingSympaServerAxisW
 
     setConnectUrl( casProperties.getBaseServerUrl());
 
-    String currentUai = userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT).orElse(null);
+    String currentUai = userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT);
 
-    if(Objects.isNull(currentUai) || currentUai.isEmpty()){
-      //TODO exception message
-      return;
-    }
-
-
-
-    List<String> allUai = userAttributesHandler.getAttributeList(UserAttributesHandler.UAI_ALL).orElse(List.of(currentUai));
-
-    List<String>  isMemberOf = userAttributesHandler.getAttributeList(UserAttributesHandler.IS_MEMBER_OF).orElse(List.of());
+    List<String>  isMemberOf = userAttributesHandler.getAttributeList(UserAttributesHandler.IS_MEMBER_OF);
 
 		if (robotSympaConf.isForAllUai()) {
-			for (String uai : allUai) {
+      List<String> allUai = userAttributesHandler.getAttributeList(UserAttributesHandler.UAI_ALL);
+      for (String uai : allUai) {
 				creeSympaServer(uai, isMemberOf);
 			}
 		} else {

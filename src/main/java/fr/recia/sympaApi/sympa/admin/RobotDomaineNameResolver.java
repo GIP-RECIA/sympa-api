@@ -43,9 +43,9 @@ public class RobotDomaineNameResolver  {
 	
 	public String resolveRobotDomainName() {
 
-    String uai = userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT).orElse(null);
+    String uai = userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT);
 
-    List<String> isMemberOf = userAttributesHandler.getAttributeList(UserAttributesHandler.IS_MEMBER_OF).orElse(null);
+    List<String> isMemberOf = userAttributesHandler.getAttributeList(UserAttributesHandler.IS_MEMBER_OF);
 
     RobotSympaInfo rsi = robotSympaConf.getRobotSympaInfoByUai(uai, isMemberOf, false);
     // todo read in session instead of RSC

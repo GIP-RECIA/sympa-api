@@ -65,7 +65,7 @@ public class EscoUserAttributeMapping extends UserAttributeMapping {
 	 * @param userInfo modifiable attribute map.
 	 */
 	private void addSirenToUserInfo(final Map<String, String> userInfo) {
-    userInfo.put(UserAttributeMapping.USER_ATTRIBUTE_SIREN_KEY, userAttributesHandler.getAttribute(UserAttributesHandler.SIREN_CURRENT).orElseThrow());
+    userInfo.put(UserAttributeMapping.USER_ATTRIBUTE_SIREN_KEY, userAttributesHandler.getAttribute(UserAttributesHandler.SIREN_CURRENT));
 	}
 
 }

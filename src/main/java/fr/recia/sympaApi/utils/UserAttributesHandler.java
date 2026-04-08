@@ -16,6 +16,7 @@
 package fr.recia.sympaApi.utils;
 
 import fr.recia.sympaApi.config.custom.impl.UserCustomImplementation;
+import fr.recia.sympaApi.exception.UserAttributeNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -71,33 +72,32 @@ public class UserAttributesHandler {
     return null;
   }
 
-  public Optional<String> getAttribute(String attributeKey){
+  public String getAttribute(String attributeKey){
 
 
     Object attributeRaw = getAttributeRaw(attributeKey);
 
     if (attributeRaw instanceof String) {
-      return Optional.of((String)attributeRaw);
+      return (String)attributeRaw;
     }
-    return Optional.empty();
+    throw new UserAttributeNotFoundException(attributeKey);
   }
 
-  public Optional<List<String>> getAttributeList(String key) {
+  public List<String> getAttributeList(String key) {
 
     Object value = getAttributeRaw(key);
 
     if (value instanceof List ) {
 
-      return Optional.of(
-        ((List<?>)value).stream()
+      return ((List<?>)value).stream()
         .filter(String.class::isInstance)
         .map(String.class::cast)
         .collect(Collectors.toList())
-      );
+      ;
     }
-    Optional<String> valueAsString = getAttribute(key);
+    String stringValue = getAttribute(key);
 
-    return valueAsString.map(List::of);
+    return List.of(stringValue);
 
   }
 }
