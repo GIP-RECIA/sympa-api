@@ -47,25 +47,6 @@ public class UserAttributeMapping {
 	/** User attribute : Siren key. */
 	public static final String USER_ATTRIBUTE_SIREN_KEY = "USER_ATTRIBUTE_SIREN_KEY";
 
-	/** Logger. */
-	@SuppressWarnings("unused")
-	private static final Log LOG = LogFactory.getLog(UserAttributeMapping.class);
-
-	/**
-	 * Get the user attribute attached to the placeholder provided.
-	 * 
-	 * @param placeholder the placeholder key.
-	 * @return the corresponding user attribute, or null.
-	 */
-	public String getMapping(final String placeholder) {
-		String result = null;
-		if (StringUtils.hasText(placeholder)) {
-			result = this.userMappingProperties.getMapping().get(placeholder);
-		}
-
-		return result;
-	}
-
 	/**
 	 * Replace user attributes placeholders like %UAI by their value in the portal.
 	 * 
@@ -75,6 +56,7 @@ public class UserAttributeMapping {
 	 * Or null if the supplied chain is null.
 	 */
 	public String substitutePlaceholder(final String chain, final Map<String, String> userInfo) {
+
 		String result = chain;
 
 		String pattern = null;
@@ -90,25 +72,4 @@ public class UserAttributeMapping {
 
 		return result;
 	}
-
-	/**
-	 * Build a map of user attributes placeholders and their values in the portal.
-	 * The keys are placeholders alphanum chars only.
-	 * 
-	 * @param userInfo map of the ser attributes.
-	 * @return a map with placeholders values.
-	 */
-	public Map<String, String> buildPlaceholderValuesMap(final Map<String, String> userInfo) {
-		Map<String, String> result = new HashMap<String, String>();
-
-		for (Entry<String, String> entry : this.userMappingProperties.getMapping().entrySet()) {
-			result.put(entry.getKey().replaceAll("[^a-zA-Z0-9]", "").toLowerCase(),
-					userInfo.get(entry.getValue()));
-		}
-
-		return result;
-	}
-
-  private class log {
-  }
 }

@@ -26,7 +26,6 @@ import fr.recia.sympaApi.pojo.RobotSympaConf;
 import fr.recia.sympaApi.service.AdminSympaService;
 import fr.recia.sympaApi.service.DomainService;
 import fr.recia.sympaApi.servlet.JsTreeNode;
-import fr.recia.sympaApi.sympa.admin.EscoUserAttributeMapping;
 import fr.recia.sympaApi.sympa.admin.LdapFilterSourceRequest;
 import fr.recia.sympaApi.sympa.admin.LdapPerson;
 import fr.recia.sympaApi.sympa.admin.RobotDomaineNameResolver;
@@ -63,9 +62,6 @@ public class AdminSympaController {
 
   @Autowired
   UserAttributesHandler userAttributesHandler;
-
-  @Autowired
-  private EscoUserAttributeMapping userAttributeMapping;
 
   @Autowired
   private SessionAttributesHandler sessionAttributesHandler;

@@ -34,10 +34,10 @@ import fr.recia.sympaApi.pojo.UserSympaListWithUrl;
 import fr.recia.sympaApi.servlet.EditorAlias;
 import fr.recia.sympaApi.servlet.JsCreateListTableRow;
 import fr.recia.sympaApi.servlet.JsTreeNode;
-import fr.recia.sympaApi.sympa.admin.EscoUserAttributeMapping;
 import fr.recia.sympaApi.sympa.admin.LdapFilterSourceRequest;
 import fr.recia.sympaApi.sympa.admin.LdapPerson;
 import fr.recia.sympaApi.sympa.admin.RobotDomaineNameResolver;
+import fr.recia.sympaApi.sympa.admin.UserAttributeMapping;
 import fr.recia.sympaApi.sympa.listfinder.IMailingList;
 import fr.recia.sympaApi.sympa.listfinder.IMailingListModel;
 import fr.recia.sympaApi.sympa.listfinder.model.AvailableMailingListsFound;
@@ -61,7 +61,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
@@ -127,9 +126,6 @@ public class AdminSympaService {
 
   @Autowired
   DomainService domainService;
-
-  @Autowired
-  EscoUserAttributeMapping escoUserAttributeMapping;
 
   @Autowired
   private FormToCriterion formToCriterion;
@@ -286,10 +282,8 @@ public class AdminSympaService {
 
     Map<String, String> userInfo = new HashMap<>();
 
-    //enhanceUserInfo => add siren
     userInfo.put(UserAttributesHandler.UAI_CURRENT, userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT));
-
-    userInfo = this.escoUserAttributeMapping.enhanceUserInfo(userInfo);
+    userInfo.put(UserAttributeMapping.USER_ATTRIBUTE_SIREN_KEY, userAttributesHandler.getAttribute(UserAttributesHandler.SIREN_CURRENT));
 
     String uai = userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT);
 
