@@ -59,7 +59,17 @@ public class SympaApiExceptionHandler {
     return ResponseEntity
       .status(HttpStatus.FORBIDDEN)
       .body(Map.of(
-        "message", ex.getMessage()
+        "message", "Forbidden"
+      ));
+  }
+
+  @ExceptionHandler(UserAttributeNotFoundException.class)
+  public ResponseEntity<?> handleUserAttributeNotFoundException(UserAttributeNotFoundException ex) {
+    log.error("User attribute not found for [{}]", ex.getMessage());
+    return ResponseEntity
+      .status(HttpStatus.INTERNAL_SERVER_ERROR)
+      .body(Map.of(
+        "message", "Unexpected error"
       ));
   }
 }
