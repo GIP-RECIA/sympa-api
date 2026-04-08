@@ -13,21 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package fr.recia.sympaApi.sympa.listfinder.model;
+package fr.recia.sympaApi.pojo;
+
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Embeddable;
-import java.io.Serializable;
-import java.math.BigInteger;
-
+/**
+ * Represents a row in the table of lists that can be created
+ * @author Eric Groning
+ *
+ */
 @Getter
 @Setter
-@Embeddable
-public class ModelSubscribersId implements Serializable {
+@NoArgsConstructor
+public class JsCreateListTableRow {
+	//Name of the list (email address)
+	String name;
+	
+	//Subject of list
+	String subject;
 
-  private BigInteger id;
-  private String groupFilter;
+  //Model id
+	String modelId;
 
+  //Name of the model parameter
+	String modelParam;
+	
+	UserSympaListWithUrl urls;
+
+
+  @Override
+	public String toString() {
+		return "JsCreateListTableRow [name=" + name + ", subject=" + subject + ", modelId=" + modelId + ", modelParam="
+				+ modelParam + ", urls=" + (urls != null ? urls.toString(): "null") + "]";
+	}
 }

@@ -13,33 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package fr.recia.sympaApi.servlet;
+package fr.recia.sympaApi.entity;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-/**
- * Class used to represent a row representing a 
- * group that can be subscribed to a list in the create list screen.
- * 
- * @author Eric Groning
- *
- */
+import javax.persistence.Embeddable;
+import java.io.Serializable;
+import java.math.BigInteger;
+
 @Getter
 @Setter
-@NoArgsConstructor
-public class EditorAlias {
-	//Name of the group
-	String name;
-	
-	//True if the group will be part of the mailing list
-	Boolean checked;
-	
-	//True if the user can toggle the checked value
-	Boolean editable;
-	
-	//Database id of the group
-	String idRequest;
+@Embeddable
+public class ModelSubscribersId implements Serializable {
+
+  private BigInteger id;
+  private String groupFilter;
 
 }

@@ -15,7 +15,7 @@
  */
 package fr.recia.sympaApi.dto.response.admin;
 
-import fr.recia.sympaApi.servlet.JsCreateListTableRow;
+import fr.recia.sympaApi.pojo.JsCreateListTableRow;
 import lombok.Getter;
 
 @Getter

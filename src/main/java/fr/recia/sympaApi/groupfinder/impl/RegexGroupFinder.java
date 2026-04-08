@@ -18,7 +18,7 @@ package fr.recia.sympaApi.groupfinder.impl;
 
 import fr.recia.sympaApi.config.bean.RegexGroupFinderProperties;
 import fr.recia.sympaApi.groupfinder.IEtabGroupsFinder;
-import fr.recia.sympaApi.sympa.admin.UserAttributeMapping;
+import fr.recia.sympaApi.service.UserAttributeMapping;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;

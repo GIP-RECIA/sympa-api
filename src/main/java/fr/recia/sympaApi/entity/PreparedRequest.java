@@ -13,26 +13,43 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package fr.recia.sympaApi.dto.response.admin;
+package fr.recia.sympaApi.entity;
 
-import fr.recia.sympaApi.pojo.EditorAlias;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.math.BigInteger;
 
+/**
+ * Object representing row in prepared_request table in the SympaRemote database. 
+ * @author Eric Groning
+ *
+ */
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-public class CreateOrUpdateListFormDataResponsePayload {
+@Entity
+@Table(name = "prepared_request")
+public class PreparedRequest {
 
-  List<EditorAlias> editorsAliases;
-  String type;
-  String typeParam;
-  String typeParamName;
-  String subscribersGroup;
+  @Id
+	@Column(name = "id_request")
+	BigInteger id;
+
+  @Column(name = "display_name")
+	String displayName;
+	
+	@Column(name = "ldapfilter")	
+	String ldapFilter;
+
+
+  @Column(name = "data_source")
+	String dataSource;
+	
+	@Column(name = "ldap_suffix")	
+	String ldapSuffix;
 
 }

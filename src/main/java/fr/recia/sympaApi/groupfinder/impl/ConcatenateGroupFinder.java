@@ -17,7 +17,7 @@ package fr.recia.sympaApi.groupfinder.impl;
 
 import fr.recia.sympaApi.config.bean.ConcatenateGroupFinderProperties;
 import fr.recia.sympaApi.groupfinder.IEtabGroupsFinder;
-import fr.recia.sympaApi.sympa.admin.UserAttributeMapping;
+import fr.recia.sympaApi.service.UserAttributeMapping;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package fr.recia.sympaApi.sympa.admin;
+package fr.recia.sympaApi.service.ldap;
 
 
 import fr.recia.sympaApi.config.bean.LdapPersonProperties;

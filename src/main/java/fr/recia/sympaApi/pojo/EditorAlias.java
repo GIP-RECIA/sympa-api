@@ -13,23 +13,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package fr.recia.sympaApi.dto.response.admin;
+package fr.recia.sympaApi.pojo;
 
-import fr.recia.sympaApi.pojo.JsCreateListTableRow;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
+/**
+ * Class used to represent a row representing a 
+ * group that can be subscribed to a list in the create list screen.
+ * 
+ * @author Eric Groning
+ *
+ */
 @Getter
-public class AdminSympaUpdatableList extends AdminSympaCreatableList {
-
-
-
-  final String adminUrl;
-  final String archivesUrl;
-
-  public AdminSympaUpdatableList(JsCreateListTableRow tableRow){
-    super(tableRow);
-    this.adminUrl = tableRow.getUrls().getListAdminUrl();
-    this.archivesUrl = tableRow.getUrls().getListArchivesUrl();
-  }
+@Setter
+@NoArgsConstructor
+public class EditorAlias {
+	//Name of the group
+	String name;
+	
+	//True if the group will be part of the mailing list
+	Boolean checked;
+	
+	//True if the user can toggle the checked value
+	Boolean editable;
+	
+	//Database id of the group
+	String idRequest;
 
 }

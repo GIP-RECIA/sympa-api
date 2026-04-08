@@ -13,14 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package fr.recia.sympaApi.sympa.listfinder.services;
+package fr.recia.sympaApi.service.listfinder.impl;
 
 
 
-import fr.recia.sympaApi.sympa.listfinder.IListsFromGroupsPatternMatcher;
-import fr.recia.sympaApi.sympa.listfinder.IMailingList;
-import fr.recia.sympaApi.sympa.listfinder.IMailingListModel;
-import fr.recia.sympaApi.sympa.listfinder.model.BasicMailingList;
+import fr.recia.sympaApi.service.listfinder.IListsFromGroupsPatternMatcher;
+import fr.recia.sympaApi.model.IMailingList;
+import fr.recia.sympaApi.model.IMailingListModel;
+import fr.recia.sympaApi.model.impl.BasicMailingList;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -28,8 +28,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

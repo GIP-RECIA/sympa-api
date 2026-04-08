@@ -15,8 +15,8 @@
  */
 package fr.recia.sympaApi.repositories;
 
-import fr.recia.sympaApi.sympa.listfinder.model.ModelRequest;
-import fr.recia.sympaApi.sympa.listfinder.model.ModelRequestId;
+import fr.recia.sympaApi.entity.ModelRequest;
+import fr.recia.sympaApi.entity.ModelRequestId;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

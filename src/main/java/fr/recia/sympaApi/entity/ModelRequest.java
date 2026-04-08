@@ -13,26 +13,47 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package fr.recia.sympaApi.sympa.listfinder.model;
+package fr.recia.sympaApi.entity;
+
 
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import java.io.Serializable;
-import java.math.BigInteger;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
+/**
+ * Object representing row in j_model_request table in the SympaRemote database. 
+ * @author Eric Groning
+ *
+ */
 @Getter
 @Setter
-@Embeddable
-public class ModelRequestId implements Serializable {
+@Entity
+@Table(name = "j_model_request")
+public class ModelRequest {
+	
+	@EmbeddedId
+	ModelRequestId id;
 
-  /** Svuid. */
-  private static final long serialVersionUID = 2561811354459813795L;
+  @Column(name = "category", columnDefinition="enum('MANDATORY','UNCHECKED','CHECKED')")
+  String category;
+	
+	public enum ModelRequestRequired {
+    	MANDATORY,
+    	UNCHECKED,
+    	CHECKED
+    }
 
-  @Column(name = "id_model")
-  private BigInteger idModel;
-  @Column(name = "id_request")
-  private BigInteger idRequest;
+	public ModelRequestRequired getCategoryAsEnum() {
+		return ModelRequestRequired.valueOf(category);
+	}
+
+	
+	
+	
 }
+
+

@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package fr.recia.sympaApi.sympa.listfinder.services;
+package fr.recia.sympaApi.service.listfinder.impl;
 
 
 import fr.recia.sympaApi.groupfinder.impl.ConcatenateGroupFinder;
 import fr.recia.sympaApi.service.DomainService;
-import fr.recia.sympaApi.sympa.listfinder.IAvailableListsFinder;
-import fr.recia.sympaApi.sympa.listfinder.IListsFromGroupsPatternMatcher;
-import fr.recia.sympaApi.sympa.listfinder.IMailingList;
-import fr.recia.sympaApi.sympa.listfinder.IMailingListModel;
-import fr.recia.sympaApi.sympa.listfinder.model.AvailableMailingListsFound;
+import fr.recia.sympaApi.service.listfinder.IAvailableListsFinder;
+import fr.recia.sympaApi.service.listfinder.IListsFromGroupsPatternMatcher;
+import fr.recia.sympaApi.model.IMailingList;
+import fr.recia.sympaApi.model.IMailingListModel;
+import fr.recia.sympaApi.model.AvailableMailingListsFound;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -33,7 +33,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.stream.Collectors;

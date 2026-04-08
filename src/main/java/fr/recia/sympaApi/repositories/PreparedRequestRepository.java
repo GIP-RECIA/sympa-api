@@ -15,7 +15,7 @@
  */
 package fr.recia.sympaApi.repositories;
 
-import fr.recia.sympaApi.sympa.listfinder.model.PreparedRequest;
+import fr.recia.sympaApi.entity.PreparedRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.math.BigInteger;

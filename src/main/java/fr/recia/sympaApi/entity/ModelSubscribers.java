@@ -13,33 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-/**
- * 
- */
-package fr.recia.sympaApi.sympa.listfinder.model;
+package fr.recia.sympaApi.entity;
 
-
-import fr.recia.sympaApi.sympa.listfinder.IMailingList;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.Serializable;
-import java.util.Collection;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.persistence.Table;
 
 /**
- * Object containing the available list founds.
- * 
- * @author GIP RECIA 2013 - Maxime BOSSARD.
+ * Object representing row in model_subscribers table in the SympaRemote database. 
+ * @author Eric Groning
  *
  */
 @Getter
 @Setter
-public class AvailableMailingListsFound  implements Serializable {
+@Entity
+@Table(name = "model_subscribers")
+public class ModelSubscribers {
 
-	private static final long serialVersionUID = 2955582247625647743L;
 
-	private Collection<IMailingList> creatableLists;
-
-	private Collection<IMailingList> updatableLists;
+  @EmbeddedId
+  ModelSubscribersId id;
 
 }

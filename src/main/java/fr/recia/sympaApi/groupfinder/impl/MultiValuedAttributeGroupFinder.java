@@ -15,7 +15,7 @@
  */
 package fr.recia.sympaApi.groupfinder.impl;
 
-import fr.recia.sympaApi.sympa.admin.UserAttributeMapping;
+import fr.recia.sympaApi.service.UserAttributeMapping;
 import fr.recia.sympaApi.utils.LdapUtils;
 import lombok.Getter;
 import lombok.Setter;

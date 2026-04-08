@@ -16,10 +16,10 @@
 /**
  * 
  */
-package fr.recia.sympaApi.sympa.listfinder.model;
+package fr.recia.sympaApi.model.impl;
 
 
-import fr.recia.sympaApi.sympa.listfinder.IMailingListModel;
+import fr.recia.sympaApi.model.IMailingListModel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

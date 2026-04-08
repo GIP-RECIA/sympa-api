@@ -13,11 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package fr.recia.sympaApi.sympa.admin;
+package fr.recia.sympaApi.service.ldap;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import fr.recia.sympaApi.config.bean.CacheProperties;
-import fr.recia.sympaApi.sympa.listfinder.model.PreparedRequest;
+import fr.recia.sympaApi.entity.PreparedRequest;
 import fr.recia.sympaApi.utils.CacheHandler;
 import fr.recia.sympaApi.utils.LdapUtils;
 import lombok.Getter;

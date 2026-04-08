@@ -13,23 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package fr.recia.sympaApi.dto.response.admin;
+package fr.recia.sympaApi.entity;
 
-import fr.recia.sympaApi.pojo.JsCreateListTableRow;
 import lombok.Getter;
+import lombok.Setter;
+
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import java.io.Serializable;
+import java.math.BigInteger;
 
 @Getter
-public class AdminSympaUpdatableList extends AdminSympaCreatableList {
+@Setter
+@Embeddable
+public class ModelRequestId implements Serializable {
 
+  /** Svuid. */
+  private static final long serialVersionUID = 2561811354459813795L;
 
-
-  final String adminUrl;
-  final String archivesUrl;
-
-  public AdminSympaUpdatableList(JsCreateListTableRow tableRow){
-    super(tableRow);
-    this.adminUrl = tableRow.getUrls().getListAdminUrl();
-    this.archivesUrl = tableRow.getUrls().getListArchivesUrl();
-  }
-
+  @Column(name = "id_model")
+  private BigInteger idModel;
+  @Column(name = "id_request")
+  private BigInteger idRequest;
 }

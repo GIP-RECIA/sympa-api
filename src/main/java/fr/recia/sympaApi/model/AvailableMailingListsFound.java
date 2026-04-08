@@ -13,23 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package fr.recia.sympaApi.dto.response.admin;
+/**
+ * 
+ */
+package fr.recia.sympaApi.model;
 
-import fr.recia.sympaApi.pojo.JsCreateListTableRow;
+
 import lombok.Getter;
+import lombok.Setter;
 
+import java.io.Serializable;
+import java.util.Collection;
+
+/**
+ * Object containing the available list founds.
+ * 
+ * @author GIP RECIA 2013 - Maxime BOSSARD.
+ *
+ */
 @Getter
-public class AdminSympaUpdatableList extends AdminSympaCreatableList {
+@Setter
+public class AvailableMailingListsFound  implements Serializable {
 
+	private static final long serialVersionUID = 2955582247625647743L;
 
+	private Collection<IMailingList> creatableLists;
 
-  final String adminUrl;
-  final String archivesUrl;
-
-  public AdminSympaUpdatableList(JsCreateListTableRow tableRow){
-    super(tableRow);
-    this.adminUrl = tableRow.getUrls().getListAdminUrl();
-    this.archivesUrl = tableRow.getUrls().getListArchivesUrl();
-  }
+	private Collection<IMailingList> updatableLists;
 
 }

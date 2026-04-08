@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package fr.recia.sympaApi.sympa.listfinder;
+package fr.recia.sympaApi.service.listfinder;
 
 
-import fr.recia.sympaApi.sympa.listfinder.model.AvailableMailingListsFound;
+import fr.recia.sympaApi.model.IMailingListModel;
+import fr.recia.sympaApi.model.AvailableMailingListsFound;
 
 import java.util.Collection;
 import java.util.Map;

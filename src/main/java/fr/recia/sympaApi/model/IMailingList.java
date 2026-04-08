@@ -13,40 +13,40 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package fr.recia.sympaApi.sympa.listfinder;
-
+package fr.recia.sympaApi.model;
 
 /**
- *
- * Interface d'un objet MailingListModel, afin d'autoriser differentes implementations
- * La classe MailingListModel represente un modele de mailing list, qui
- * possede
- *  - un identifiant (un nom pour le modele)
- *  - un template de nom pour les listes creees avec le modele
- *  - un pattern de groupe a matcher pour etre autorise a instancier le modele
+ * Interface d'un objet MailingList, afin d'autoriser differentes implementations.
  *
  * @author GIP Recia
  *
  */
-public interface IMailingListModel {
+public interface IMailingList {
 
 	/**
-	 * @return the id of the model
+	 * Return the name of the mailing list.
+	 * 
+	 * @return the name of the mailing list
 	 */
-	String getId();
+	String getName();
 
 	/**
-	 * @return the listname of the model
-	 */
-	String getListname();
-
-	/**
-	 * @return a description of the list
+	 *
+	 * @return The description of the mailing list
 	 */
 	String getDescription();
 
 	/**
-	 * @return the pattern of the model
+	 * Return the model of the mailing list.
+	 * 
+	 * @return the model of the mailing list
 	 */
-	String getGroupPatternToMatch();
+	IMailingListModel getModel();
+
+	/**
+	 * Return the modelParameter.
+	 * 
+	 * @return the modelParameter (ex. Classe, Niveau...)
+	 */
+	String getModelParameter();
 }

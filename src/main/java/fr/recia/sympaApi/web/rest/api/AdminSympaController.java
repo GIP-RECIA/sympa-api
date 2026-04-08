@@ -25,11 +25,11 @@ import fr.recia.sympaApi.dto.response.admin.CreateOrUpdateListFormDataResponsePa
 import fr.recia.sympaApi.pojo.RobotSympaConf;
 import fr.recia.sympaApi.service.AdminSympaService;
 import fr.recia.sympaApi.service.DomainService;
-import fr.recia.sympaApi.servlet.JsTreeNode;
-import fr.recia.sympaApi.sympa.admin.LdapFilterSourceRequest;
-import fr.recia.sympaApi.sympa.admin.LdapPerson;
-import fr.recia.sympaApi.sympa.admin.RobotDomaineNameResolver;
-import fr.recia.sympaApi.sympa.listfinder.services.HibernateDaoServiceImpl;
+import fr.recia.sympaApi.pojo.JsTreeNode;
+import fr.recia.sympaApi.service.ldap.LdapFilterSourceRequest;
+import fr.recia.sympaApi.service.ldap.LdapPerson;
+import fr.recia.sympaApi.service.RobotDomaineNameResolver;
+import fr.recia.sympaApi.service.listfinder.impl.HibernateDaoServiceImpl;
 import fr.recia.sympaApi.utils.FormToCriterion;
 import fr.recia.sympaApi.utils.SessionAttributesHandler;
 import fr.recia.sympaApi.utils.UserAttributesHandler;

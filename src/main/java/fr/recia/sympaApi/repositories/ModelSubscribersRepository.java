@@ -15,8 +15,8 @@
  */
 package fr.recia.sympaApi.repositories;
 
-import fr.recia.sympaApi.sympa.listfinder.model.ModelSubscribers;
-import fr.recia.sympaApi.sympa.listfinder.model.ModelSubscribersId;
+import fr.recia.sympaApi.entity.ModelSubscribers;
+import fr.recia.sympaApi.entity.ModelSubscribersId;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.math.BigInteger;

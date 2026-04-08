@@ -15,7 +15,7 @@
  */
 package fr.recia.sympaApi.repositories;
 
-import fr.recia.sympaApi.sympa.listfinder.model.Model;
+import fr.recia.sympaApi.entity.Model;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
