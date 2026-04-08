@@ -96,24 +96,6 @@ public class AdminSympaController {
   @Autowired
   private RestTemplate restTemplate;
 
-  @GetMapping("/me")
-  public ResponseEntity<Map<String,Object>> test(){
-    Map<String, Object> responseMap = new HashMap<>();
-
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-    if (authentication.getPrincipal() instanceof UserCustomImplementation) {
-      UserCustomImplementation userCustomImplementation = (UserCustomImplementation)authentication.getPrincipal();
-      responseMap.put("user info from cas ticket", userCustomImplementation.getAttributes());
-      responseMap.put("principal", authentication.getPrincipal());
-      responseMap.put("name",       authentication.getName());
-    }
-
-    return ResponseEntity.ok().body(responseMap);
-
-  }
-
-
   @GetMapping("/lists")
   public ResponseEntity<AdminSympaListResponseForDisplay> fetchLists(@RequestBody(required = false) SympaListRequestForm sympaListRequestForm) throws Exception {
 
