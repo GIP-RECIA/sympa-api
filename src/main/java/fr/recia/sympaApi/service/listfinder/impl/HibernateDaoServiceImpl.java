@@ -16,19 +16,19 @@
 package fr.recia.sympaApi.service.listfinder.impl;
 
 
-import fr.recia.sympaApi.repositories.ModelRepository;
-import fr.recia.sympaApi.repositories.ModelRequestRepository;
-import fr.recia.sympaApi.repositories.ModelSubscribersRepository;
-import fr.recia.sympaApi.repositories.PreparedRequestRepository;
-import fr.recia.sympaApi.service.listfinder.IDaoService;
-import fr.recia.sympaApi.service.UserAttributeMapping;
-import fr.recia.sympaApi.model.IMailingListModel;
-import fr.recia.sympaApi.model.impl.BasicMailingListModel;
 import fr.recia.sympaApi.entity.Model;
 import fr.recia.sympaApi.entity.ModelRequest;
 import fr.recia.sympaApi.entity.ModelRequestId;
 import fr.recia.sympaApi.entity.ModelSubscribers;
 import fr.recia.sympaApi.entity.PreparedRequest;
+import fr.recia.sympaApi.model.IMailingListModel;
+import fr.recia.sympaApi.model.impl.BasicMailingListModel;
+import fr.recia.sympaApi.repositories.ModelRepository;
+import fr.recia.sympaApi.repositories.ModelRequestRepository;
+import fr.recia.sympaApi.repositories.ModelSubscribersRepository;
+import fr.recia.sympaApi.repositories.PreparedRequestRepository;
+import fr.recia.sympaApi.service.UserAttributeMapping;
+import fr.recia.sympaApi.service.listfinder.IDaoService;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;

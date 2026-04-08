@@ -17,12 +17,12 @@ package fr.recia.sympaApi.service.listfinder.impl;
 
 
 import fr.recia.sympaApi.groupfinder.impl.ConcatenateGroupFinder;
+import fr.recia.sympaApi.model.AvailableMailingListsFound;
+import fr.recia.sympaApi.model.IMailingList;
+import fr.recia.sympaApi.model.IMailingListModel;
 import fr.recia.sympaApi.service.DomainService;
 import fr.recia.sympaApi.service.listfinder.IAvailableListsFinder;
 import fr.recia.sympaApi.service.listfinder.IListsFromGroupsPatternMatcher;
-import fr.recia.sympaApi.model.IMailingList;
-import fr.recia.sympaApi.model.IMailingListModel;
-import fr.recia.sympaApi.model.AvailableMailingListsFound;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;

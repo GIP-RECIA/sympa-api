@@ -16,8 +16,8 @@
 package fr.recia.sympaApi.service.listfinder;
 
 
-import fr.recia.sympaApi.model.IMailingListModel;
 import fr.recia.sympaApi.model.AvailableMailingListsFound;
+import fr.recia.sympaApi.model.IMailingListModel;
 
 import java.util.Collection;
 import java.util.Map;

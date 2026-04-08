@@ -18,7 +18,6 @@ package fr.recia.sympaApi.service;
 import fr.recia.sympaApi.config.bean.CacheProperties;
 import fr.recia.sympaApi.config.bean.CasProperties;
 import fr.recia.sympaApi.config.bean.ServerListMapProperties;
-import fr.recia.sympaApi.pojo.CreateListInfo;
 import fr.recia.sympaApi.pojo.RobotSympaConf;
 import fr.recia.sympaApi.pojo.SympaList;
 import fr.recia.sympaApi.pojo.SympaListCriterion;

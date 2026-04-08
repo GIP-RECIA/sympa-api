@@ -17,7 +17,6 @@ package fr.recia.sympaApi.sympa;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import fr.recia.sympaApi.config.bean.CacheProperties;
-import fr.recia.sympaApi.pojo.CreateListInfo;
 import fr.recia.sympaApi.pojo.SympaCredential;
 import fr.recia.sympaApi.pojo.SympaList;
 import fr.recia.sympaApi.pojo.SympaRobot;

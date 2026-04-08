@@ -19,7 +19,6 @@ package fr.recia.sympaApi.service;
 import fr.recia.sympaApi.dto.request.SympaListRequestForm;
 import fr.recia.sympaApi.dto.response.SympaListResponseForDisplay;
 import fr.recia.sympaApi.dto.response.UserSympaListDetail;
-import fr.recia.sympaApi.pojo.SympaListCriterion;
 import fr.recia.sympaApi.pojo.UserSympaListWithUrl;
 import fr.recia.sympaApi.utils.FormToCriterion;
 import fr.recia.sympaApi.utils.UserAttributesHandler;
@@ -28,7 +27,6 @@ import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

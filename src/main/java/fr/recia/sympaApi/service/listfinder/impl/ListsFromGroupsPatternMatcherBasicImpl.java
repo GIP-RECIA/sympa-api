@@ -16,11 +16,10 @@
 package fr.recia.sympaApi.service.listfinder.impl;
 
 
-
-import fr.recia.sympaApi.service.listfinder.IListsFromGroupsPatternMatcher;
 import fr.recia.sympaApi.model.IMailingList;
 import fr.recia.sympaApi.model.IMailingListModel;
 import fr.recia.sympaApi.model.impl.BasicMailingList;
+import fr.recia.sympaApi.service.listfinder.IListsFromGroupsPatternMatcher;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
