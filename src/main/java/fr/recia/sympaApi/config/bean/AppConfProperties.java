@@ -55,9 +55,6 @@ public class AppConfProperties {
     @NotNull
     private  String casProxyTicketCallback;
 
-    @NotNull
-    private String casAttributesKeyCurrentEtab;
-
     @PostConstruct
     public void setupAndDebug() {
         log.debug("AppConfProperties {}", this);

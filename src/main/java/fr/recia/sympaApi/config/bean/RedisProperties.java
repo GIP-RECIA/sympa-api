@@ -52,15 +52,6 @@ public class RedisProperties {
 
     private int pgtiouExpiryInSeconds = 120;
 
-
-    private String responseCacheName = "";
-
-    private int responseCacheTtlInSeconds = 360;
-
-    private String uaiToImapCacheName = "";
-
-    private int uaiToImapCacheTtlInSeconds = 360;
-
   private String mappingPrefix;
   private String cachePrefix;
 
@@ -88,10 +79,6 @@ public class RedisProperties {
                 ", databaseIndex=" + databaseIndex +
                 ", pgtiouPrefix='" + pgtiouPrefix + '\'' +
                 ", pgtiouExpiryInSeconds=" + pgtiouExpiryInSeconds +
-                ", responseCacheName='" + responseCacheName + '\'' +
-                ", responseCacheTtlInSeconds=" + responseCacheTtlInSeconds +
-                ", uaiToIampCacheName='" + uaiToImapCacheName + '\'' +
-                ", uaiToIampCacheTtlInSeconds=" + uaiToImapCacheTtlInSeconds +
                 ", mappingPrefix=" + mappingPrefix +
                 ", cachePrefix=" + cachePrefix +
                 '}';

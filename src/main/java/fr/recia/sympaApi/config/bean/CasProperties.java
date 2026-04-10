@@ -33,14 +33,12 @@ import javax.annotation.PostConstruct;
 public class CasProperties {
 
   String baseServerUrl;
-  String tempTestServiceId;
 
 
   @Override
   public String toString() {
     return "CasProperties{" +
       "baseServerUrl='" + baseServerUrl + '\'' +
-      ", tempTestServiceId='" + tempTestServiceId + '\'' +
       '}';
   }
 
