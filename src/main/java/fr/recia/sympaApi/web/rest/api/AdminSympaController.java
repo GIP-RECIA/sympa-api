@@ -122,7 +122,7 @@ public class AdminSympaController {
     if(Objects.nonNull(messageKey)) {
       Map<String, String> responseMap = new HashMap<>();
       responseMap.put("messageKey", messageKey);
-      if (responseMap.get("messageKey").contains("0")) {
+      if (responseMap.get("messageKey").contains("1")) {
         return ResponseEntity.internalServerError().body(responseMap);
       } else {
         return ResponseEntity.ok(responseMap);
@@ -140,7 +140,7 @@ public class AdminSympaController {
     if(Objects.nonNull(messageKey)) {
       Map<String, String> responseMap = new HashMap<>();
       responseMap.put("messageKey", messageKey);
-      if (responseMap.get("messageKey").contains("0")) {
+      if (responseMap.get("messageKey").contains("1")) {
         return ResponseEntity.internalServerError().body(responseMap);
       } else {
         return ResponseEntity.ok(responseMap);
