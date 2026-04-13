@@ -43,7 +43,6 @@ public class UserAttributesHandler {
   public static final String UAI_ALL = "ESCOUAI";
   public static final String IS_MEMBER_OF = "isMemberOf";
   public static final String IS_ADMIN_SYMPA = "IS_ADMIN_SYMPA";
-  public static final String MAIL = "mail";
 
 
   public void setIsAdminSympa(String url){
