@@ -55,6 +55,8 @@ public class RedisProperties {
   private String mappingPrefix;
   private String cachePrefix;
 
+  private String indexPrefix;
+
     @PostConstruct
     public void setupAndDebug() {
 
@@ -69,18 +71,19 @@ public class RedisProperties {
         log.info("RedisProperties {}", this);
     }
 
-    @Override
-    public String toString() {
-        return "RedisProperties{" +
-                "hostName='" + hostName + '\'' +
-                ", port=" + port +
-                ", userName='" + userName + '\'' +
-                ", password='" + password + '\'' +
-                ", databaseIndex=" + databaseIndex +
-                ", pgtiouPrefix='" + pgtiouPrefix + '\'' +
-                ", pgtiouExpiryInSeconds=" + pgtiouExpiryInSeconds +
-                ", mappingPrefix=" + mappingPrefix +
-                ", cachePrefix=" + cachePrefix +
-                '}';
-    }
+  @Override
+  public String toString() {
+    return "RedisProperties{" +
+      "hostName='" + hostName + '\'' +
+      ", port=" + port +
+      ", userName='" + userName + '\'' +
+      ", password='" + password + '\'' +
+      ", databaseIndex=" + databaseIndex +
+      ", pgtiouPrefix='" + pgtiouPrefix + '\'' +
+      ", pgtiouExpiryInSeconds=" + pgtiouExpiryInSeconds +
+      ", mappingPrefix='" + mappingPrefix + '\'' +
+      ", cachePrefix='" + cachePrefix + '\'' +
+      ", indexPrefix='" + indexPrefix + '\'' +
+      '}';
+  }
 }

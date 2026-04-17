@@ -76,6 +76,7 @@ This project includes:
   Non-Blocking Reactive Foundation for the JVM under Apache License, Version 2.0
   Project Lombok under The MIT License
   reactive-streams under MIT-0
+  redis-session-cleanup-lib under Apache License, Version 2.0
   SLF4J API Module under MIT License
   SnakeYAML under Apache License, Version 2.0
   Spring AOP under Apache License, Version 2.0
