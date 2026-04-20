@@ -97,13 +97,10 @@ public class AdminSympaController {
   private RestTemplate restTemplate;
 
   @GetMapping("/lists")
-  public ResponseEntity<AdminSympaListResponseForDisplay> fetchLists(@RequestBody(required = false) SympaListRequestForm sympaListRequestForm) throws Exception {
+  public ResponseEntity<AdminSympaListResponseForDisplay> fetchLists() throws Exception {
 
-    if(Objects.isNull(sympaListRequestForm)){
-      sympaListRequestForm = new SympaListRequestForm(true, true, true);
-    }
 
-    Optional<AdminSympaListResponseForDisplay> adminSympaListResponseForDisplayOptional = Optional.ofNullable(adminSympaService.fetchLists(sympaListRequestForm));
+    Optional<AdminSympaListResponseForDisplay> adminSympaListResponseForDisplayOptional = Optional.ofNullable(adminSympaService.fetchLists());
 
     return adminSympaListResponseForDisplayOptional.map(adminSympaListResponseForDisplay -> ResponseEntity.ok().body(adminSympaListResponseForDisplay)).orElseGet(() -> ResponseEntity.internalServerError().body(null));
 

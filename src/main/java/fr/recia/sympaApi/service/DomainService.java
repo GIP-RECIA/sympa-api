@@ -20,7 +20,6 @@ import fr.recia.sympaApi.config.bean.CasProperties;
 import fr.recia.sympaApi.config.bean.ServerListMapProperties;
 import fr.recia.sympaApi.pojo.RobotSympaConf;
 import fr.recia.sympaApi.pojo.SympaList;
-import fr.recia.sympaApi.pojo.SympaListCriterion;
 import fr.recia.sympaApi.pojo.SympaRobot;
 import fr.recia.sympaApi.pojo.UserSympaList;
 import fr.recia.sympaApi.pojo.UserSympaListWithUrl;
@@ -100,7 +99,7 @@ public class DomainService {
   }
 
 
-  private List<UserSympaListWithUrl> getWhich() throws Exception {
+  public List<UserSympaListWithUrl> getWhich() throws Exception {
     Collection<SpringCachingSympaServerAxisWsImpl> srvList = getServerList().values();
     List<UserSympaListWithUrl> result = new ArrayList<>();
     for ( SpringCachingSympaServerAxisWsImpl s : srvList ) {
@@ -127,43 +126,6 @@ public class DomainService {
   }
 
 
-  public List<UserSympaListWithUrl> getWhich(List<SympaListCriterion> criterions, boolean matchAll) throws Exception {
-    List<UserSympaListWithUrl> sympaList = getWhich();
-    if ( criterions == null || criterions.size() <= 0 ) return sympaList;
-    List<UserSympaListWithUrl> filteredList = new ArrayList<>();
-    for ( UserSympaListWithUrl item : sympaList ) {
-      if ( matchCriterions(item, criterions, matchAll) ) {
-        filteredList.add(item);
-      }
-    }
-    return filteredList;
-  }
-
-  private boolean matchCriterions(UserSympaList item, List<SympaListCriterion> crits, boolean matchAll) {
-    if ( item == null || crits == null || crits.size() <= 0 ) return false;
-    DirectFieldAccessor accessor = new DirectFieldAccessor(item);
-    int results = 0;
-    for ( SympaListCriterion c : crits ) {
-      try {
-        if ( accessor.isReadableProperty(c.getFieldName().name()) ) {
-          Object o = accessor.getPropertyValue(c.getFieldName().name());
-          if ( o == null ) {
-            // case compare to null object
-            if ( c.getCompareTo() == null ) results++;
-          } else {
-            if ( o.equals(c.getCompareTo()) ) results++;
-          }
-        }
-      } catch ( Exception e) {
-        log.error("exception raised while introspecting object ",e);
-      }
-    }
-    if ( matchAll ) {
-      return results == crits.size();
-    } else {
-      return results > 0;
-    }
-  }
   //protected boolean have
   // sorting
   private void sortResults(List<UserSympaListWithUrl> toSort) {

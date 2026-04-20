@@ -20,6 +20,7 @@ import fr.recia.sympaApi.dto.response.SympaListResponseForDisplay;
 import fr.recia.sympaApi.service.SympaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,12 +35,9 @@ public class SympaController {
   @Autowired
   SympaService sympaService;
 
-  @PostMapping("/lists")
-  public ResponseEntity<SympaListResponseForDisplay> fetchSympaList( @RequestBody(required = false) SympaListRequestForm sympaListRequestForm) throws Exception {
-    if(Objects.isNull(sympaListRequestForm)){
-      sympaListRequestForm = new SympaListRequestForm(true, true, true);
-    }
-    SympaListResponseForDisplay response = sympaService.fetchSympaList(sympaListRequestForm);
+  @GetMapping("/lists")
+  public ResponseEntity<SympaListResponseForDisplay> fetchSympaList() throws Exception {
+    SympaListResponseForDisplay response = sympaService.fetchSympaList();
     return ResponseEntity.ok().body(response);
   }
 

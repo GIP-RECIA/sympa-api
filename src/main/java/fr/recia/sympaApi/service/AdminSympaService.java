@@ -18,7 +18,6 @@ package fr.recia.sympaApi.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import fr.recia.sympaApi.config.bean.CacheProperties;
 import fr.recia.sympaApi.config.bean.DebugProperties;
-import fr.recia.sympaApi.dto.request.SympaListRequestForm;
 import fr.recia.sympaApi.dto.request.admin.CloseListRequestPayload;
 import fr.recia.sympaApi.dto.request.admin.CreateOrUpdateListFormDataRequestPayload;
 import fr.recia.sympaApi.dto.request.admin.CreateOrUpdateListRequestPayload;
@@ -46,7 +45,6 @@ import fr.recia.sympaApi.service.ldap.LdapPerson;
 import fr.recia.sympaApi.service.listfinder.impl.AvailableListsFinderBasicImpl;
 import fr.recia.sympaApi.service.listfinder.impl.HibernateDaoServiceImpl;
 import fr.recia.sympaApi.utils.CacheHandler;
-import fr.recia.sympaApi.utils.FormToCriterion;
 import fr.recia.sympaApi.utils.SessionAttributesHandler;
 import fr.recia.sympaApi.utils.UserAttributesHandler;
 import lombok.Getter;
@@ -124,9 +122,6 @@ public class AdminSympaService {
 
   @Autowired
   DomainService domainService;
-
-  @Autowired
-  private FormToCriterion formToCriterion;
 
   @Autowired
   private LdapPerson ldapPerson;
@@ -276,7 +271,7 @@ public class AdminSympaService {
   }
 
   @Nullable
-  public AdminSympaListResponseForDisplay fetchLists(SympaListRequestForm sympaListRequestForm) throws Exception {
+  public AdminSympaListResponseForDisplay fetchLists() throws Exception {
 
     Map<String, String> userInfo = new HashMap<>();
 
@@ -305,7 +300,7 @@ public class AdminSympaService {
     //is done by comparing the domain of the list address (after the @).
     //As domains are 1 to 1 with establishments
     //this can be used to tell what lists belong to which establishment.
-    sympaList = this.getDomainService().getWhich(this.formToCriterion.formToCriterion(sympaListRequestForm), false);
+    sympaList = this.getDomainService().getWhich();
 
     AdminSympaListResponseForDisplay response = fetchCreateListTableData(userInfo, sympaList);
     return response;

@@ -16,11 +16,9 @@
 package fr.recia.sympaApi.service;
 
 
-import fr.recia.sympaApi.dto.request.SympaListRequestForm;
 import fr.recia.sympaApi.dto.response.SympaListResponseForDisplay;
 import fr.recia.sympaApi.dto.response.UserSympaListDetail;
 import fr.recia.sympaApi.pojo.UserSympaListWithUrl;
-import fr.recia.sympaApi.utils.FormToCriterion;
 import fr.recia.sympaApi.utils.UserAttributesHandler;
 import lombok.Getter;
 import lombok.Setter;
@@ -38,15 +36,13 @@ public class SympaService {
   @Autowired
   DomainService domainService;
 
-  @Autowired
-  FormToCriterion formToCriterion;
 
   @Autowired
   UserAttributesHandler userAttributesHandler;
 
-  public SympaListResponseForDisplay fetchSympaList(SympaListRequestForm sympaListRequestForm) throws Exception {
+  public SympaListResponseForDisplay fetchSympaList() throws Exception {
 
-    List<UserSympaListWithUrl> sympaList = domainService.getWhich(formToCriterion.formToCriterion(sympaListRequestForm),false);
+    List<UserSympaListWithUrl> sympaList = domainService.getWhich();
     SympaListResponseForDisplay response = new SympaListResponseForDisplay();
     response.setAdminServiceUrl(userAttributesHandler.getIsAdminSympa().orElse(null));
     response.setUserSympaListDetailList(sympaList.stream().map(UserSympaListDetail::new).collect(Collectors.toList()));
