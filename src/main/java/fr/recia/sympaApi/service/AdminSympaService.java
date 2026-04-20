@@ -609,11 +609,9 @@ public class AdminSympaService {
             jcltr = new JsCreateListTableRow();
             jcltr.setName(addr);
             jcltr.setSubject(uslwu.getSubject());
-            log.debug("new jcltr " + jcltr);
           }
           jcltr.setUrls(uslwu);
           updateTableData.add(jcltr);
-          log.debug("jcltr " + jcltr);
         }
       }
 
