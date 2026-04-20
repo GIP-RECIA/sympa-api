@@ -43,6 +43,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.AuthenticationUserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -73,9 +74,14 @@ public class SecurityConfig {
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
+    CookieCsrfTokenRepository cookieCsrfTokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
+    cookieCsrfTokenRepository.setCookiePath("/");
+    cookieCsrfTokenRepository.setCookieName("SYMPA-XSRF-TOKEN");
+
     http
       .cors(cors -> cors.configurationSource(corsConfigurationSource))
-      .csrf(AbstractHttpConfigurer::disable)
+      .csrf(csrf -> csrf.csrfTokenRepository(cookieCsrfTokenRepository))
       .addFilterBefore(singleSignOutFilter(), CasAuthenticationFilter.class)
       .httpBasic(AbstractHttpConfigurer::disable)
       .formLogin(AbstractHttpConfigurer::disable)
