@@ -10,7 +10,7 @@
     </parent>
     <groupId>fr.recia</groupId>
     <artifactId>sympa-api</artifactId>
-    <version>0.0.4</version>
+    <version>0.0.5-SNAPSHOT</version>
     <packaging>war</packaging>
     <name>sympa-api</name>
     <inceptionYear>2026</inceptionYear>
