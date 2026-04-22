@@ -365,7 +365,7 @@ public class AdminSympaService {
 
     Pattern p = Pattern.compile("\\{((?!UAI).*)\\}");
     Matcher m = p.matcher(model.getListname());
-
+    responsePayload.setSubscribersGroup(modelSubscribers.getId().getGroupFilter());
     if (m.find()) {
       responsePayload.setTypeParam(modelParam);
       responsePayload.setTypeParamName(m.group(1));
