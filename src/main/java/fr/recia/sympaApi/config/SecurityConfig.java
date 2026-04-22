@@ -81,7 +81,7 @@ public class SecurityConfig {
 
     http
       .cors(cors -> cors.configurationSource(corsConfigurationSource))
-      .csrf(csrf -> csrf.csrfTokenRepository(cookieCsrfTokenRepository))
+      .csrf(csrf -> csrf.csrfTokenRepository(cookieCsrfTokenRepository).ignoringAntMatchers(appConfProperties.getCasTicketCallback()).ignoringAntMatchers(appConfProperties.getCasProxyReceptorUrl()))
       .addFilterBefore(singleSignOutFilter(), CasAuthenticationFilter.class)
       .httpBasic(AbstractHttpConfigurer::disable)
       .formLogin(AbstractHttpConfigurer::disable)
