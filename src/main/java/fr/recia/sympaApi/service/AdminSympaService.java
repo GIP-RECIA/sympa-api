@@ -480,37 +480,6 @@ public class AdminSympaService {
     return null;
   }
 
-    public List<String> fetchEmailProfileList(final Map<String, List<Object>> mvUserInfo, final LdapPerson ldapPerson, final String uid) {
-    List<String> emailProfileList = null;
-    //Check for at least the isMemberOfList which won't be empty should the multi-value map exist
-    if ((mvUserInfo != null) && mvUserInfo.containsKey(ldapPerson.getMemberAttribute())) {
-
-
-      emailProfileList = new ArrayList<>();
-      log.debug("Reading email profiles for ldap person using attribute [" + ldapPerson.getWebmailProfileAttribute() + "]");
-      List<Object> listObjects = mvUserInfo.get(ldapPerson.getWebmailProfileAttribute());
-      if (listObjects != null) {
-        for(Object o : listObjects) {
-          emailProfileList.add(o == null ? "" : o.toString());
-        }
-      }
-    } else {
-      log.debug("MV map not found or does not contain isMemberOf.");
-
-      //Backup plan, use direct ldap queries
-      LdapPerson.Person person = ldapPerson.getPerson(uid);
-
-      if (person != null) {
-        log.debug("Ldap person found");
-        emailProfileList = person.getProfile();
-      } else {
-        log.error("Ldap person NOT found");
-      }
-    }
-    return emailProfileList;
-  }
-
-
   private boolean fetchIsAdmin(final List<String> isMemberOf, String adminRegex, final String uai) {
     // /////////////////////////////////////////////////////////
     // Determine if user is an admin or not
