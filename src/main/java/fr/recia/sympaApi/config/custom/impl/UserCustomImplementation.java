@@ -17,6 +17,7 @@ package fr.recia.sympaApi.config.custom.impl;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
@@ -24,7 +25,8 @@ import java.util.Collection;
 import java.util.Map;
 
 @Getter
-@Setter
+@Setter @Profile("!test")
+
 public class UserCustomImplementation extends User {
     public UserCustomImplementation(String username, String password, Collection<? extends GrantedAuthority> authorities, Map<String, Object> attributes) {
         super(username, password, authorities);

@@ -20,7 +20,10 @@ This project includes:
   Apache Commons Codec under Apache License, Version 2.0
   Apache Log4j API under Apache License, Version 2.0
   Apache Log4j to SLF4J Adapter under Apache License, Version 2.0
+  asm under BSD-3-Clause
+  ASM based accessors helper used by json-smart under The Apache Software License, Version 2.0
   AspectJ Weaver under Eclipse Public License - v 2.0
+  AssertJ fluent assertions under Apache License, Version 2.0
   Axis Web Services under The Apache Software License, Version 2.0
   axis-jaxrpc under Apache License
   axis-saaj under Apache License
@@ -29,11 +32,14 @@ This project includes:
   Bouncy Castle PKIX, CMS, EAC, TSP, PKCS, OCSP, CMP, and CRMF APIs under Bouncy Castle Licence
   Bouncy Castle Provider under Bouncy Castle Licence
   Byte Buddy (without dependencies) under Apache License, Version 2.0
+  Byte Buddy agent under Apache License, Version 2.0
   Caffeine cache under Apache License, Version 2.0
   Checker Qual under The MIT License
   ClassMate under Apache License, Version 2.0
   Discovery under Apache License, Version 2.0
   error-prone annotations under Apache 2.0
+  Hamcrest under BSD License 3
+  Hamcrest Core under BSD License 3
   Hibernate Commons Annotations under GNU Library General Public License v2.1 or later
   Hibernate ORM - hibernate-core under GNU Library General Public License v2.1 or later
   Hibernate Validator Engine under Apache License 2.0
@@ -47,6 +53,7 @@ This project includes:
   jackson-databind under The Apache Software License, Version 2.0
   Jackson-module-parameter-names under The Apache Software License, Version 2.0
   Jakarta Activation under EDL 1.0
+  Jakarta Activation API jar under EDL 1.0
   Jakarta Annotations API under EPL 2.0 or GPL2 w/ CPE
   Jakarta Bean Validation API under Apache License 2.0
   Jakarta Persistence API under Eclipse Public License v. 2.0 or Eclipse Distribution License v. 1.0
@@ -60,12 +67,25 @@ This project includes:
   JAXB Runtime under Eclipse Distribution License - v 1.0
   JBoss Logging 3 under Apache License, version 2.0
   JCL 1.2 implemented over SLF4J under Apache License, Version 2.0
+  JSON library from Android SDK under Apache License 2.0
+  JSON Small and Fast Parser under The Apache Software License, Version 2.0
+  JSONassert under The Apache Software License, Version 2.0
   JUL to SLF4J bridge under MIT License
+  JUnit under Eclipse Public License 1.0
+  JUnit Jupiter (Aggregator) under Eclipse Public License v2.0
+  JUnit Jupiter API under Eclipse Public License v2.0
+  JUnit Jupiter Engine under Eclipse Public License v2.0
+  JUnit Jupiter Params under Eclipse Public License v2.0
+  JUnit Platform Commons under Eclipse Public License v2.0
+  JUnit Platform Engine API under Eclipse Public License v2.0
+  JUnit Vintage Engine under Eclipse Public License v2.0
   Lettuce under Apache License, Version 2.0
   Logback Classic Module under Eclipse Public License - v 1.0 or GNU Lesser General Public License
   Logback Core Module under Eclipse Public License - v 1.0 or GNU Lesser General Public License
   Logging under The Apache Software License, Version 2.0
   mariadb-java-client under LGPL-2.1
+  mockito-core under The MIT License
+  mockito-junit-jupiter under The MIT License
   Netty/Buffer under Apache License, Version 2.0
   Netty/Codec under Apache License, Version 2.0
   Netty/Common under Apache License, Version 2.0
@@ -74,6 +94,11 @@ This project includes:
   Netty/Transport under Apache License, Version 2.0
   Netty/Transport/Native/Unix/Common under Apache License, Version 2.0
   Non-Blocking Reactive Foundation for the JVM under Apache License, Version 2.0
+  Objenesis under Apache License, Version 2.0
+  org.apiguardian:apiguardian-api under The Apache License, Version 2.0
+  org.opentest4j:opentest4j under The Apache License, Version 2.0
+  org.xmlunit:xmlunit-core under The Apache Software License, Version 2.0
+  project ':json-path' under The Apache Software License, Version 2.0
   Project Lombok under The MIT License
   reactive-streams under MIT-0
   redis-session-cleanup-lib under Apache License, Version 2.0
@@ -94,6 +119,7 @@ This project includes:
   Spring JDBC under Apache License, Version 2.0
   Spring Object/Relational Mapping under Apache License, Version 2.0
   Spring Object/XML Marshalling under Apache License, Version 2.0
+  Spring TestContext Framework under Apache License, Version 2.0
   Spring Transaction under Apache License, Version 2.0
   Spring Web under Apache License, Version 2.0
   Spring Web MVC under Apache License, Version 2.0
@@ -108,9 +134,12 @@ This project includes:
   spring-boot-starter-json under Apache License, Version 2.0
   spring-boot-starter-logging under Apache License, Version 2.0
   spring-boot-starter-security under Apache License, Version 2.0
+  spring-boot-starter-test under Apache License, Version 2.0
   spring-boot-starter-tomcat under Apache License, Version 2.0
   spring-boot-starter-validation under Apache License, Version 2.0
   spring-boot-starter-web under Apache License, Version 2.0
+  spring-boot-test under Apache License, Version 2.0
+  spring-boot-test-autoconfigure under Apache License, Version 2.0
   spring-ldap-core under Apache License, Version 2.0
   spring-security-cas under Apache License, Version 2.0
   spring-security-config under Apache License, Version 2.0

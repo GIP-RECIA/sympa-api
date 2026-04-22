@@ -18,6 +18,7 @@ package fr.recia.sympaApi.config.custom.impl;
 import fr.recia.sympaApi.config.bean.RedisProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.session.FindByIndexNameSessionRepository;
 import org.springframework.session.Session;
@@ -26,7 +27,8 @@ import org.springframework.stereotype.Component;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
-@Component
+@Component @Profile("!test")
+
 public class CustomSessionMappingStorage {
 
     @Autowired

@@ -16,11 +16,13 @@
 package fr.recia.sympaApi.config.custom.impl;
 
 import org.jasig.cas.client.validation.Cas20ProxyTicketValidator;
+import org.springframework.context.annotation.Profile;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
+@Profile("!test")
 
 public class CustomCas20ProxyTicketValidator extends Cas20ProxyTicketValidator {
 

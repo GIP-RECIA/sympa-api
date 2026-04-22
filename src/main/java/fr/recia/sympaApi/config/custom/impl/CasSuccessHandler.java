@@ -17,6 +17,7 @@ package fr.recia.sympaApi.config.custom.impl;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -33,7 +34,8 @@ import java.io.IOException;
  * Répond en JSON pour les appels API, sinon redirige l'utilisateur.
  */
 @Slf4j
-@Component
+@Component @Profile("!test")
+
 public class CasSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 
     @Autowired

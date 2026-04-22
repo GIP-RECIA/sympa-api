@@ -17,12 +17,14 @@ package fr.recia.sympaApi.config.custom.impl;
 
 import fr.recia.sympaApi.config.bean.AppConfProperties;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.cas.web.CasAuthenticationEntryPoint;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@Slf4j
+@Slf4j @Profile("!test")
+
 public class CustomCasAuthenticationEntryPoint extends CasAuthenticationEntryPoint {
 
     public CustomCasAuthenticationEntryPoint(AppConfProperties appConfProperties) {

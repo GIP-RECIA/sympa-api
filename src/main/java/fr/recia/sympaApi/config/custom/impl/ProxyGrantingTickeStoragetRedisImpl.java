@@ -20,11 +20,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.jasig.cas.client.proxy.ProxyGrantingTicketStorage;
 import org.jasig.cas.client.util.CommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.concurrent.TimeUnit;
 
-@Slf4j
+@Slf4j @Profile("!test")
+
 public class ProxyGrantingTickeStoragetRedisImpl implements ProxyGrantingTicketStorage {
 
     @Autowired

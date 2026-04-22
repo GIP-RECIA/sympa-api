@@ -23,6 +23,7 @@ import org.jasig.cas.client.validation.TicketValidator;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.security.authentication.AccountStatusUserDetailsChecker;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -50,7 +51,8 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 
-@Slf4j
+@Slf4j @Profile("!test")
+
 public class CustomAuthenticationProvider implements AuthenticationProvider, InitializingBean, MessageSourceAware {
 
     private AuthenticationUserDetailsService<CasAssertionAuthenticationToken> authenticationUserDetailsService;
