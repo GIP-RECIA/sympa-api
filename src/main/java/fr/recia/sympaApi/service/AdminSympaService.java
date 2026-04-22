@@ -424,47 +424,16 @@ public class AdminSympaService {
   public String createOrUpdate(CreateOrUpdateListRequestPayload requestPayload, String operation) {
     Map<String, String> responseMap = new HashMap<>();
 
-    String type = String.format("&type=%s", requestPayload.getType());   //var type = $("#createListURL_type").html() || " ";  MODEL NAME
 
-    //add check of mandatory ?
-    List<String> requiredAliases = allMandatoryPreparedRequestToStringList(requestPayload.getModelId()); // todo fetch required list
+    String queryCreatedFromInputsWithBdId = sympaRemoteQueryService.createCreateOrUpdateQuery(operation, requestPayload);
 
-    log.debug("Required aliases list {}", requiredAliases);
-    if (!requiredAliases.isEmpty()) {
-
-      // si il manque au moins un groupe "MANDATORY" on tombe en erreur
-      if (!new HashSet<>(List.of(requestPayload.getEditorsAliases().split("\\$"))).containsAll(requiredAliases)) {
-        log.debug("Required aliases list {}", requestPayload.getEditorsAliases());
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "[editorsAliases] parameter is missing required value(s)");
-        //todo reason is not transmitted to browser
-      }
-    }
-
-    String editorsAliases = Objects.isNull(requestPayload.getEditorsAliases()) ? "" : String.format("&editors_aliases=%s", requestPayload.getEditorsAliases()); //  args.get("editorAliases"));
-    String editorsGroups = Objects.isNull(requestPayload.getEditorsGroups()) ? "" : String.format("&editors_groups=%s", requestPayload.getEditorsGroups());
-    String typeParam = Objects.isNull(requestPayload.getTypeParam()) ? "" : String.format("&type_param=%s", requestPayload.getTypeParam());
-    //todo test with missing type param when required
-
-    // statics
-    String policy = "&policy=newsletter"; // always
-
-    // ces valeurs doivent venir du user info
-    String siren = String.format("&siren=%s", userAttributesHandler.getAttribute(UserAttributesHandler.SIREN_CURRENT));
-    String rne = String.format("&rne=%s", userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT));
-    String uai = String.format("&uai=%s", userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT));
-
-    String queryCreatedFromInputs = operation + policy +
-      type + siren + rne + uai + editorsAliases + editorsGroups + typeParam;
-
-    responseMap.put("queryCreatedFromInputs", queryCreatedFromInputs);
-
-    // Get SympaRemote database Id
-    final String sympaRemoteDatabaseId = retrieveSympaRemoteDatabaseId();
-    final String queryStringWithDbId = queryCreatedFromInputs + "&databaseId=" + sympaRemoteDatabaseId;
+    responseMap.put("queryCreatedFromInputsWithBdId", queryCreatedFromInputsWithBdId);
 
 
-    responseMap.put("sympaRemoteDatabaseId", sympaRemoteDatabaseId);
-    responseMap.put("queryStringWithDbId", queryStringWithDbId);
+
+
+    responseMap.put("sympaRemoteDatabaseId", queryCreatedFromInputsWithBdId);
+    responseMap.put("queryStringWithDbId", queryCreatedFromInputsWithBdId);
 
     // Get SympaRemote endpoint URL
     final String sympaRemoteEndpointUrl = retrieveSympaRemoteEndpointUrl();
@@ -473,10 +442,10 @@ public class AdminSympaService {
 
     log.debug("Connecting to SympaRemote with the url [" + sympaRemoteEndpointUrl + "]");
 
-    String errorCode = postToSympaRemote(sympaRemoteEndpointUrl, queryCreatedFromInputs);
+    String errorCode = postToSympaRemote(sympaRemoteEndpointUrl, queryCreatedFromInputsWithBdId);
 
     if(Objects.nonNull(errorCode)){
-      return errorCodeToMessageKey(errorCode, queryCreatedFromInputs);
+      return errorCodeToMessageKey(errorCode, queryCreatedFromInputsWithBdId);
     }
     return null;
   }
@@ -678,19 +647,7 @@ public class AdminSympaService {
     return sympaRemoteEndpointUrl;
   }
 
-  /**
-   * Retrieve the Sympa Remote endpoint URL from the HTTP session. or userInfo
-   */
-  public String retrieveSympaRemoteDatabaseId() {
-    RobotSympaInfo rsi = getRobotInfo();
-    String sympaRemoteDatabaseId = null;
-    if (rsi != null) {
-      sympaRemoteDatabaseId = rsi.getSympaRemoteDatabaseId();
-    } else {
-      log.debug("RobotSympaInfo est null");
-    }
-    return sympaRemoteDatabaseId;
-  }
+
 
 
 
@@ -698,20 +655,7 @@ public class AdminSympaService {
     return robotSympaConf.getRobotSympaInfoByUai(userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT), userAttributesHandler.getAttributeList(UserAttributesHandler.IS_MEMBER_OF), true);
   }
 
-  private List<String> allMandatoryPreparedRequestToStringList(String modelId) {
-    List<PreparedRequest> listPreparedRequest = this.daoService.getAllPreparedRequests();
-    List<String> idToStringList = new ArrayList<>();
-    Model model = this.daoService.getModel(new BigInteger(modelId));
-    for (PreparedRequest preparedRequest : listPreparedRequest) {
-      ModelRequest modelRequest = this.daoService.getModelRequest(model, preparedRequest);
-      if (modelRequest != null) {
-        if (modelRequest.getCategoryAsEnum() == ModelRequest.ModelRequestRequired.MANDATORY) {
-          idToStringList.add(preparedRequest.getId().toString());
-        }
-      }
-    }
-    return idToStringList;
-  }
+
 
 
 
