@@ -150,6 +150,9 @@ public class AdminSympaService {
   @Autowired
   protected RegexGroupFinder jsTreeGroupFinder;
 
+  @Autowired
+  protected SympaRemoteQueryService sympaRemoteQueryService;
+
   private final Pattern operationPattern = Pattern.compile(".*operation=([^&]*).*");
 
 
@@ -372,35 +375,33 @@ public class AdminSympaService {
   }
 
 
-  @Nullable
-  public String closeList(CloseListRequestPayload requestPayload){
-    String listName = String.format("&listname=%s", requestPayload.getListName());
-
-    // statics
-    String operation = "operation=CLOSE"; //always in this RequestMapping
-    String queryCreatedFromInputs = operation + listName;
-
-
-    // --- DEBUT CHECK ---
-    // 1 check si le domaine de la liste à supprimer correspond au domaine courant
-    // todo use trim !!!
+  protected boolean isCurrentDomain(CloseListRequestPayload requestPayload){
+    String listName = requestPayload.getListName().trim();
     String[] listSplit = listName.split("@");
     Assert.isTrue(listSplit.length == 2, "List should have been split in 2 part around '@'");
     String domainName = robotDomaineNameResolver.resolveRobotDomainName();
     log.info("doCloseList check domain name {} against from the list {}", domainName, listSplit[1]);
-    if (!listSplit[1].equals(domainName)) {
+    return listSplit[1].equals(domainName);
+  }
+
+  protected boolean isAdminOnCurrentDomain(){
+    return robotSympaConf.isAdminRobotSympaByUai(userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT), userAttributesHandler.getAttributeList(UserAttributesHandler.IS_MEMBER_OF));
+  }
+
+  @Nullable
+  public String closeList(CloseListRequestPayload requestPayload){
+
+    String queryCreatedFromInputs = sympaRemoteQueryService.createCloseQuery(requestPayload);
+
+    // --- DEBUT CHECK ---
+    // 1 check si le domaine de la liste à supprimer correspond au domaine courant
+    if (!isCurrentDomain(requestPayload)){
       throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "List domain does not match current user establishment");
     }
 
     // 2 check si le user est admin sur cet etab
-    boolean isAdmin = robotSympaConf.isAdminRobotSympaByUai(userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT), userAttributesHandler.getAttributeList(UserAttributesHandler.IS_MEMBER_OF));
-
-    if(!isAdmin){
-      throw new IsNotAdminException("");
-    }
-
-    if (!listSplit[1].equals(domainName)) {
-      throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Current user is not an admin for this establishment");
+    if(!isAdminOnCurrentDomain()){
+      throw new IsNotAdminException("Current user is not an admin for this establishment");
     }
     // --- FIN CHECK ---
 
