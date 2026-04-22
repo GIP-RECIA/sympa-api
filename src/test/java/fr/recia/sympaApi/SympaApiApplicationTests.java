@@ -37,6 +37,7 @@ import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.redis.connection.ReactiveRedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -76,6 +77,9 @@ public class SympaApiApplicationTests {
 
   @MockBean
   PreparedRequestRepository preparedRequestRepository;
+
+  @MockBean
+  ReactiveRedisConnectionFactory reactiveRedisConnectionFactory;
 
     @Test
     public void queryBuilderCloseOK() {
