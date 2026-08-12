@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.18</version>
+        <version>4.1.0</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>fr.recia</groupId>
@@ -31,8 +31,7 @@
         <url/>
     </scm>
     <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+      <java.version>25</java.version>
     </properties>
   <distributionManagement>
     <repository>
@@ -81,11 +80,15 @@
         <groupId>jakarta.validation</groupId>
         <artifactId>jakarta.validation-api</artifactId>
       </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-cas</artifactId>
-            <version>5.7.2</version>
-        </dependency>
+      <dependency>
+        <groupId>org.apereo.cas.client</groupId>
+        <artifactId>cas-client-core</artifactId>
+        <version>4.1.1</version>
+      </dependency>
+      <dependency>
+          <groupId>org.springframework.security</groupId>
+          <artifactId>spring-security-cas</artifactId>
+      </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
@@ -130,19 +133,19 @@
         <version>1.4</version>
       </dependency>
       <dependency>
-        <groupId>org.glassfish</groupId>
-        <artifactId>javax.xml.rpc</artifactId>
-        <version>10.0-b28</version>
+        <groupId>jakarta.xml.rpc</groupId>
+        <artifactId>jakarta.xml.rpc-api</artifactId>
+        <version>1.1.4</version>
+        <scope>compile</scope>
       </dependency>
       <dependency>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-cache</artifactId>
       </dependency>
       <dependency>
-        <groupId>org.springframework.ldap</groupId>
-        <artifactId>spring-ldap-core</artifactId>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-ldap</artifactId>
       </dependency>
-
       <!-- Source: https://mvnrepository.com/artifact/org.hibernate/hibernate -->
       <!-- Source: https://mvnrepository.com/artifact/org.springframework/spring-hibernate3 -->
 <!--      <dependency>-->
@@ -169,6 +172,42 @@
 
     <build>
         <plugins>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>default-compile</id>
+                <phase>compile</phase>
+                <goals>
+                  <goal>compile</goal>
+                </goals>
+                <configuration>
+                  <annotationProcessorPaths>
+                    <path>
+                      <groupId>org.projectlombok</groupId>
+                      <artifactId>lombok</artifactId>
+                    </path>
+                  </annotationProcessorPaths>
+                </configuration>
+              </execution>
+              <execution>
+                <id>default-testCompile</id>
+                <phase>test-compile</phase>
+                <goals>
+                  <goal>testCompile</goal>
+                </goals>
+                <configuration>
+                  <annotationProcessorPaths>
+                    <path>
+                      <groupId>org.projectlombok</groupId>
+                      <artifactId>lombok</artifactId>
+                    </path>
+                  </annotationProcessorPaths>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
           <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>axistools-maven-plugin</artifactId>
@@ -222,10 +261,10 @@
                         <include>**/*.js</include>
                         <include>**/*.css</include>
                     </includes>
-                    <excludes>
-                        <exclude>src/test/resources/json/**</exclude>
-                        <exclude>.mvn/**</exclude>
-                    </excludes>
+                  <excludes>
+                    <exclude>src/test/resources/json/**</exclude>
+                    <exclude>.mvn/**</exclude>
+                  </excludes>
                 </configuration>
                 <executions>
                     <execution>

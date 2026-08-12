@@ -29,7 +29,6 @@ import fr.recia.sympaApi.utils.CacheHandler;
 import fr.recia.sympaApi.utils.SessionAttributesHandler;
 import fr.recia.sympaApi.utils.UserAttributesHandler;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.DirectFieldAccessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

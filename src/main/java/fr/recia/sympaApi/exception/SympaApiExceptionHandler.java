@@ -16,6 +16,7 @@
 package fr.recia.sympaApi.exception;
 
 import fr.recia.sympaApi.config.bean.CorsProperties;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -26,7 +27,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -48,8 +48,10 @@ public class SympaApiExceptionHandler {
       headers.set("Access-Control-Allow-Origin", origin);
       headers.set("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
       headers.set("Access-Control-Allow-Credentials", String.valueOf(corsProperties.isAllowCredentials()));
+      //todo debug instead of info
       log.info("allowed  origins contains {}", origin);
     } else {
+      //todo debug instead of info
       log.info("allowed origins does not contains {} - {}", origin, corsProperties.getAllowedOrigins());
     }
     return headers;

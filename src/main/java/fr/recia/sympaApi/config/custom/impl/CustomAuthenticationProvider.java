@@ -16,14 +16,14 @@
 package fr.recia.sympaApi.config.custom.impl;
 
 import fr.recia.sympaApi.config.bean.AppConfProperties;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
-import org.jasig.cas.client.validation.Assertion;
-import org.jasig.cas.client.validation.TicketValidationException;
-import org.jasig.cas.client.validation.TicketValidator;
+import org.apereo.cas.client.validation.Assertion;
+import org.apereo.cas.client.validation.TicketValidationException;
+import org.apereo.cas.client.validation.TicketValidator;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.MessageSource;
 import org.springframework.context.MessageSourceAware;
-import org.springframework.context.annotation.Profile;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.security.authentication.AccountStatusUserDetailsChecker;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -32,9 +32,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.cas.ServiceProperties;
 import org.springframework.security.cas.authentication.CasAssertionAuthenticationToken;
 import org.springframework.security.cas.authentication.CasAuthenticationToken;
+import org.springframework.security.cas.authentication.CasServiceTicketAuthenticationToken;
 import org.springframework.security.cas.authentication.NullStatelessTicketCache;
 import org.springframework.security.cas.authentication.StatelessTicketCache;
-import org.springframework.security.cas.web.CasAuthenticationFilter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.SpringSecurityMessageSource;
@@ -49,10 +49,7 @@ import org.springframework.util.Assert;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-
-@Slf4j @Profile("!test")
-
+@Slf4j
 public class CustomAuthenticationProvider implements AuthenticationProvider, InitializingBean, MessageSourceAware {
 
     private AuthenticationUserDetailsService<CasAssertionAuthenticationToken> authenticationUserDetailsService;
@@ -67,7 +64,9 @@ public class CustomAuthenticationProvider implements AuthenticationProvider, Ini
 
     private final AppConfProperties appConfProperties;
 
+
     public CustomAuthenticationProvider(AppConfProperties appConfProperties) {
+        log.info("IN CONTROLLER CustomAuthenticationProvider");
         this.appConfProperties = appConfProperties;
     }
 
@@ -82,47 +81,52 @@ public class CustomAuthenticationProvider implements AuthenticationProvider, Ini
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+
+        log.info("AUTHENTICATE METHOD");
         if (!supports(authentication.getClass())) {
             return null;
         }
+
         if (authentication instanceof UsernamePasswordAuthenticationToken
-                && (!CasAuthenticationFilter.CAS_STATEFUL_IDENTIFIER.equals(authentication.getPrincipal().toString())
-                && !CasAuthenticationFilter.CAS_STATELESS_IDENTIFIER
-                .equals(authentication.getPrincipal().toString()))) {
-            // UsernamePasswordAuthenticationToken not CAS related
+                && authentication.isAuthenticated()) {
             return null;
         }
-        // If an existing CasAuthenticationToken, just check we created it
-        if (authentication instanceof CasAuthenticationToken) {
-            if (this.key.hashCode() != ((CasAuthenticationToken) authentication).getKeyHash()) {
-                throw new BadCredentialsException(this.messages.getMessage("CasAuthenticationProvider.incorrectKey",
-                        "The presented CasAuthenticationToken does not contain the expected key"));
+
+        if (authentication instanceof CasAuthenticationToken casAuth) {
+            if (this.key.hashCode() != casAuth.getKeyHash()) {
+                throw new BadCredentialsException(
+                        this.messages.getMessage(
+                                "CasAuthenticationProvider.incorrectKey",
+                                "The presented CasAuthenticationToken does not contain the expected key"
+                        )
+                );
             }
             return authentication;
         }
 
-        // Ensure credentials are presented
-        if ((authentication.getCredentials() == null) || "".equals(authentication.getCredentials())) {
-            throw new BadCredentialsException(this.messages.getMessage("CasAuthenticationProvider.noServiceTicket",
-                    "Failed to provide a CAS service ticket to validate"));
+        if (authentication.getCredentials() == null
+                || "".equals(authentication.getCredentials())) {
+            throw new BadCredentialsException(
+                    this.messages.getMessage(
+                            "CasAuthenticationProvider.noServiceTicket",
+                            "Failed to provide a CAS service ticket to validate"
+                    )
+            );
         }
 
-        boolean stateless = (authentication instanceof UsernamePasswordAuthenticationToken
-                && CasAuthenticationFilter.CAS_STATELESS_IDENTIFIER.equals(authentication.getPrincipal()));
-        CasAuthenticationToken result = null;
+        CasAuthenticationToken result;
 
-        if (stateless) {
-            // Try to obtain from cache
-            result = this.statelessTicketCache.getByTicketId(authentication.getCredentials().toString());
-        }
+        String ticket = authentication.getCredentials().toString();
+
+        result = this.statelessTicketCache.getByTicketId(ticket);
+
+        log.info("RESULT IS "+result);
         if (result == null) {
             result = this.authenticateNow(authentication);
             result.setDetails(authentication.getDetails());
-        }
-        if (stateless) {
-            // Add to cache
             this.statelessTicketCache.putTicketInCache(result);
         }
+
         return result;
     }
 
@@ -161,11 +165,28 @@ public class CustomAuthenticationProvider implements AuthenticationProvider, Ini
      * Récupère l'URL du service à partir de la requête ou de la configuration.
      */
     private String getServiceUrl(Authentication authentication) {
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes())
-                .getRequest();
-        final String url = request.getRequestURL().toString();
-        final String uri = request.getRequestURI();
-        return url.substring(0, url.length() - uri.length()) + appConfProperties.getCasServiceId();
+        log.info("GET SERVICE URL");
+
+        ServletRequestAttributes attrs =
+                (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+
+        if (attrs == null) {
+            throw new IllegalStateException("No request context available");
+        }
+
+        HttpServletRequest request = attrs.getRequest();
+
+
+
+        String baseUrl = request.getScheme() + "://" +
+                request.getServerName() +
+                (request.getServerPort() == 80 || request.getServerPort() == 443
+                        ? ""
+                        : ":" + request.getServerPort());
+
+
+
+        return baseUrl + appConfProperties.getCasServiceId();
     }
 
     /**
@@ -215,8 +236,9 @@ public class CustomAuthenticationProvider implements AuthenticationProvider, Ini
 
     @Override
     public boolean supports(final Class<?> authentication) {
-        return (UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication))
-                || (CasAuthenticationToken.class.isAssignableFrom(authentication))
-                || (CasAssertionAuthenticationToken.class.isAssignableFrom(authentication));
+        return CasServiceTicketAuthenticationToken.class.isAssignableFrom(authentication)
+                || CasAuthenticationToken.class.isAssignableFrom(authentication)
+                || CasAssertionAuthenticationToken.class.isAssignableFrom(authentication)
+                || UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication);
     }
 }

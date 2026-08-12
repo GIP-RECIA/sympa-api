@@ -13,21 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package fr.recia.sympaApi.entity;
+package fr.recia.sympaApi.exception;
 
-import lombok.Getter;
-import lombok.Setter;
-
-import jakarta.persistence.Embeddable;
-import java.io.Serializable;
-import java.math.BigInteger;
-
-@Getter
-@Setter
-@Embeddable
-public class ModelSubscribersId implements Serializable {
-
-  private BigInteger id;
-  private String groupFilter;
-
+public class InvalidDomainException extends RuntimeException {
+    public InvalidDomainException(String message) {
+        super(message);
+    }
 }

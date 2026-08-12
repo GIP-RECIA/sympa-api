@@ -15,18 +15,17 @@
  */
 package fr.recia.sympaApi.config.custom.impl;
 
+import jakarta.annotation.PostConstruct;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
@@ -34,8 +33,7 @@ import java.io.IOException;
  * Répond en JSON pour les appels API, sinon redirige l'utilisateur.
  */
 @Slf4j
-@Component @Profile("!test")
-
+@Component
 public class CasSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 
     @Autowired
@@ -54,6 +52,11 @@ public class CasSuccessHandler extends SavedRequestAwareAuthenticationSuccessHan
                                         HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
         log.info("Authentification terminé avec succés Utilisateur authentifié : {}", authentication.getName());
+
+
+        log.info("SUCCESS - Session ID = {}", request.getSession(false).getId());
+
+
 
         // URI et type de requête
         String uri = request.getRequestURI();
@@ -94,12 +97,6 @@ public class CasSuccessHandler extends SavedRequestAwareAuthenticationSuccessHan
         }
         log.debug("Création du mappage entre le ticket [{}] et l'ID de session [{}] dans le cache Redis", credentials, sessionId);
         redisService.setSessionTicketSessionIdPair(credentials, sessionId);
-
-        // Hard coded redirection no longer required?
-//        String serverName = request.getServerName();
-//        int serverPort = request.getServerPort();
-//        String baseUrl = "https://" + serverName + (serverPort == 80 || serverPort == 443 ? "" : ":" + serverPort);
-//        getRedirectStrategy().sendRedirect(request, response, baseUrl + servletContext.getContextPath()+"/api/email/summary");
         super.onAuthenticationSuccess(request, response, authentication);
     }
 

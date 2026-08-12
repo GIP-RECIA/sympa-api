@@ -17,17 +17,16 @@ package fr.recia.sympaApi.config.custom.impl;
 
 import fr.recia.sympaApi.config.bean.RedisProperties;
 import lombok.extern.slf4j.Slf4j;
-import org.jasig.cas.client.proxy.ProxyGrantingTicketStorage;
-import org.jasig.cas.client.util.CommonUtils;
+
+import org.apereo.cas.client.proxy.ProxyGrantingTicketStorage;
+import org.apereo.cas.client.util.CommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.concurrent.TimeUnit;
 
-@Slf4j @Profile("!test")
-
-public class ProxyGrantingTickeStoragetRedisImpl implements ProxyGrantingTicketStorage {
+@Slf4j
+public class ProxyGrantingTicketRedisImpl implements ProxyGrantingTicketStorage {
 
     @Autowired
     private RedisTemplate<String, String> redisTemplate;
@@ -68,8 +67,8 @@ public class ProxyGrantingTickeStoragetRedisImpl implements ProxyGrantingTicketS
         log.warn("Redis does not require cleanup for PGT, entries have ttl in Redis");
     }
 
-    public void saveInRedis(String Iou, String pgtIou) {
-        redisTemplate.opsForValue().set(String.format("%1$s:%2$s",  redisProperties.getPgtiouPrefix(), Iou), pgtIou, redisProperties.getPgtiouExpiryInSeconds(), TimeUnit.SECONDS);
+    public void saveInRedis(String Iou, String test) {
+        redisTemplate.opsForValue().set(String.format("%1$s:%2$s",  redisProperties.getPgtiouPrefix(), Iou), test, redisProperties.getPgtiouExpiryInSeconds(), TimeUnit.SECONDS);
     }
 
     public String getFromRedis(String Iou){

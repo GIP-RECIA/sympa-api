@@ -15,20 +15,26 @@
  */
 package fr.recia.sympaApi.config.custom.impl;
 
-import org.jasig.cas.client.validation.Cas20ProxyTicketValidator;
-import org.springframework.context.annotation.Profile;
+
+
+import fr.recia.sympaApi.config.bean.CasProperties;
+import fr.recia.sympaApi.exception.InvalidDomainException;
+import jakarta.servlet.http.HttpServletRequest;
+import org.apereo.cas.client.validation.Cas20ProxyTicketValidator;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
-@Profile("!test")
 
 public class CustomCas20ProxyTicketValidator extends Cas20ProxyTicketValidator {
 
-    public CustomCas20ProxyTicketValidator(String casServerUrlPrefix) {
+    public CustomCas20ProxyTicketValidator(String casServerUrlPrefix, CasProperties casProperties) {
         super(casServerUrlPrefix);
+        this.casProperties = casProperties;
     }
+
+    private final CasProperties casProperties;
 
     @Override
     protected void populateUrlAttributeMap(final Map<String, String> urlParameters) {
@@ -36,6 +42,31 @@ public class CustomCas20ProxyTicketValidator extends Cas20ProxyTicketValidator {
                 .getRequest();
         final String url = request.getRequestURL().toString();
         final String uri = request.getRequestURI();
-        urlParameters.put("pgtUrl", url.substring(0, url.length() - uri.length()) + this.getProxyCallbackUrl());
+
+        String host = request.getHeader("X-Forwarded-Host");
+
+        if (host == null) {
+            host = request.getServerName();
+        }
+
+        if (!casProperties.getAuthorizedDomains().contains(host)) {
+            throw new InvalidDomainException("Invalid domain: " + host);
+        }
+
+        String baseUrl = ServletUriComponentsBuilder
+                .fromRequestUri(request)
+                .replacePath(null)
+                .build()
+                .toUriString();
+
+        logger.info("urlParameters map {}", urlParameters.entrySet().toString() );
+
+        //todo remove
+      //  urlParameters.put("service", urlParameters.get("service").replace("http", "https"));
+
+        //todo replace
+        urlParameters.put("pgtUrl", baseUrl
+               // .replace("http","https")
+                + this.getProxyCallbackUrl());
     }
 }
