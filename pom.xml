@@ -43,19 +43,6 @@
       <url>https://nexus.recia.dev/content/repositories/snapshots/</url>
     </snapshotRepository>
   </distributionManagement>
-  <repositories>
-    <repository>
-      <id>recia</id>
-      <url>https://nexus.recia.dev/repository/public/</url>
-      <releases>
-        <enabled>true</enabled>
-        <updatePolicy>always</updatePolicy>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-    </repository>
-  </repositories>
     <dependencies>
       <dependency>
         <groupId>org.junit.vintage</groupId>
@@ -66,11 +53,6 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-test</artifactId>
         <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>fr.recia</groupId>
-        <artifactId>redis-session-cleanup-lib</artifactId>
-        <version>0.0.2</version>
       </dependency>
       <dependency>
         <groupId>org.springframework.boot</groupId>

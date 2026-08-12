@@ -103,7 +103,6 @@ This project includes:
   Project Lombok under The MIT License
   reactive-streams under MIT-0
   redis-authx-core under MIT
-  redis-session-cleanup-lib under Apache License, Version 2.0
   SLF4J API Module under MIT
   SnakeYAML under Apache License, Version 2.0
   Spring AOP under Apache License, Version 2.0

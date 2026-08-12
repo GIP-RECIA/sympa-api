@@ -17,25 +17,12 @@ package fr.recia.sympaApi;
 
 
 import fr.recia.redis.session.cleanup.service.RedisSessionCleanupService;
-import fr.recia.sympaApi.config.RedisSessionCleanupConfiguration;
-import fr.recia.sympaApi.config.SecurityConfig;
-import fr.recia.sympaApi.config.bean.ConcatenateGroupFinderProperties;
-import fr.recia.sympaApi.config.bean.CorsProperties;
-import fr.recia.sympaApi.config.bean.RegexGroupFinderProperties;
-import fr.recia.sympaApi.config.custom.impl.CasSuccessHandler;
-import fr.recia.sympaApi.entity.ModelRequest;
-import fr.recia.sympaApi.entity.ModelSubscribers;
-import fr.recia.sympaApi.entity.PreparedRequest;
-import fr.recia.sympaApi.groupfinder.impl.RegexGroupFinder;
 import fr.recia.sympaApi.repositories.ModelRepository;
 import fr.recia.sympaApi.repositories.ModelRequestRepository;
 import fr.recia.sympaApi.repositories.ModelSubscribersRepository;
 import fr.recia.sympaApi.repositories.PreparedRequestRepository;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.connection.ReactiveRedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.test.context.ActiveProfiles;
