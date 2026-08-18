@@ -19,6 +19,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
@@ -35,6 +36,27 @@ import java.util.List;
 public class CasProperties {
 
   String baseServerUrl;
+
+  @NotNull
+  private String casServiceId;
+
+  @NotNull
+  private String casServerUrl;
+
+  @NotNull
+  private String casServerLoginUrl;
+
+  @NotNull
+  private String casProviderKey;
+
+  @NotNull
+  private String casTicketCallback;
+
+  @NotNull
+  private  String casProxyReceptorUrl;
+
+  @NotNull
+  private  String casProxyTicketCallback;
 
   List<String> authorizedDomains;
 

@@ -30,6 +30,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -52,7 +53,7 @@ public class SympaApiExceptionHandler {
       log.info("allowed  origins contains {}", origin);
     } else {
       //todo debug instead of info
-      log.info("allowed origins does not contains {} - {}", origin, corsProperties.getAllowedOrigins());
+      log.info("allowed origins does not contains {} is null {} - {} ", origin, Objects.isNull(origin), corsProperties.getAllowedOrigins());
     }
     return headers;
   }
