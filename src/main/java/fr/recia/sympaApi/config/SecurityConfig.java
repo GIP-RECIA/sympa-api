@@ -50,6 +50,7 @@ import org.springframework.security.core.userdetails.AuthenticationUserDetailsSe
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -82,9 +83,18 @@ public class SecurityConfig {
     cookieCsrfTokenRepository.setCookiePath("/");
     cookieCsrfTokenRepository.setCookieName("SYMPA-XSRF-TOKEN");
 
+    CsrfTokenRequestAttributeHandler csrfTokenRequestHandler =
+      new CsrfTokenRequestAttributeHandler();
+
+
     http
       .cors(cors -> cors.configurationSource(corsConfigurationSource))
-      .csrf(csrf -> csrf.csrfTokenRepository(cookieCsrfTokenRepository).ignoringRequestMatchers(casProperties.getCasTicketCallback()).ignoringRequestMatchers(casProperties.getCasProxyReceptorUrl()))
+      .csrf(csrf ->
+        csrf.csrfTokenRepository(cookieCsrfTokenRepository)
+          .ignoringRequestMatchers(casProperties.getCasTicketCallback())
+          .ignoringRequestMatchers(casProperties.getCasProxyReceptorUrl())
+          .csrfTokenRequestHandler(csrfTokenRequestHandler)
+      )
       .addFilterBefore(singleSignOutFilter(), CasAuthenticationFilter.class)
       .httpBasic(AbstractHttpConfigurer::disable)
       .formLogin(AbstractHttpConfigurer::disable)
