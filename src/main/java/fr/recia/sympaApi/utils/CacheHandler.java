@@ -75,6 +75,7 @@ public class CacheHandler {
   public <T> T getFromCache(String cacheName, String cacheKey, TypeReference<T> typeRef){
 
     if(cacheProperties.isIgnoreCache()){
+      log.info("IGNORE CACHE IS ACTIVE, RETURN NULL");
       return null;
     }
 
