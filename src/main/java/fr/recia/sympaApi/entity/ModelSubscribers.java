@@ -18,9 +18,9 @@ package fr.recia.sympaApi.entity;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import jakarta.persistence.EmbeddedId;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
 /**
  * Object representing row in model_subscribers table in the SympaRemote database. 

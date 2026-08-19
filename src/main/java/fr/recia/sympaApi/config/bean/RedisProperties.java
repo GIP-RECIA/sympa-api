@@ -23,7 +23,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 @ConfigurationProperties(prefix = "redis")
 @Data

@@ -17,83 +17,58 @@ package fr.recia.sympaApi;
 
 
 import fr.recia.redis.session.cleanup.service.RedisSessionCleanupService;
-import fr.recia.sympaApi.config.RedisSessionCleanupConfiguration;
-import fr.recia.sympaApi.config.SecurityConfig;
-import fr.recia.sympaApi.config.bean.ConcatenateGroupFinderProperties;
-import fr.recia.sympaApi.config.bean.CorsProperties;
-import fr.recia.sympaApi.config.bean.RegexGroupFinderProperties;
-import fr.recia.sympaApi.config.custom.impl.CasSuccessHandler;
-import fr.recia.sympaApi.entity.ModelRequest;
-import fr.recia.sympaApi.entity.ModelSubscribers;
-import fr.recia.sympaApi.entity.PreparedRequest;
-import fr.recia.sympaApi.groupfinder.impl.RegexGroupFinder;
 import fr.recia.sympaApi.repositories.ModelRepository;
 import fr.recia.sympaApi.repositories.ModelRequestRepository;
 import fr.recia.sympaApi.repositories.ModelSubscribersRepository;
 import fr.recia.sympaApi.repositories.PreparedRequestRepository;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.data.redis.connection.ReactiveRedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
-import javax.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 import static org.junit.Assert.assertEquals;
 
-@RunWith(SpringJUnit4ClassRunner.class)
 @SpringBootTest(properties = {
-  "spring.session.store-type=none"
+  "spring.session.store-type=none",
+  "spring.autoconfigure.exclude=" +
+    "org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration," +
+    "org.springframework.boot.hibernate.autoconfigure.HibernateJpaAutoConfiguration"
 })
 @ActiveProfiles("test")
 public class SympaApiApplicationTests {
 
-
-
-  @MockBean
+  @MockitoBean
   RedisConnectionFactory redisConnectionFactory;
 
-
-  @MockBean
+  @MockitoBean
   DataSource dataSource;
 
-  @MockBean
+  @MockitoBean
   EntityManagerFactory entityManagerFactory;
 
-  @MockBean
+  @MockitoBean
   ModelRepository modelRepository;
 
-  @MockBean
+  @MockitoBean
   ModelRequestRepository modelRequestRepository;
 
-  @MockBean
+  @MockitoBean
   ModelSubscribersRepository modelSubscribersRepository;
 
-  @MockBean
+  @MockitoBean
   PreparedRequestRepository preparedRequestRepository;
 
-  @MockBean
+  @MockitoBean
   ReactiveRedisConnectionFactory reactiveRedisConnectionFactory;
-
     @Test
     public void queryBuilderCloseOK() {
-
       String queryFromService ="";
       final String expectedQuery ="";
       assertEquals("Query does not match expected output", expectedQuery, queryFromService);
-
     }
-
-
-
-
-
-
-
 }

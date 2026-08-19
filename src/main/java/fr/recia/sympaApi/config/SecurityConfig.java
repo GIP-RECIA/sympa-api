@@ -15,19 +15,24 @@
  */
 package fr.recia.sympaApi.config;
 
-import fr.recia.sympaApi.config.bean.AppConfProperties;
+import fr.recia.sympaApi.config.bean.CasProperties;
 import fr.recia.sympaApi.config.custom.impl.CasSuccessHandler;
 import fr.recia.sympaApi.config.custom.impl.CustomAuthenticationProvider;
 import fr.recia.sympaApi.config.custom.impl.CustomCas20ProxyTicketValidator;
 import fr.recia.sympaApi.config.custom.impl.CustomCasAuthenticationEntryPoint;
 import fr.recia.sympaApi.config.custom.impl.CustomSessionMappingStorage;
-import fr.recia.sympaApi.config.custom.impl.ProxyGrantingTickeStoragetRedisImpl;
+import fr.recia.sympaApi.config.custom.impl.ProxyGrantingTicketRedisImpl;
 import fr.recia.sympaApi.config.custom.impl.UserCustomImplementation;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.jasig.cas.client.proxy.ProxyGrantingTicketStorage;
-import org.jasig.cas.client.session.SingleSignOutFilter;
-import org.jasig.cas.client.validation.Assertion;
-import org.jasig.cas.client.validation.Cas20ProxyTicketValidator;
+import org.apereo.cas.client.proxy.ProxyGrantingTicketStorage;
+import org.apereo.cas.client.session.SingleSignOutFilter;
+import org.apereo.cas.client.validation.Assertion;
+import org.apereo.cas.client.validation.Cas20ProxyTicketValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -45,14 +50,11 @@ import org.springframework.security.core.userdetails.AuthenticationUserDetailsSe
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -63,7 +65,7 @@ import java.util.Map;
 public class SecurityConfig {
 
   @Autowired
-  AppConfProperties appConfProperties;
+  CasProperties casProperties;
 
   @Autowired
   CorsConfigurationSource corsConfigurationSource;
@@ -81,9 +83,18 @@ public class SecurityConfig {
     cookieCsrfTokenRepository.setCookiePath("/");
     cookieCsrfTokenRepository.setCookieName("SYMPA-XSRF-TOKEN");
 
+    CsrfTokenRequestAttributeHandler csrfTokenRequestHandler =
+      new CsrfTokenRequestAttributeHandler();
+
+
     http
       .cors(cors -> cors.configurationSource(corsConfigurationSource))
-      .csrf(csrf -> csrf.csrfTokenRepository(cookieCsrfTokenRepository).ignoringAntMatchers(appConfProperties.getCasTicketCallback()).ignoringAntMatchers(appConfProperties.getCasProxyReceptorUrl()))
+      .csrf(csrf ->
+        csrf.csrfTokenRepository(cookieCsrfTokenRepository)
+          .ignoringRequestMatchers(casProperties.getCasTicketCallback())
+          .ignoringRequestMatchers(casProperties.getCasProxyReceptorUrl())
+          .csrfTokenRequestHandler(csrfTokenRequestHandler)
+      )
       .addFilterBefore(singleSignOutFilter(), CasAuthenticationFilter.class)
       .httpBasic(AbstractHttpConfigurer::disable)
       .formLogin(AbstractHttpConfigurer::disable)
@@ -91,19 +102,19 @@ public class SecurityConfig {
       .addFilterBefore(casAuthenticationFilter(authenticationManager(customAuthProvider(serviceProperties()))), UsernamePasswordAuthenticationFilter.class)
       .exceptionHandling(e -> e.authenticationEntryPoint(casAuthenticationEntryPoint()))
       .authorizeHttpRequests(authorize -> authorize
-        .antMatchers("/health-check").permitAll()
-        .antMatchers("/api/admin-sympa/**").authenticated()
-        .antMatchers("/api/sympa/**").authenticated()
-        .antMatchers(appConfProperties.getCasTicketCallback()).permitAll()
-        .antMatchers(appConfProperties.getCasProxyReceptorUrl()).permitAll()
+        .requestMatchers("/health-check").permitAll()
+        .requestMatchers("/api/admin-sympa/**").authenticated()
+        .requestMatchers("/api/sympa/**").authenticated()
+        .requestMatchers(casProperties.getCasTicketCallback()).permitAll()
+        .requestMatchers(casProperties.getCasProxyReceptorUrl()).permitAll()
         .anyRequest().denyAll()
       );
     return http.build();
   }
 
   public CasAuthenticationEntryPoint casAuthenticationEntryPoint() {
-    CasAuthenticationEntryPoint casAuthenticationEntryPoint = new CustomCasAuthenticationEntryPoint(appConfProperties);
-    casAuthenticationEntryPoint.setLoginUrl(this.appConfProperties.getCasServerLoginUrl()); //old concatenation
+    CasAuthenticationEntryPoint casAuthenticationEntryPoint = new CustomCasAuthenticationEntryPoint(casProperties);
+    casAuthenticationEntryPoint.setLoginUrl(this.casProperties.getCasServerLoginUrl()); //old concatenation
     casAuthenticationEntryPoint.setServiceProperties(serviceProperties());
     return casAuthenticationEntryPoint;
   }
@@ -111,14 +122,14 @@ public class SecurityConfig {
   @Bean
   public ServiceProperties serviceProperties() {
     ServiceProperties serviceProperties = new ServiceProperties();
-    serviceProperties.setService(appConfProperties.getCasServiceId());
+    serviceProperties.setService(casProperties.getCasServiceId());
     serviceProperties.setSendRenew(false);
     return serviceProperties;
   }
 
   @Bean
   public ProxyGrantingTicketStorage pgtStorage(){
-    return new ProxyGrantingTickeStoragetRedisImpl();
+    return new ProxyGrantingTicketRedisImpl();
   }
 
   @Bean
@@ -133,16 +144,16 @@ public class SecurityConfig {
 
   @Bean
   public CustomAuthenticationProvider customAuthProvider(ServiceProperties serviceProperties) {
-    CustomAuthenticationProvider provider = new CustomAuthenticationProvider(appConfProperties);
+    CustomAuthenticationProvider provider = new CustomAuthenticationProvider(casProperties);
     provider.setServiceProperties(serviceProperties);
 
-    Cas20ProxyTicketValidator validator = new CustomCas20ProxyTicketValidator(appConfProperties.getCasServerUrl());
-    validator.setProxyCallbackUrl(appConfProperties.getCasProxyTicketCallback());
+    Cas20ProxyTicketValidator validator = new CustomCas20ProxyTicketValidator(casProperties.getCasServerUrl(), casProperties);
+    validator.setProxyCallbackUrl(casProperties.getCasProxyTicketCallback());
     validator.setProxyGrantingTicketStorage(pgtStorage());
 
     provider.setTicketValidator(validator);
     provider.setAuthenticationUserDetailsService(customUserDetailsService());
-    provider.setKey(appConfProperties.getCasProviderKey());
+    provider.setKey(casProperties.getCasProviderKey());
     return provider;
   }
 
@@ -155,9 +166,9 @@ public class SecurityConfig {
   public CasAuthenticationFilter casAuthenticationFilter(AuthenticationManager authenticationManager) {
     CasAuthenticationFilter filter = new CasAuthenticationFilter();
     filter.setAuthenticationManager(authenticationManager);
-    filter.setFilterProcessesUrl(appConfProperties.getCasTicketCallback());
+    filter.setFilterProcessesUrl(casProperties.getCasTicketCallback());
     filter.setProxyGrantingTicketStorage(pgtStorage());
-    filter.setProxyReceptorUrl(appConfProperties.getCasProxyReceptorUrl());
+    filter.setProxyReceptorUrl(casProperties.getCasProxyReceptorUrl());
     filter.setAuthenticationSuccessHandler(casSuccessHandler);
     return filter;
   }
@@ -169,8 +180,8 @@ public class SecurityConfig {
   public Filter singleSignOutFilter() {
     SingleSignOutFilter delegate = new SingleSignOutFilter();
     delegate.setIgnoreInitConfiguration(true);
-    delegate.setArtifactParameterName("ticket");
-    delegate.setLogoutParameterName("logoutRequest");
+    SingleSignOutFilter.setArtifactParameterName("ticket");
+    SingleSignOutFilter.setLogoutParameterName("logoutRequest");
 
     return new OncePerRequestFilter() {
       @Override

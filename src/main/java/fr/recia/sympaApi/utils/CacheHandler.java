@@ -26,7 +26,7 @@ import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 import reactor.util.annotation.Nullable;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -42,9 +42,6 @@ public class CacheHandler {
 
   @Autowired
   CacheProperties cacheProperties;
-
-  @Autowired
-  ObjectMapper objectMapper;
 
   Map<String, Cache> caches;
 
@@ -78,6 +75,7 @@ public class CacheHandler {
   public <T> T getFromCache(String cacheName, String cacheKey, TypeReference<T> typeRef){
 
     if(cacheProperties.isIgnoreCache()){
+      log.info("IGNORE CACHE IS ACTIVE, RETURN NULL");
       return null;
     }
 
@@ -96,6 +94,7 @@ public class CacheHandler {
     log.debug("Found cache value in cache {} with key {}", cacheName, cacheKey);
 
     try {
+      ObjectMapper objectMapper = new ObjectMapper();
       return objectMapper.convertValue(result, typeRef);
     } catch (
       IllegalArgumentException e) {

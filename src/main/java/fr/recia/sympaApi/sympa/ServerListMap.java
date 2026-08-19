@@ -64,7 +64,7 @@ public class ServerListMap extends HashMap<String, SpringCachingSympaServerAxisW
 
   private transient SessionAttributesHandler sessionAttributesHandler;
 
-  private transient CasProperties  casProperties;
+  private transient CasProperties casProperties;
 
   private transient CacheHandler cacheHandler ;
 

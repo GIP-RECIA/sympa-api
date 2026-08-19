@@ -24,8 +24,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.JacksonJsonRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializationContext;
+import tools.jackson.databind.DeserializationFeature;
+import tools.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 
 import java.time.Duration;
 import java.util.HashMap;
@@ -43,14 +46,22 @@ public class RedisCacheConfig {
     RedisConnectionFactory connectionFactory,
     RedisProperties redisProperties) {
 
+        ObjectMapper objectMapper = JsonMapper.builder()
+                .disable(DeserializationFeature.FAIL_ON_NULL_FOR_PRIMITIVES)
+                .build();
+    JacksonJsonRedisSerializer<Object> objectJacksonJsonRedisSerializer =
+      new JacksonJsonRedisSerializer<>(
+        objectMapper,
+        Object.class
+      );
+
     //  default TTL
     RedisCacheConfiguration defaultConfig = RedisCacheConfiguration.defaultCacheConfig()
       .computePrefixWith(cacheName -> redisProperties.getCachePrefix() + "::" + cacheName + "::")
       .entryTtl(Duration.ofHours(cacheProperties.getDefaultDurationHours()))
       .serializeValuesWith(
-        RedisSerializationContext.SerializationPair.fromSerializer(
-          new GenericJackson2JsonRedisSerializer()
-        )
+        RedisSerializationContext.SerializationPair
+          .fromSerializer(objectJacksonJsonRedisSerializer)
       );
 
     // TTL per key

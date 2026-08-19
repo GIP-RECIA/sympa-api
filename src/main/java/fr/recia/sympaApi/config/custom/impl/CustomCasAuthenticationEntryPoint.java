@@ -15,31 +15,48 @@
  */
 package fr.recia.sympaApi.config.custom.impl;
 
-import fr.recia.sympaApi.config.bean.AppConfProperties;
+
+import fr.recia.sympaApi.config.bean.CasProperties;
+import fr.recia.sympaApi.exception.InvalidDomainException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Profile;
 import org.springframework.security.cas.web.CasAuthenticationEntryPoint;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-@Slf4j @Profile("!test")
-
+@Slf4j
 public class CustomCasAuthenticationEntryPoint extends CasAuthenticationEntryPoint {
 
-    public CustomCasAuthenticationEntryPoint(AppConfProperties appConfProperties) {
-        this.appConfProperties = appConfProperties;
+    public CustomCasAuthenticationEntryPoint(CasProperties casProperties) {
+        this.casProperties = casProperties;
     }
 
-    private final AppConfProperties appConfProperties;
+    private final CasProperties casProperties;
 
     @Override
     protected String createServiceUrl(HttpServletRequest request, HttpServletResponse response) {
-      log.warn(request.getRequestURL().toString());
-      log.warn(request.getRequestURI());
-        final String url = request.getRequestURL().toString();
-        final String uri = request.getRequestURI();
-        return url.substring(0, url.length() - uri.length()) + appConfProperties.getCasServiceId();
+
+        String host = request.getHeader("X-Forwarded-Host");
+
+        if (host == null) {
+            host = request.getServerName();
+        }
+
+        if (!casProperties.getAuthorizedDomains().contains(host)) {
+            throw new InvalidDomainException("Invalid domain: " + host);
+        }
+
+        String baseUrl = ServletUriComponentsBuilder
+                .fromRequestUri(request)
+                .replacePath(null)
+                .build()
+                .toUriString();
+
+        //todo mettre au propre
+        return baseUrl
+             //   .replace("http", "https")
+                + casProperties.getCasServiceId();
     }
 
 }
