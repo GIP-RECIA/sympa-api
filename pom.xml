@@ -10,7 +10,7 @@
     </parent>
     <groupId>fr.recia</groupId>
     <artifactId>sympa-api</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1-SNAPSHOT</version>
     <packaging>war</packaging>
     <name>sympa-api</name>
     <inceptionYear>2026</inceptionYear>
@@ -27,7 +27,7 @@
     <scm>
       <connection>scm:git:ssh://git@github.com/GIP-RECIA/sympa-api.git</connection>
       <developerConnection>scm:git:ssh://git@github.com/GIP-RECIA/sympa-api.git</developerConnection>
-      <tag>1.0.0</tag>
+      <tag>HEAD</tag>
       <url>https://github.com/GIP-RECIA/sympa-api</url>
     </scm>
     <properties>
