@@ -1,0 +1,63 @@
+@use 'sass:map';
+@use 'ress/dist/ress.min.css';
+@use '@gip-recia/ui' as *;
+
+@include dm-sans;
+@include sora;
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background-color: var(--#{$prefix}body-bg);
+  font-family: $dm-sans;
+  font-style: normal;
+  font-weight: normal;
+  font-size: var(--#{$prefix}body-font-size);
+  letter-spacing: 0;
+  color: var(--#{$prefix}body);
+
+  display: grid;
+  grid-template-rows: auto auto 1fr auto;
+  grid-template-areas:
+    'header'
+    'alert'
+    'main'
+    'footer';
+
+  > header {
+    grid-area: header;
+    height: var(--#{$prefix}header-height, 68px);
+  }
+
+  > .alert {
+    grid-area: alert;
+  }
+
+  > main {
+    grid-area: main;
+    padding-top: 40px;
+    padding-bottom: 40px;
+    display: grid;
+    grid-auto-rows: min-content;
+    row-gap: 40px;
+
+    > * {
+      min-width: 0;
+    }
+  }
+
+  > footer {
+    grid-area: footer;
+  }
+
+  @media (width >= map.get($grid-breakpoints, md)) {
+    > main {
+      padding-top: 60px;
+      padding-bottom: 60px;
+      row-gap: 60px;
+    }
+  }
+}

@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+
+    <script
+      vite-ignore
+      src="/resource-server/webjars/gip-recia__ui-webcomponents/dist/r-header.js"
+      type="module"
+      defer
+    ></script>
+    <script
+      vite-ignore
+      src="/resource-server/webjars/gip-recia__ui-webcomponents/dist/r-page-layout.js"
+      type="module"
+      defer
+    ></script>
+    <script
+      vite-ignore
+      src="/resource-server/webjars/gip-recia__sympa/dist/sympa.min.js"
+      type="module"
+      defer
+    ></script>
+    <script
+      vite-ignore
+      src="/resource-server/webjars/gip-recia__ui-webcomponents/dist/r-footer.js"
+      type="module"
+      defer
+    ></script>
+  </head>
+  <body>
+    <header>
+      <r-header template-api-url="/commun/portal_template_api.tpl.json">
+      </r-header>
+    </header>
+    <main>
+      <div class="container">
+        <r-page-layout
+          back-link='{
+            "name": "Retour &agrave; l&#39;accueil",
+            "href": "/portail",
+            "target": "_self",
+            "rel": "noopener noreferrer"
+          }'
+          page-title="Listes de diffusion"
+        >
+          <sympa-admin-redirect
+            slot="header"
+            style="margin: 0;"
+          >
+          </sympa-admin-redirect>
+          <page-sympa>
+          </page-sympa>
+        </r-page-layout>
+      </div>
+    </main>
+    <footer>
+      <r-footer template-api-url="/commun/portal_template_api.tpl.json">
+      </r-footer>
+    </footer>
+
+    <script
+      type="module"
+      src="/src/main.ts"
+    ></script>
+  </body>
+</html>
