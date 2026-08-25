@@ -1,4 +1,4 @@
-# esup-sympa-api
+# sympa-api
 
 API pour les services : 
 - Listes de diffusion
