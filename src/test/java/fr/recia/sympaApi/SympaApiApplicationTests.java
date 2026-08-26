@@ -15,8 +15,6 @@
  */
 package fr.recia.sympaApi;
 
-
-import fr.recia.redis.session.cleanup.service.RedisSessionCleanupService;
 import fr.recia.sympaApi.repositories.ModelRepository;
 import fr.recia.sympaApi.repositories.ModelRequestRepository;
 import fr.recia.sympaApi.repositories.ModelSubscribersRepository;

@@ -1,6 +1,5 @@
-HELP.md
 target/
-.mvn/wrapper/maven-wrapper.jar
+!.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 
@@ -30,4 +29,41 @@ build/
 !**/src/test/**/build/
 
 ### VS Code ###
-.vscode/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+### Yarn ###
+.yarn/*
+!.yarn/releases
+!.yarn/plugins
+.pnp.*
+
+node_modules
+node
+.DS_Store
+dist
+dist-ssr
+coverage
+*.local
+src/main/resources/**/application-*.yml
+!src/main/resources/**/application-test.yml
+!src/main/resources/**/application-*.example.yml
+*.bak
+
+### Tests ###
+playwright-report
+test-results
+results.json
+
+### Logs ###
+logs
+*.log
+*.log.*.gz
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
