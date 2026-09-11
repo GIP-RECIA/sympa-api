@@ -56,7 +56,7 @@ public class RobotSympaConf {
     for (String rgxFormat : regexFormatList) {
       if (rgxFormat != null) {
         try {
-          String regex = String.format(rgxFormat, uai);
+          String regex = String.format(rgxFormat, uai, uai);
           Pattern pattern = Pattern.compile(regex);
           for (String grp : userGrps) {
             try {

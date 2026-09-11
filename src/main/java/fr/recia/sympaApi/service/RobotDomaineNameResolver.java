@@ -33,8 +33,7 @@ import java.util.List;
 public class RobotDomaineNameResolver  {
 	
 	protected final Log logger = LogFactory.getLog(this.getClass());
-	
-	//private UserInfoBean userInfoBean;
+
   @Autowired
 	private RobotSympaConf robotSympaConf;
 
@@ -42,26 +41,10 @@ public class RobotDomaineNameResolver  {
   UserAttributesHandler userAttributesHandler;
 	
 	public String resolveRobotDomainName() {
-
     String uai = userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT);
-
     List<String> isMemberOf = userAttributesHandler.getAttributeList(UserAttributesHandler.IS_MEMBER_OF);
-
-    RobotSympaInfo rsi = robotSympaConf.getRobotSympaInfoByUai(uai, isMemberOf, false);
-    // todo read in session instead of RSC
-
-		if (rsi == null) {
-      rsi = robotSympaConf.getRobotSympaInfoByUai(uai, isMemberOf, false);
-			if (rsi == null) {
-				return null;
-			}
-
-      //todo store in session
-		//	userInfoBean.setRobotSympaInfo(rsi);
-		}
+    RobotSympaInfo rsi = robotSympaConf.getRobotSympaInfoByUai(uai, isMemberOf, true);
 		return rsi.getNom();
-		
-	}
-
+  }
 
 }
