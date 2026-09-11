@@ -96,7 +96,7 @@ public class AdminSympaService {
         row.setSubject(mailList.getDescription());
         row.setModelId(mailList.getModel().getId());
         row.setModelParam(mailList.getModelParameter());
-        log.debug("Loading creatable list " + row);
+        log.debug("Loading creatable or updatable list " + row);
         tableData.add(row);
       }
     }
