@@ -5094,10 +5094,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ress@npm:^5.0.2":
-  version: 5.0.2
-  resolution: "ress@npm:5.0.2"
-  checksum: 10/99e16b99cc6392b4c2373b6b4643b8de3b3cd36ab77d19efb0c285d60cc7072ae52fabc403a1a890d618e26ba66277675387898a5a5e4b885d75c4d04970174d
+"ress@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "ress@npm:6.0.0"
+  checksum: 10/97672bf8830d2832916abc6785bbeff8cbe9240402f47d69c2cb22ddc37688268848ba3a174f77b2790f8c341a67c9a24465872073a8beb064f2578f7b3e7ae1
   languageName: node
   linkType: hard
 
@@ -5432,7 +5432,7 @@ __metadata:
     husky: "npm:^9.1.7"
     lint-staged: "npm:^17.3.0"
     npm-run-all2: "npm:^9.0.3"
-    ress: "npm:^5.0.2"
+    ress: "npm:^6.0.0"
     sass: "npm:^1.102.0"
     typescript: "npm:@typescript/typescript6@^6.0.2"
     vite: "npm:^8.2.0"
