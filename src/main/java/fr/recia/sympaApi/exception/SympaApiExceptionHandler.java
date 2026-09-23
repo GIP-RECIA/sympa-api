@@ -107,7 +107,8 @@ public class SympaApiExceptionHandler {
   }
 
   @ExceptionHandler(Exception.class)
-  public ResponseEntity<?> handleException(UserAttributeNotFoundException ex, HttpServletRequest request) {
+  public ResponseEntity<?> handleException(Exception ex, HttpServletRequest request) {
+    log.error("Error is : ", ex);
     return ResponseEntity
       .status(HttpStatus.INTERNAL_SERVER_ERROR)
       .headers(headersHandler(request))
