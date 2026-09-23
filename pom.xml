@@ -236,12 +236,7 @@
                         <website>https://www.recia.fr/</website>
                     </properties>
                     <includes>
-                        <include>**/*.java</include>
-                        <include>src/**/*.xml</include>
-                        <include>**/*.properties</include>
-                        <include>src/test/**</include>
-                        <include>**/*.js</include>
-                        <include>**/*.css</include>
+                        <include>src/**/*.java</include>
                     </includes>
                   <excludes>
                     <exclude>src/test/resources/json/**</exclude>
