@@ -105,6 +105,7 @@ public class SecurityConfig {
         .requestMatchers("/health-check").permitAll()
         .requestMatchers("/api/admin-sympa/**").authenticated()
         .requestMatchers("/api/sympa/**").authenticated()
+        .requestMatchers("/", "/ui/**").authenticated()
         .requestMatchers(casProperties.getCasTicketCallback()).permitAll()
         .requestMatchers(casProperties.getCasProxyReceptorUrl()).permitAll()
         .anyRequest().denyAll()
