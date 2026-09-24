@@ -102,6 +102,7 @@ public class SecurityConfig {
       .exceptionHandling(e -> e.authenticationEntryPoint(casAuthenticationEntryPoint()))
       .authorizeHttpRequests(authorize -> authorize
         .requestMatchers("/health-check").permitAll()
+        .requestMatchers("/error").anonymous()
         .requestMatchers("/", "/ui/**", "/api/**").authenticated()
         .requestMatchers(casProperties.getCasTicketCallback()).permitAll()
         .requestMatchers(casProperties.getCasProxyReceptorUrl()).permitAll()
