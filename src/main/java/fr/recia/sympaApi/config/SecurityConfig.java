@@ -37,6 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.cas.ServiceProperties;
@@ -45,11 +46,15 @@ import org.springframework.security.cas.web.CasAuthenticationEntryPoint;
 import org.springframework.security.cas.web.CasAuthenticationFilter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.AuthenticationUserDetailsService;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRepository;
 import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -76,21 +81,18 @@ public class SecurityConfig {
   @Autowired
   private CasSuccessHandler casSuccessHandler;
 
+  @Autowired
+  private CsrfTokenRepository csrfTokenRepository;
+
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-    CookieCsrfTokenRepository cookieCsrfTokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
-    cookieCsrfTokenRepository.setCookiePath("/");
-    cookieCsrfTokenRepository.setCookieName("SYMPA-XSRF-TOKEN");
-
-    CsrfTokenRequestAttributeHandler csrfTokenRequestHandler =
-      new CsrfTokenRequestAttributeHandler();
-
+    CsrfTokenRequestAttributeHandler csrfTokenRequestHandler = new CsrfTokenRequestAttributeHandler();
 
     http
       .cors(cors -> cors.configurationSource(corsConfigurationSource))
       .csrf(csrf ->
-        csrf.csrfTokenRepository(cookieCsrfTokenRepository)
+        csrf.csrfTokenRepository(csrfTokenRepository)
           .ignoringRequestMatchers(casProperties.getCasTicketCallback())
           .ignoringRequestMatchers(casProperties.getCasProxyReceptorUrl())
           .csrfTokenRequestHandler(csrfTokenRequestHandler)
