@@ -592,10 +592,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@gip-recia/ui@npm:^1.0.5":
-  version: 1.0.5
-  resolution: "@gip-recia/ui@npm:1.0.5"
-  checksum: 10/fd703c2ae5d61d440ebc6792545c50ee787fe3161f32a19515130e05027a3aa8e47e0749b564388b1f4b3a60316dff4b7db352a7fdb1cf69f387bba8939a726e
+"@gip-recia/ui@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "@gip-recia/ui@npm:1.1.0"
+  checksum: 10/ab6631bd6567b57a651025a73e73c9206ea1ba9970aaf01295a7f9cd2c828becaab22699fbda81e6d8805255a07a22a2c087efee23e31711a8d1c367762bbfe9
   languageName: node
   linkType: hard
 
@@ -5420,7 +5420,7 @@ __metadata:
     "@antfu/eslint-config": "npm:^9.2.0"
     "@commitlint/cli": "npm:^21.2.1"
     "@commitlint/config-conventional": "npm:^21.2.0"
-    "@gip-recia/ui": "npm:^1.0.5"
+    "@gip-recia/ui": "npm:^1.1.0"
     "@types/node": "npm:^24"
     "@types/xml2js": "npm:^0"
     "@typescript/native": "npm:typescript@^7.0.2"
