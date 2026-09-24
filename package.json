@@ -21,7 +21,7 @@
     "@types/node": "^24",
     "@types/xml2js": "^0",
     "@typescript/native": "npm:typescript@^7.0.2",
-    "commit-and-tag-version": "^13.1.2",
+    "commit-and-tag-version": "^13.2.1",
     "dotenv": "^17.4.2",
     "dotenv-checker": "^1.1.7",
     "eslint": "^10.8.0",
