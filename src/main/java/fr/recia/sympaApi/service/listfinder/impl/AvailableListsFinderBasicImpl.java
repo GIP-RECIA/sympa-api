@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
  * Implementation basique du 'module' permettant de sortir la liste des
  * listes de diffusion qu'il est possible de creer pour cet
  * etablissement, à partir des modeles de listes.
- * 
+ *
  * Par exemple :
  * 		eleves701 avec le model eleves_classe
  * 		eleves702 avec le model eleves_classe
@@ -49,7 +49,7 @@ import java.util.stream.Collectors;
  * 		parents702 ..
  * 		profs701 ..
  * 		profs702 ..
- * 
+ *
  * @author GIP Recia
  *
  */
@@ -79,7 +79,7 @@ public class AvailableListsFinderBasicImpl implements IAvailableListsFinder {
 	 * Chaque modele possede un pattern de groupe qui, s'il est respecte, autorise
 	 * l'instanciation d'une liste avec ce modele.
 	 * (Permet d'obtenir la liste des listes qui seront proposees a l'administrateur d'etablissement)
-	 * 
+	 *
 	 * @param modeles les modeles de listes connus, a partir desquels on va deduire les
 	 * listes qu'il est possible de creer
 	 * @return la collection de mailing lists qu'il est possible de creer
@@ -87,7 +87,7 @@ public class AvailableListsFinderBasicImpl implements IAvailableListsFinder {
 	 */
 	@Override
 	public AvailableMailingListsFound getAvailableAndNonExistingLists (
-			final Map<String,String> userInfo, final Collection<IMailingListModel> modeles) throws Exception {
+			final Map<String,String> userInfo, final Collection<IMailingListModel> modeles, boolean forAdmin) throws Exception {
 
 		AvailableMailingListsFound availableLists = new AvailableMailingListsFound();
 
@@ -117,7 +117,7 @@ public class AvailableListsFinderBasicImpl implements IAvailableListsFinder {
     }
 
     AvailableListsFinderBasicImpl.log.debug("Finding existing lists with userInfo [" + userInfo.toString() + "]");
-		Collection<String> existingLists = findExistingLists();
+		Collection<String> existingLists = findExistingLists(forAdmin);
 		AvailableListsFinderBasicImpl.log.debug("Existing lists found " + existingLists.size());
 
     Map<String, IMailingList> creatableListsMap = creatableLists.stream().collect(Collectors.toMap(m -> m.getName().toLowerCase(), Function.identity()));
@@ -134,9 +134,9 @@ public class AvailableListsFinderBasicImpl implements IAvailableListsFinder {
 		return availableLists;
 	}
 
-  public Collection<String> findExistingLists() throws Exception {
+  public Collection<String> findExistingLists(boolean forAdmin) throws Exception {
 
-    List<String> listsAddressesSet = this.domainService.getLists().stream().map(x -> x.getAddress().toLowerCase()).collect(Collectors.toList());
+    List<String> listsAddressesSet = this.domainService.getLists(forAdmin).stream().map(x -> x.getAddress().toLowerCase()).collect(Collectors.toList());
     List<String> existingLists = new ArrayList<>();
 
     for (String address : listsAddressesSet) {

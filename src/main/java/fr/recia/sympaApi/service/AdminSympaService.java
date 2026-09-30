@@ -303,7 +303,7 @@ public class AdminSympaService {
     //is done by comparing the domain of the list address (after the @).
     //As domains are 1 to 1 with establishments
     //this can be used to tell what lists belong to which establishment.
-    sympaList = this.getDomainService().getWhich();
+    sympaList = this.getDomainService().getWhich(true);
 
     AdminSympaListResponseForDisplay response = fetchCreateListTableData(userInfo, sympaList);
     return response;
@@ -501,7 +501,7 @@ public class AdminSympaService {
     if(Objects.nonNull(availableMailingListsFound)){
       availableLists = availableMailingListsFound;
     } else {
-      availableLists = this.availableListFinder.getAvailableAndNonExistingLists(userInfo, listMailingListModels);
+      availableLists = this.availableListFinder.getAvailableAndNonExistingLists(userInfo, listMailingListModels, true);
         cacheHandler.putObjectInCache(cacheProperties.getAdminServiceCacheName(), uai, availableLists);
     }
 

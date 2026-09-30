@@ -36,13 +36,11 @@ public class SympaService {
   @Autowired
   DomainService domainService;
 
-
   @Autowired
   UserAttributesHandler userAttributesHandler;
 
   public SympaListResponseForDisplay fetchSympaList() throws Exception {
-
-    List<UserSympaListWithUrl> sympaList = domainService.getWhich();
+    List<UserSympaListWithUrl> sympaList = domainService.getWhich(false);
     SympaListResponseForDisplay response = new SympaListResponseForDisplay();
     response.setAdminServiceUrl(userAttributesHandler.getIsAdminSympa().orElse(null));
     response.setUserSympaListDetailList(sympaList.stream().map(UserSympaListDetail::new).collect(Collectors.toList()));

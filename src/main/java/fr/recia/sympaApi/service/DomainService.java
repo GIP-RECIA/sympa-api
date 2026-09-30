@@ -28,12 +28,14 @@ import fr.recia.sympaApi.sympa.SpringCachingSympaServerAxisWsImpl;
 import fr.recia.sympaApi.utils.CacheHandler;
 import fr.recia.sympaApi.utils.SessionAttributesHandler;
 import fr.recia.sympaApi.utils.UserAttributesHandler;
+import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -76,30 +78,13 @@ public class DomainService {
   @Autowired
   CacheHandler cacheHandler;
 
-  private final String SERVER_LIST_KEY = "serverList";
-
-  private ServerListMap getServerListInternal() throws Exception {
-    Optional<ServerListMap> optional = sessionAttributesHandler.getSessionAttribute(SERVER_LIST_KEY, ServerListMap.class);
-    if(optional.isPresent()){
-      // re-inject because these attributes are not puts in cache
-      optional.get().setUserAttributesHandler(this.userAttributesHandler);
-      optional.get().setSessionAttributesHandler(this.sessionAttributesHandler);
-      optional.get().setRobotSympaConf(this.robotSympaConf);
-      optional.get().setCredentialRetriever(this.credentialRetriever);
-      optional.get().setCasProperties(this.casProperties);
-      optional.get().setServerListMapProperties(this.serverListMapProperties);
-      optional.get().setCacheProperties(this.cacheProperties);
-      optional.get().setCacheHandler(this.cacheHandler);
-      return optional.get();
-    }
-
-    return new ServerListMap(robotSympaConf, serverListMapProperties, credentialRetriever, userAttributesHandler, sessionAttributesHandler, casProperties, cacheProperties, cacheHandler);
-
+  private ServerListMap getServerListInternal(boolean forAdmin) throws Exception {
+    return new ServerListMap(robotSympaConf, serverListMapProperties, credentialRetriever, userAttributesHandler, sessionAttributesHandler, casProperties, cacheProperties, cacheHandler, forAdmin);
   }
 
 
-  public List<UserSympaListWithUrl> getWhich() throws Exception {
-    Collection<SpringCachingSympaServerAxisWsImpl> srvList = getServerList().values();
+  public List<UserSympaListWithUrl> getWhich(boolean forAdmin) throws Exception {
+    Collection<SpringCachingSympaServerAxisWsImpl> srvList = getServerList(forAdmin).values();
     List<UserSympaListWithUrl> result = new ArrayList<>();
     for ( SpringCachingSympaServerAxisWsImpl s : srvList ) {
       List<UserSympaListWithUrl> srvResult = s.getWhich(SympaRobot.getDefaultRobot());
@@ -112,8 +97,8 @@ public class DomainService {
     return result;
   }
 
-  public List<SympaList> getLists() throws Exception {
-    Collection<SpringCachingSympaServerAxisWsImpl> srvList = getServerList().values();
+  public List<SympaList> getLists(boolean forAdmin) throws Exception {
+    Collection<SpringCachingSympaServerAxisWsImpl> srvList = getServerList(forAdmin).values();
     List<SympaList> result = new ArrayList<>();
     for ( SpringCachingSympaServerAxisWsImpl s : srvList ) {
       List<SympaList> srvResult = s.getLists(SympaRobot.getDefaultRobot());
@@ -181,11 +166,11 @@ public class DomainService {
   /**
    * @return the serverList
    */
-  public Map<String, SpringCachingSympaServerAxisWsImpl> getServerList() throws Exception {
+  public Map<String, SpringCachingSympaServerAxisWsImpl> getServerList(boolean forAdmin) throws Exception {
     Map<String, SpringCachingSympaServerAxisWsImpl> serverListToUse = new HashMap<>();
-    for(String serverKey: getServerListInternal().keySet()) {
+    for(String serverKey: getServerListInternal(forAdmin).keySet()) {
         log.debug("Add this server to the list for the current user : " + serverKey);
-        serverListToUse.put(serverKey, getServerListInternal().get(serverKey));
+        serverListToUse.put(serverKey, getServerListInternal(forAdmin).get(serverKey));
     }
     return serverListToUse;
   }

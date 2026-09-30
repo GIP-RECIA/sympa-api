@@ -38,7 +38,8 @@ import java.util.List;
 @NoArgsConstructor // only for deserialization
 public class ServerListMap extends HashMap<String, SpringCachingSympaServerAxisWsImpl> {
 
-  public ServerListMap(RobotSympaConf robotSympaConf, ServerListMapProperties serverListMapProperties, CASCredentialRetrieverService casCredentialRetriever, UserAttributesHandler userAttributesHandler, SessionAttributesHandler sessionAttributesHandler, CasProperties casProperties, CacheProperties cacheProperties, CacheHandler cacheHandler) throws Exception {
+  public ServerListMap(RobotSympaConf robotSympaConf, ServerListMapProperties serverListMapProperties, CASCredentialRetrieverService casCredentialRetriever, UserAttributesHandler userAttributesHandler,
+                       SessionAttributesHandler sessionAttributesHandler, CasProperties casProperties, CacheProperties cacheProperties, CacheHandler cacheHandler, boolean isAdmin) throws Exception {
     this.robotSympaConf = robotSympaConf;
     this.serverListMapProperties = serverListMapProperties;
     this.credentialRetriever = casCredentialRetriever;
@@ -49,7 +50,7 @@ public class ServerListMap extends HashMap<String, SpringCachingSympaServerAxisW
     this.cacheHandler = cacheHandler;
 
     //no use of post construct since it must only be invoked at the "true" creation (when deserialized from session it will use the no args constructor)
-    this.init();
+    this.init(isAdmin);
   }
 
 	private static final long serialVersionUID = -2957480650779043219L;
@@ -71,7 +72,7 @@ public class ServerListMap extends HashMap<String, SpringCachingSympaServerAxisW
   private transient CacheProperties cacheProperties;
 
   //TODO read value from conf
-	private final  int timeout = 5000;
+  private final  int timeout = 5000;
 
   private final String CONNECT_URL_KEY = "connectUrl";
 
@@ -83,52 +84,47 @@ public class ServerListMap extends HashMap<String, SpringCachingSympaServerAxisW
     sessionAttributesHandler.setSessionAttribute(CONNECT_URL_KEY,connectUrl);
   }
 
-  public void init() throws Exception {
+    public void init(boolean forAdmin) throws Exception {
 
-    log.warn("post construct de server list map");
+        log.warn("post construct de server list map");
+        setConnectUrl( casProperties.getBaseServerUrl());
+        String currentUai = userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT);
+        List<String>  isMemberOf = userAttributesHandler.getAttributeList(UserAttributesHandler.IS_MEMBER_OF);
 
-    setConnectUrl( casProperties.getBaseServerUrl());
-
-    String currentUai = userAttributesHandler.getAttribute(UserAttributesHandler.UAI_CURRENT);
-
-    List<String>  isMemberOf = userAttributesHandler.getAttributeList(UserAttributesHandler.IS_MEMBER_OF);
-
-		if (robotSympaConf.isForAllUai()) {
-      List<String> allUai = userAttributesHandler.getAttributeList(UserAttributesHandler.UAI_ALL);
-      for (String uai : allUai) {
-				creeSympaServer(uai, isMemberOf);
-			}
-		} else {
-			RobotSympaInfo rsi = creeSympaServer(currentUai, isMemberOf);
-			 if (rsi != null && robotSympaConf.isAdminRobotSympaByUai(currentUai, isMemberOf)) {
-         userAttributesHandler.setIsAdminSympa(rsi.getAdminPortletUrl());
-			}
-		}
-	}
+        if (robotSympaConf.isForAllUai()) {
+            List<String> allUai = userAttributesHandler.getAttributeList(UserAttributesHandler.UAI_ALL);
+            for (String uai : allUai) {
+                creeSympaServer(uai, isMemberOf, forAdmin);
+            }
+        } else {
+            RobotSympaInfo rsi = creeSympaServer(currentUai, isMemberOf, forAdmin);
+            if (rsi != null && robotSympaConf.isAdminRobotSympaByUai(currentUai, isMemberOf)) {
+                userAttributesHandler.setIsAdminSympa(rsi.getAdminPortletUrl());
+            }
+        }
+    }
 
 
-	private RobotSympaInfo creeSympaServer(String uai, List<String> isMemberOf) {
+	private RobotSympaInfo creeSympaServer(String uai, List<String> isMemberOf, boolean forAdmin) {
 		if (uai != null) {
-			RobotSympaInfo rsi = robotSympaConf.getRobotSympaInfoByUai(uai, isMemberOf, true);
+			RobotSympaInfo rsi = robotSympaConf.getRobotSympaInfoByUai(uai, isMemberOf, forAdmin);
 			if (rsi != null) {
-        log.debug("robotSympaInfo=" + rsi);
+                log.debug("robotSympaInfo=" + rsi);
+                SpringCachingSympaServerAxisWsImpl server = new SpringCachingSympaServerAxisWsImpl();
+                server.setAdminUrl(rsi.getAdminUrl());
+                server.setArchivesUrl(rsi.getArchiveUrl());
+                server.setConnectUrl(getConnectUrl());
+                server.setName(rsi.getNom());
+                server.setNewListUrl(rsi.getNewListUrl());
+                server.setHomeUrl(rsi.getUrl());
+                server.setEndPointUrl(rsi.getSoapUrl());
+                server.setTimeout(timeout);
+                server.setCredentialRetriever(getCredentialRetriever());
+                server.setNewListForRoles(serverListMapProperties.getNewListForRoles());
+                server.setCacheProperties(getCacheProperties());
+                server.setCacheHandler(getCacheHandler());
 
-				SpringCachingSympaServerAxisWsImpl server = new  SpringCachingSympaServerAxisWsImpl();
-
-				server.setAdminUrl(rsi.getAdminUrl());
-        server.setArchivesUrl(rsi.getArchiveUrl());
-        server.setConnectUrl(getConnectUrl());
-				server.setName(rsi.getNom());
-				server.setNewListUrl(rsi.getNewListUrl());
-				server.setHomeUrl(rsi.getUrl());
-				server.setEndPointUrl(rsi.getSoapUrl());
-				server.setTimeout(timeout);
-				server.setCredentialRetriever(getCredentialRetriever());
-				server.setNewListForRoles(serverListMapProperties.getNewListForRoles());
-        server.setCacheProperties(getCacheProperties());
-        server.setCacheHandler(getCacheHandler());
-
-        log.info("created server {} in creeSympaServer ", server);
+                log.info("created server {} in creeSympaServer ", server);
 
 				this.put(rsi.getNom(), server);
 				return rsi;
