@@ -145,7 +145,7 @@ jobs:
 
     strategy:
       matrix:
-        java: ['11', '17']
+        java: ['25']
         mariadb: ['10.3', 'latest']
 
     env:
@@ -155,7 +155,7 @@ jobs:
       LC_CTYPE: 'fr_FR.UTF-8'
       TZ: 'Europe/Paris'
       MARIADB_IMG: 'wodby/mariadb'
-      JACOCO_JAVA: '11'
+      JACOCO_JAVA: '25'
       JACOCO_MARIADB: '10.3'
 
     name: Java ${{ matrix.java }} & mariadb ${{ matrix.mariadb }}
