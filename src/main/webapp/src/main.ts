@@ -14,7 +14,38 @@
  * limitations under the License.
  */
 
-import './assets/scss/main.scss'
+import type { ToastContainerOptions } from 'vue3-toastify'
+import { createApp } from 'vue'
+import Vue3Toasity from 'vue3-toastify'
+import App from '@/App.vue'
+import { register as registerDirectives } from '@/directives/index.ts'
+import i18n from '@/plugins/i18n.ts'
+import pinia from '@/plugins/pinia.ts'
+import router from '@/router'
+import '@/plugins/date-fns.ts'
+import 'vue3-toastify/dist/index.css'
+import '@/assets/main.scss'
+
+// sympa
+import '@/components/sympa/main.ts'
+
+const app = createApp(App)
+
+registerDirectives(app)
+
+app.use(i18n)
+app.use(pinia)
+app.use(router)
+app.use(
+  Vue3Toasity,
+  {
+    limit: 0,
+    newestOnTop: true,
+    theme: 'auto',
+  } as ToastContainerOptions,
+)
+
+app.mount('#app')
 
 // eslint-disable-next-line no-console
 console.log('Version', __BACK_VERSION__)

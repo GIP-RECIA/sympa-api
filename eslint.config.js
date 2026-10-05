@@ -9,7 +9,17 @@ export default antfu({
       singleAttributePerLine: true,
     },
   },
-  vue: true,
+  vue: {
+    overrides: {
+      'vue/max-attributes-per-line': [
+        'error',
+        {
+          singleline: 1,
+          multiline: 1,
+        },
+      ],
+    },
+  },
   ignores: [
     './src/main/resources/config',
   ],

@@ -1,5 +1,5 @@
 /**
- * Copyright © 2026 GIP-RECIA (https://www.recia.fr/)
+ * Copyright (C) 2023 GIP-RECIA, Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,26 +14,32 @@
  * limitations under the License.
  */
 
-package fr.recia.sympaApi.web.rest;
+export interface SympaList {
+  owner: boolean
+  editor: boolean
+  subscriber: boolean
+  subject: string
+  address: string
+}
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
+export interface SympaApiResponse {
+  adminServiceUrl: string
+  sympaLists: SympaList[]
+}
 
-@Controller
-public class StaticRedirectionController {
+export interface CreatableList {
+  address: string
+  subject: string
+  modelId: string
+  modelParam: string
+}
 
-    @GetMapping("/")
-    public String root() {
-        return "redirect:/ui";
-    }
+export interface UpdatableList extends CreatableList {
+  adminUrl: string
+  archivesUrl: string
+}
 
-    @GetMapping({"/ui", "/ui/"})
-    public String index() {
-        return "forward:/ui/index.html";
-    }
-
-    @GetMapping({"/ui/admin", "/ui/admin/"})
-    public String admin() {
-        return "forward:/ui/admin.html";
-    }
+export interface AdminSympaApiListsResponse {
+  createData: CreatableList[]
+  updateData: UpdatableList[]
 }
