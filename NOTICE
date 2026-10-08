@@ -127,6 +127,7 @@ This project includes:
   spring-boot under Apache License, Version 2.0
   spring-boot-autoconfigure under Apache License, Version 2.0
   spring-boot-cache under Apache License, Version 2.0
+  spring-boot-configuration-metadata under Apache License, Version 2.0
   spring-boot-data-commons under Apache License, Version 2.0
   spring-boot-data-jpa under Apache License, Version 2.0
   spring-boot-data-redis under Apache License, Version 2.0
@@ -138,6 +139,7 @@ This project includes:
   spring-boot-ldap under Apache License, Version 2.0
   spring-boot-netty under Apache License, Version 2.0
   spring-boot-persistence under Apache License, Version 2.0
+  spring-boot-properties-migrator under Apache License, Version 2.0
   spring-boot-security under Apache License, Version 2.0
   spring-boot-servlet under Apache License, Version 2.0
   spring-boot-sql under Apache License, Version 2.0
