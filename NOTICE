@@ -170,8 +170,8 @@ This project includes:
   spring-security-core under Apache License, Version 2.0
   spring-security-crypto under Apache License, Version 2.0
   spring-security-web under Apache License, Version 2.0
-  spring-session-core under Apache License, Version 2.0
-  spring-session-data-redis under Apache License, Version 2.0
+  spring-session-core under Broadcom Foundation License
+  spring-session-data-redis under Broadcom Foundation License
   sympa-api under Apache License, Version 2.0
   tomcat-embed-core under Apache License, Version 2.0
   tomcat-embed-el under Apache License, Version 2.0
