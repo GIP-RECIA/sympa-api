@@ -350,26 +350,7 @@ const canDisplay = computed<boolean>(() => {
                 <esup-js-tree
                   v-if="groupTreeNodeRoots.length > 0 && displayTree"
                   id="additiona-groups-tree"
-
-                  style="
-              accent-color: 'var(--recia-primary)';
-  --icon-0-font-family: 'FontAwesome';
-  --icon-0-font-weight: 900;
-
-  --icon-1-font-family: 'FontAwesome';
-  --icon-1-font-weight: 900;
-  --icon-1-content:  '\f0c0';
-
-  --icon-fold-font-family: 'FontAwesome';
-  --icon-fold-font-weight: 900;
-  --icon-fold-content: '\f0da';
-  --icon-unfold-font-family: 'FontAwesome';
-  --icon-unfold-font-weight: 900;
-  --icon-unfold-content: '\f0d7';
-  "
-
                   .onSelection="handleOnSelection"
-
                   :datas="groupTreeNodeRoots"
                   :config="{ showCheckbox: true, isMultipleSelection: true }"
                 />
@@ -531,5 +512,12 @@ ul {
 .description {
   text-align: start;
   margin-bottom: 16px;
+}
+
+esup-js-tree {
+  --icon-0-font-family: var(--fa-family-classic);
+  --icon-1-font-family: var(--fa-family-classic);
+  --icon-fold-font-family: var(--fa-family-classic);
+  --icon-unfold-font-family: var(--fa-family-classic);
 }
 </style>

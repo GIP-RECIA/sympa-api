@@ -28,7 +28,7 @@ const props = withDefaults(
   }>(),
   {
     apiUrl: import.meta.env.VITE_APP_SYMPA_API_BASE_URL + import.meta.env.VITE_APP_SYMPA_API_URI,
-    timeoutDefault: import.meta.env.VITE_APP_TIMEOUT_DEFAULT,
+    timeoutDefault: parseInt(import.meta.env.VITE_APP_TIMEOUT_DEFAULT),
   },
 )
 const adminServiceUrl = ref<string | undefined>(undefined)

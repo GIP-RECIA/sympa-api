@@ -49,6 +49,8 @@ export default ({ mode }: ConfigEnv) => {
               'r-header',
               'r-footer',
               // sympa
+              'esup-js-tree',
+              'r-filters',
               'button-dropdown-admin-card-sympa-update',
               'card-admin-sympa-create',
               'card-admin-sympa-update',

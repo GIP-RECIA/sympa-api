@@ -41,8 +41,8 @@ const props = withDefaults(
     apiUrlCreateList: import.meta.env.VITE_APP_SYMPA_API_BASE_URL + import.meta.env.VITE_APP_ADMIN_SYMPA_API_URI_CREATE_LIST,
     apiUrlUpdateList: import.meta.env.VITE_APP_SYMPA_API_BASE_URL + import.meta.env.VITE_APP_ADMIN_SYMPA_API_URI_UPDATE_LIST,
     apiUrlCloseList: import.meta.env.VITE_APP_SYMPA_API_BASE_URL + import.meta.env.VITE_APP_ADMIN_SYMPA_API_URI_CLOSE_LIST,
-    timeoutDefault: import.meta.env.VITE_APP_TIMEOUT_DEFAULT,
-    timeoutSympa: import.meta.env.VITE_APP_TIMEOUT_SYMPA,
+    timeoutDefault: parseInt(import.meta.env.VITE_APP_TIMEOUT_DEFAULT),
+    timeoutSympa: parseInt(import.meta.env.VITE_APP_TIMEOUT_SYMPA),
   },
 )
 const loaded = ref<boolean>(false)

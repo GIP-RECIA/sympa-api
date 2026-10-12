@@ -1258,6 +1258,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@fortawesome/fontawesome-free@npm:^7.3.1":
+  version: 7.3.1
+  resolution: "@fortawesome/fontawesome-free@npm:7.3.1"
+  checksum: 10/e9d6c134349cd07ed85ad8db359fc35bb003657579e440cb986c38b3209a0d277eac2f5c9d613d490b17bdab588846da33d152428e3f4f094fc54bf635256ac2
+  languageName: node
+  linkType: hard
+
 "@fortawesome/fontawesome-svg-core@npm:^7.3.1":
   version: 7.3.1
   resolution: "@fortawesome/fontawesome-svg-core@npm:7.3.1"
@@ -8105,6 +8112,7 @@ __metadata:
     "@commitlint/cli": "npm:^21.2.3"
     "@commitlint/config-conventional": "npm:^21.2.3"
     "@date-io/date-fns": "npm:^3.2.1"
+    "@fortawesome/fontawesome-free": "npm:^7.3.1"
     "@fortawesome/fontawesome-svg-core": "npm:^7.3.1"
     "@fortawesome/free-regular-svg-icons": "npm:^7.3.1"
     "@fortawesome/free-solid-svg-icons": "npm:^7.3.1"

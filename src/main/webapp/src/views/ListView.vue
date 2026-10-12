@@ -44,7 +44,7 @@ const { t } = useI18n()
       </template>
 
       <template #header>
-        <sympa-admin-redirect style="margin: 0;" />
+        <sympa-admin-redirect />
       </template>
 
       <page-sympa />
