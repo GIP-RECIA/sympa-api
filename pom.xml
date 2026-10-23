@@ -11,7 +11,7 @@
 
   <groupId>fr.recia</groupId>
   <artifactId>sympa-api</artifactId>
-  <version>1.0.7</version>
+  <version>1.0.8-SNAPSHOT</version>
   <packaging>war</packaging>
   <name>sympa-api</name>
   <inceptionYear>2026</inceptionYear>
