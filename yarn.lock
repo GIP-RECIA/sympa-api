@@ -1962,14 +1962,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@pinia/testing@npm:^2.0.1":
-  version: 2.0.1
-  resolution: "@pinia/testing@npm:2.0.1"
+"@pinia/testing@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "@pinia/testing@npm:2.0.2"
   dependencies:
-    nostics: "npm:^1.1.4"
+    nostics: "npm:^1.2.0"
   peerDependencies:
-    pinia: ">=4.0.2"
-  checksum: 10/505033e49f048edc73c966d8347c31e3ed35ebf3be506ed2d002b7abc8d4ac586f9c61105f8cb78d6779876f77e07a7331bcbfe8ca3b3e6c0b3476f229d63808
+    pinia: ">=4.1.0"
+  checksum: 10/f2b7578a334f0835e8a19162b931898cdc9231da364e1ac23aa55db106772e48006397e5ba012640502aedad1ec2ca0df302908db2e22dd716464cd15e023887
   languageName: node
   linkType: hard
 
@@ -8127,7 +8127,7 @@ __metadata:
     "@gip-recia/ui-webcomponents": "npm:^1.20.0"
     "@intlify/unplugin-vue-i18n": "npm:^11.2.5"
     "@juggle/resize-observer": "npm:^3.4.0"
-    "@pinia/testing": "npm:^2.0.1"
+    "@pinia/testing": "npm:^2.0.2"
     "@playwright/test": "npm:^1.64.1"
     "@tsconfig/node24": "npm:^24.0.5"
     "@types/jsdom": "npm:^30"
