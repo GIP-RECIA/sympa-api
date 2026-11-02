@@ -36,7 +36,7 @@
     "@gip-recia/js-tree": "^0.0.18",
     "@gip-recia/ui": "^1.1.0",
     "@gip-recia/ui-webcomponents": "^1.20.0",
-    "@intlify/unplugin-vue-i18n": "^11.2.5",
+    "@intlify/unplugin-vue-i18n": "^11.2.8",
     "@juggle/resize-observer": "^3.4.0",
     "@pinia/testing": "^2.0.2",
     "@playwright/test": "^1.64.1",
